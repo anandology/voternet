@@ -4,11 +4,13 @@ CREATE TYPE place_type AS ENUM (
 
 create table place (
     id serial primary key,
-    name text unique,
+    name text,
     type place_type,
-    code text unique,
+    code text,
     parent_id integer references place
 );
+
+create unique index place_code_idx on place(code, parent_id);
 
 create table people (
     id serial primary key,

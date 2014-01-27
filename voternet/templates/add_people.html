@@ -1,0 +1,27 @@
+$def with (place, form)
+
+$var title: $place.name
+
+<h1>$place.name <span class="small">$place.type_label</span> / Add Volunteers</h1>
+
+<form role="form" method="POST">
+  <div class="form-group $input_class(form.name)">
+    <label for="name">Name</label>
+    <input type="text" name="name" class="form-control" id="name" placeholder="Enter name" value="$form.name.value">
+    $if form.name.note:        
+        <span class="help-inline">$form.name.note</span>    
+  </div>
+  <div class="form-group $input_class(form.email)">
+    <label for="email">Email address</label>
+    <input type="email" name="email" class="form-control" id="email" placeholder="Enter email"  value="$form.email.value">
+    $if form.email.note:        
+        <span class="help-inline">$form.email.note</span>
+  </div>
+  <div class="form-group $input_class(form.phone)">
+    <label for="phone">Phone Number</label>
+    <input type="phone" name="phone" class="form-control" id="phone" placeholder="Phone Number" value="$form.phone.value">
+    $if form.phone.note:        
+        <span class="help-inline">$form.phone.note</span>
+  </div>
+  <button type="submit" class="btn btn-default">Add</button>
+</form>
