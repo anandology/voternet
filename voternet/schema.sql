@@ -2,25 +2,25 @@
 CREATE TYPE place_type AS ENUM (
     'STATE', 'PC', 'AC', 'WARD', 'PS', 'PB');
 
-create table place (
+create table places (
     id serial primary key,
     name text,
     type place_type,
     code text,
-    parent_id integer references place,
-    state_id integer references place,
-    pc_id integer references place,
-    ac_id integer references place,
-    ward_id integer references place,
-    ps_id integer references place
+    parent_id integer references places,
+    state_id integer references places,
+    pc_id integer references places,
+    ac_id integer references places,
+    ward_id integer references places,
+    ps_id integer references places
 );
 
-create unique index place_code_idx on place(code, parent_id);
+create unique index places_code_idx on places(code, parent_id);
 
 create table people (
     id serial primary key,
     name text,
     email text,
-    phone text unique,
-    place_id integer references place
+    phone text,
+    place_id integer references places
 );

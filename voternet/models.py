@@ -70,7 +70,7 @@ class Place(web.storage):
     def get_places(self):
         db = get_db()
         id = self.id
-        result = db.select("place", where="parent_id=$id", vars=locals())
+        result = db.select("places", where="parent_id=$id", vars=locals())
         return [Place(row) for row in result]
 
     def get_places_text(self):
@@ -116,9 +116,9 @@ class Place(web.storage):
                 row[self.type.lower() + "_id"] = self.id
 
                 if row.code in existing_codes:
-                    db.update("place", name=row.name, where="code=$code AND type=$type AND parent_id=parent_id", vars=row)
+                    db.update("places", name=row.name, where="code=$code AND type=$type AND parent_id=parent_id", vars=row)
                 else:
-                    db.insert("place", **row)
+                    db.insert("places", **row)
 
     re_place_line = re.compile("([^{}]*) {{(.*)}}")
     def process_place_line(self, line):
@@ -139,13 +139,13 @@ class Place(web.storage):
 
     def _find_subplace(self, code):
         db = get_db()
-        result = db.select("place", where="code=$code AND parent_id=$self.id", vars=locals())
+        result = db.select("places", where="code=$code AND parent_id=$self.id", vars=locals())
         if result:
             return Place(result[0])
 
     def get_counts(self):
         if self.type != "PB":
-            result = get_db().query("SELECT type, count(*) as count FROM place WHERE %s=$self.id GROUP BY type" % self.type_column, vars=locals())
+            result = get_db().query("SELECT type, count(*) as count FROM places WHERE %s=$self.id GROUP BY type" % self.type_column, vars=locals())
             return dict((row.type, row.count) for row in result)
         return dict()
 
@@ -159,14 +159,14 @@ class Place(web.storage):
                 place = place and place._find_subplace(p)
             return place
         else:
-            result = db.select("place", where="code=$code AND type IN ('STATE', 'PC', 'AC')", vars=locals())
+            result = db.select("places", where="code=$code AND type IN ('STATE', 'PC', 'AC')", vars=locals())
         if result:
             return Place(result[0])
 
     @staticmethod
     def from_id(id):
         db = get_db()
-        result = db.select("place", where="id=$id", vars=locals())
+        result = db.select("places", where="id=$id", vars=locals())
         if result:
             return Place(result[0]) 
 
