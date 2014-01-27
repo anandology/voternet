@@ -11,5 +11,5 @@ setup(
     version='0.1.0-dev',
     description='Voternet',
     packages=find_packages(exclude=["ez_setup"]),
-    install_requires=dependencies.split()
+    install_requires=dependencies
 )
