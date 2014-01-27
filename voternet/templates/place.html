@@ -1,0 +1,15 @@
+$def with (place)
+
+$var title: $place.name
+
+<h1>$place.name <span class="type">$place.type_label</span></h1>
+
+<h2>Volunteers</h2>
+
+<h2>Graphs</h2>
+
+<h2>Places</h2>
+<ul>
+    $for p in place.get_places():
+        <li><a href="/$p.code">$p.name</a></li>
+</ul>

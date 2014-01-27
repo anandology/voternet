@@ -1,0 +1,74 @@
+
+body {
+    background: #eee;
+    width: 900px;
+    margin: 0 auto;
+}
+
+span.type {
+    font-size: 10pt;
+    color: #ffa337;
+    color: #ff6666;
+    font-family: "Lucida Grande", Verdana, Geneva, Helvetica, Arial, sans-serif;
+}
+
+.wrapper {
+    background: white;
+    padding: 20px;
+}
+
+.count {
+    text-align: right;
+}
+
+.domain-stats {
+    float: left;
+    widht: 260px;
+    min-width: 260px;
+    padding-right: 20px;
+}
+
+h2 {
+    margin-top: 20px;
+}
+
+.domain-stats h3 {
+    margin: 5px;
+}
+
+table.stats-table {
+    border-collapse:collapse;
+}
+
+table.stats-table tr
+{
+   border-bottom: 1px solid #ddd;
+}
+
+table.stats-table td {
+    padding: 5px;
+}
+
+table.stats-table td.count {
+    vertical-align: top;
+}
+
+.clearfix {
+    clear: both;
+}
+
+.domain-stats-block {
+    clear: both;
+}
+
+.plot {
+    margin: 20px;
+}
+
+.small {
+    font-size: 0.8em;
+}
+
+.gray {
+    color: #666;
+}
