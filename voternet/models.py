@@ -5,7 +5,7 @@ def get_db():
     params = web.config.get("db_parameters") or dict(dbn="postgres", db="voternet")
     return web.database(**params)
 
-class Place(object):
+class Place(web.storage):
     TYPE_LABELS = dict(
         state="State",
         pc="Parliamentary Constituency",
@@ -14,14 +14,18 @@ class Place(object):
         ps="Polling Station",
         pb="Polling Booth")
 
-    def __init__(self, row):
-        self.row = row
+    @property
+    def volunteers(self):
+        result = get_db().select("people", where="place_id=$place_id", vars={"place_id": self.id})
+        return [Place(row) for row in result]
 
-        self.id = self.row.id
-        self.name = row.name
-        self.code = row.code
-        self.type = row.type
-        self.type_label = self.TYPE_LABELS[self.type.lower()]
+    def add_volunteer(self, name, email, phone):
+        get_db().insert("people", name=name, email=email, phone=phone, place_id=self.id)
+
+    @property
+    def type_label(self):
+        return self.TYPE_LABELS[self.type.lower()]
+
 
     def get_places(self):
         db = get_db()
@@ -35,3 +39,15 @@ class Place(object):
         result = db.select("place", where="code=$code", vars=locals())
         if result:
             return Place(result[0])
+
+    @staticmethod
+    def from_id(id):
+        db = get_db()
+        result = db.select("place", where="id=$id", vars=locals())
+        if result:
+            return Place(result[0])            
+
+class Person(web.storage):
+    @property
+    def place(self):
+        return Place.from_id(self.place_id)

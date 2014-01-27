@@ -2,9 +2,22 @@ $def with (place)
 
 $var title: $place.name
 
-<h1>$place.name <span class="type">$place.type_label</span></h1>
+<h1>$place.name <span class="small">$place.type_label</span></h1>
 
 <h2>Volunteers</h2>
+
+$if not place.volunteers:
+    <em>None found.</em>
+$else:
+    <table class="table">
+        $for person in place.volunteers:
+            <tr><td>$loop.index</td><td>$person.name</td><td>$person.email</td><td>$person.phone</td></tr>
+    </table>
+
+<div>
+<br/>
+<a href="/$place.code/add-people">Add volunteers?</a>
+</div>
 
 <h2>Graphs</h2>
 

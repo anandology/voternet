@@ -9,3 +9,11 @@ create table place (
     code text unique,
     parent_id integer references place
 );
+
+create table people (
+    id serial primary key,
+    name text,
+    email text,
+    phone text unique,
+    place_id integer references place
+);
