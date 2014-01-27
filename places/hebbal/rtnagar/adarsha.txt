@@ -1,0 +1,4 @@
+Adarsha Vidhya Mandir - Room 1 {{room1}}
+Adarsha Vidhya Mandir - Room 2 {{room2}}
+Adarsha Vidhya Mandir - Room 3 {{room3}}
+Adarsha Vidhya Mandir - Room 4 {{room4}}
