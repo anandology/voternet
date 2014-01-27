@@ -12,13 +12,14 @@ def normalize(name):
 
 class Place(web.storage):
     TYPE_LABELS = dict(
-        state="State",
-        pc="Parliamentary Constituency",
-        ac="Assembly Constituency",
-        ward="Ward",
-        ps="Polling Station",
-        pb="Polling Booth")
-    TYPES = ['state', 'pc', 'ac', 'ward', 'ps', 'pb']
+        STATE="State",
+        PC="Parliamentary Constituency",
+        AC="Assembly Constituency",
+        WARD="Ward",
+        PS="Polling Station",
+        PB="Polling Booth")
+
+    TYPES = ['STATE', 'PC', 'AC', 'WARD', 'PS', 'PB']
 
     @property
     def url(self):
@@ -44,19 +45,27 @@ class Place(web.storage):
 
     @property
     def type_label(self):
-        return self.TYPE_LABELS[self.type.lower()]
+        return self.TYPE_LABELS[self.type]
+
+    @property
+    def type_column(self):
+        return self.type.lower() + "_id"
 
     @property
     def subtype(self):
         try:
-            return self.TYPES[self.TYPES.index(self.type.lower())+1].upper()
+            return self.TYPES[self.TYPES.index(self.type)+1]
         except (IndexError, ValueError):
             return None
 
     @property
     def subtype_label(self):
         subtype = self.subtype
-        return subtype and self.TYPE_LABELS[subtype.lower()]
+        return subtype and self.TYPE_LABELS[subtype]
+
+    def get_all_subtypes(self):
+        index = self.TYPES.index(self.type)
+        return [web.storage(code=type, label=self.TYPE_LABELS[type]) for type in self.TYPES[index+1:]]
 
     def get_places(self):
         db = get_db()
@@ -69,7 +78,6 @@ class Place(web.storage):
 
     def __str__(self):
         return "%s {{ %s }}" % (self.name, self.code)
-
 
     def add_places(self, places_text):
         lines = places_text.strip().splitlines()
@@ -98,6 +106,15 @@ class Place(web.storage):
                 row.type = self.subtype
                 row.parent_id = self.id
 
+                row.state_id = self.state_id
+                row.pc_id = self.pc_id
+                row.ac_id = self.ac_id
+                row.ward_id = self.ward_id
+                row.ps_id = self.ps_id
+
+                # sent the parent id in the apprpriate field
+                row[self.type.lower() + "_id"] = self.id
+
                 if row.code in existing_codes:
                     db.update("place", name=row.name, where="code=$code AND type=$type AND parent_id=parent_id", vars=row)
                 else:
@@ -125,6 +142,12 @@ class Place(web.storage):
         result = db.select("place", where="code=$code AND parent_id=$self.id", vars=locals())
         if result:
             return Place(result[0])
+
+    def get_counts(self):
+        if self.type != "PB":
+            result = get_db().query("SELECT type, count(*) as count FROM place WHERE %s=$self.id GROUP BY type" % self.type_column, vars=locals())
+            return dict((row.type, row.count) for row in result)
+        return dict()
 
     @staticmethod
     def find(code):
