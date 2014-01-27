@@ -149,6 +149,17 @@ class Place(web.storage):
             return dict((row.type, row.count) for row in result)
         return dict()
 
+    def get_volunteer_counts(self):
+        if self.type != "PB":
+            result = get_db().query(
+                "SELECT type, count(*) as count" +
+                " FROM places" +
+                " JOIN people ON places.id=people.place_id" +
+                " WHERE %s=$self.id" % self.type_column + 
+                " GROUP BY type", vars=locals())
+            return dict((row.type, row.count) for row in result)
+        return dict()
+
     @staticmethod
     def find(code):
         db = get_db()

@@ -34,7 +34,8 @@ $if place.subtype:
             <tr>                
                 <td><a href="$p.get_url()">$p.name</a></td>
                 $ counts = p.get_counts()
+                $ vcounts = p.get_volunteer_counts()
                 $for t in subtypes:
-                    <th>$counts.get(t.code, 0)</th>
+                    <th>$counts.get(t.code, 0) ($vcounts.get(t.code, 0) volunteers)</th>
             </tr>
     </table>
