@@ -16,6 +16,12 @@ create table places (
 );
 
 create unique index places_code_idx on places(code, parent_id);
+create index places_parent_id_idx on places(parent_id);
+create index places_state_id_idx on places(state_id);
+create index places_pc_id_idx on places(pc_id);
+create index places_ac_id_idx on places(ac_id);
+create index places_ward_id_idx on places(ward_id);
+create index places_ps_id_idx on places(ps_id);
 
 create table people (
     id serial primary key,
@@ -24,3 +30,5 @@ create table people (
     phone text,
     place_id integer references places
 );
+
+create index people_place_id_idx on people(place_id);
