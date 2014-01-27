@@ -2,6 +2,12 @@ $def with (place)
 
 $var title: $place.name
 
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+    <li class="active">$place.name</li>
+</ul>
+
 <h1>$place.name <span class="small">$place.type_label</span></h1>
 
 <h2>Volunteers</h2>

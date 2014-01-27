@@ -35,6 +35,11 @@ class Place(web.storage):
     def parent(self):
         return Place.from_id(self.parent_id)
 
+    def get_parents(self):
+        if self.type == 'STATE':
+            return []
+        return self.parent.get_parents() + [self.parent]
+
     @property
     def volunteers(self):
         result = get_db().select("people", where="place_id=$place_id", vars={"place_id": self.id})
