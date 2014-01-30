@@ -150,7 +150,11 @@ class Place(web.storage):
 
     def get_counts(self):
         if self.type != "PB":
-            result = get_db().query("SELECT type, count(*) as count FROM places WHERE %s=$self.id GROUP BY type" % self.type_column, vars=locals())
+            result = get_db().query(
+                "SELECT type, count(*) as count" +
+                " FROM places" +
+                " WHERE %s=$self.id OR id=$self.id"  % self.type_column +
+                " GROUP BY type", vars=locals())
             return dict((row.type, row.count) for row in result)
         return dict()
 
@@ -160,7 +164,7 @@ class Place(web.storage):
                 "SELECT type, count(*) as count" +
                 " FROM places" +
                 " JOIN people ON places.id=people.place_id" +
-                " WHERE %s=$self.id" % self.type_column + 
+                " WHERE %s=$self.id OR places.id=$self.id" % self.type_column + 
                 " GROUP BY type", vars=locals())
             return dict((row.type, row.count) for row in result)
         return dict()

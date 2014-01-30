@@ -2,7 +2,13 @@ $def with (place, form)
 
 $var title: $place.name
 
-<h1>$place.name <span class="small">$place.type_label</span> / Add Volunteers</h1>
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+    <li><a href="$place.get_url()">$place.name</a></li>
+</ul>
+
+<h1><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Add Volunteers</h1>
 
 <form role="form" method="POST">
   <div class="form-group $input_class(form.name)">

@@ -30,7 +30,7 @@ $else:
 $if place.subtype:
     <h2>$plural(place.subtype_label) <a href="$place.get_url()/edit"><span class="small">edit</span></a></h2>
     <table class="table table-striped">
-        $ subtypes = place.get_all_subtypes()[1:]
+        $ subtypes = place.get_all_subtypes()
         <tr>
             <th>Name</th>
             $for t in subtypes:
