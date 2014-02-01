@@ -68,6 +68,9 @@ class Place(web.storage):
         subtype = self.subtype
         return subtype and self.TYPE_LABELS[subtype]
 
+    def update_info(self, info):
+        get_db().update("places", where='id=$self.id', info=info, vars=locals())
+
     def get_all_subtypes(self):
         index = self.TYPES.index(self.type)
         return [web.storage(code=type, label=self.TYPE_LABELS[type]) for type in self.TYPES[index+1:]]

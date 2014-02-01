@@ -1,0 +1,20 @@
+$def with (place)
+
+$var title: $place.name Info
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+    <li><a href="$place.get_url()">$place.name</a></li>
+</ul>
+
+<h1><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Information </h1>
+
+$if place.info:
+    $:markdown(place.info)
+$else:
+    <em>No information is added yet.</em>
+
+<br/>
+<br/>
+<a href="$place.url/info?m=edit">Edit</a>

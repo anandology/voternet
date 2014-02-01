@@ -7,6 +7,8 @@ create table places (
     name text,
     type place_type,
     code text,
+    info text,
+
     parent_id integer references places,
     state_id integer references places,
     pc_id integer references places,

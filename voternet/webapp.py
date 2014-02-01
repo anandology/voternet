@@ -2,10 +2,12 @@ import web
 import os
 from models import Place
 from forms import AddPeopleForm
+import markdown
 
 urls = (
     "/", "index",
     "/([\w/]+)/edit", "edit_place",
+    "/([\w/]+)/info", "place_info",
     "/([\w/]+)/add-people", "add_people",
     "/([\w/]+)", "place",
 )
@@ -24,7 +26,11 @@ def plural(name):
     else:
         return name + 's'
 
-tglobals = dict(input_class=input_class, plural=plural)
+tglobals = {
+    "input_class": input_class,
+    "plural": plural,
+    "markdown": markdown.markdown
+}
 
 path = os.path.join(os.path.dirname(__file__), "templates")
 render = web.template.render(path, base="site", globals=tglobals)
@@ -54,6 +60,25 @@ class edit_place:
         i = web.input(places="")
         place.add_places(i.places)
         raise web.seeother(place.url)
+
+class place_info:
+    def GET(self, code):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+        i = web.input(m=None)
+        if i.m == "edit":
+            return render.edit_info(place)
+        else:
+            return render.place_info(place)
+
+    def POST(self, code):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+        i = web.input(info="")
+        place.update_info(i.info)
+        raise web.seeother(place.url + "/info")
 
 class add_people:
     def GET(self, code):

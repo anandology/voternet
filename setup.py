@@ -3,7 +3,8 @@ import glob, os
 
 dependencies = [
     'web.py',
-    'psycopg2'
+    'psycopg2',
+    'markdown',
 ]
 
 setup(
