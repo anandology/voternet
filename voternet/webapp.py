@@ -27,9 +27,10 @@ def plural(name):
         return name + 's'
 
 tglobals = {
-    "input_class": input_class,
+    "input_class": input_class, 
     "plural": plural,
-    "markdown": markdown.markdown
+    "markdown": markdown.markdown,
+    "sum": sum,
 }
 
 path = os.path.join(os.path.dirname(__file__), "templates")

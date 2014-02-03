@@ -31,7 +31,7 @@ $else:
 
 $if place.subtype:
     <h2>$plural(place.subtype_label) <a href="$place.get_url()/edit"><span class="small">edit</span></a></h2>
-    <table class="table table-striped">
+    <table class="table">
         $ subtypes = place.get_all_subtypes()
         <tr>
             <th>Name</th>
@@ -39,11 +39,22 @@ $if place.subtype:
                 <th>$t.code</th>
         <tr> 
         $for p in place.get_places():
-            <tr>                
-                <td><a href="$p.get_url()">$p.name</a></td>
-                $ counts = p.get_counts()
-                $ vcounts = p.get_volunteer_counts()
-                $for t in subtypes:
-                    <th>$counts.get(t.code, 0) ($vcounts.get(t.code, 0) volunteers)</th>
-            </tr>
+            $ counts = p.get_counts()
+            $ vcounts = p.get_volunteer_counts()
+            $if sum(vcounts.values()):
+                <tr class="active">                
+                    <td><a href="$p.get_url()">$p.name</a></td>
+                    $for t in subtypes:
+                        <td>$counts.get(t.code, 0) ($vcounts.get(t.code, 0) volunteers)</td>
+                </tr>
+
+        $for p in place.get_places():
+            $ counts = p.get_counts()
+            $ vcounts = p.get_volunteer_counts()
+            $if not sum(vcounts.values()):
+                <tr class="inactive">                
+                    <td><a href="$p.get_url()">$p.name</a></td>
+                    $for t in subtypes:
+                        <td>$counts.get(t.code, 0) ($vcounts.get(t.code, 0) volunteers)</td>
+                </tr>                
     </table>
