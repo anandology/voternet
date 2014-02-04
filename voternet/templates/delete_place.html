@@ -1,0 +1,29 @@
+$def with (place)
+
+$var title: $place.name
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+    <li><a href="$place.get_url()">$place.name</a></li>
+</ul>
+
+<h1><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Delete</h1>
+
+<form role="form" method="POST">
+    <div style="color: #ff4444;">
+        <h2>Are you sure?</h2>
+        <p>Deleting a place is not reversible and all the associated sub-places and voluteers will be deleted too.</p>
+        <p>&nbsp;</p>
+    </div>
+  <button type="submit" name="action" value="delete" class="btn">Yes, I'm sure!</button>
+  <button type="submit" id="cancel" name="action" value="cancel" class="btn btn-default">No, take me back</button>
+</form>
+<script>
+\$(function() {
+    \$("#cancel").click(function() {
+        window.location.href = "$place.url";
+        return false;
+    })
+})
+</script>
