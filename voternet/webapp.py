@@ -6,6 +6,7 @@ import markdown
 
 urls = (
     "/", "index",
+    "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
     "/([\w/]+)/add-people", "add_people",
@@ -46,6 +47,25 @@ class place:
         if not place:
             raise web.notfound()
         return render.place(place)
+
+class delete_place:
+    def GET(self, code):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+        return render.delete_place(place)
+
+    def POST(self, code):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+        i = web.input(action=None)
+        if i.action == "cancel":
+            raise web.seeother(place.url)
+        else:
+            parent = place.parent
+            place.delete()
+            raise web.seeother(parent.url)
 
 class edit_place:
     def GET(self, code):

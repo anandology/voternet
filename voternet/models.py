@@ -71,6 +71,15 @@ class Place(web.storage):
     def update_info(self, info):
         get_db().update("places", where='id=$self.id', info=info, vars=locals())
 
+    def delete(self):
+        db = get_db()
+        with db.transaction():
+            db.query("DELETE FROM people USING places"
+                + " WHERE place_id=places.id"
+                + "     AND (places.id=$self.id OR places.%s=$self.id)" % self.type_column,
+                vars=locals())
+            db.query("DELETE FROM places WHERE id=$self.id OR %s=$self.id" % self.type_column, vars=locals())
+
     def get_all_subtypes(self):
         index = self.TYPES.index(self.type)
         return [web.storage(code=type, label=self.TYPE_LABELS[type]) for type in self.TYPES[index+1:]]
