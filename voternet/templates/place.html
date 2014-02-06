@@ -61,13 +61,22 @@ $var title: $place.name
         </table>    
   </div>
   <div class="col-md-3 sidebar">
+    <section class="header"><strong>Info</strong></section>
+    <section>
+        <ul class="list-unstyled">
+            <li>#voters: xxx</li>
+            <li>population: xxx</li>
+            <li><a href="$place.get_url()/info">see more ...</a></li>
+        </ul>
+    </section>
+
     $if place.type != 'STATE':
         $for p in place.get_parents()[1:]:
-            <div class="header">
+            <section class="header">
                 <a href="$p.get_url()">$p.name</a><br><small>$p.type_label</small>
-            </div>
+            </section>
 
-        <div class="header"><strong>$plural(place.type_label)</strong></div>
+        <section class="header"><strong>$plural(place.type_label)</strong></section>
 
         <ul class="list-unstyled parents" style="padding: 10px;">
             $for p in place.parent.get_places():
