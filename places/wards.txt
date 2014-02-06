@@ -1,0 +1,201 @@
+PC27	AC150	W001	Kempegowda Ward
+PC27	AC150	W002	Chowdeswari Ward
+PC27	AC150	W003	Atturu
+PC27	AC150	W004	Yelahanka Satellite Town
+PC24	AC152	W005	Jakkuru
+PC27	AC150	W005	Jakkuru
+PC24	AC152	W006	Thanisandra
+PC24	AC152	W007	Byatarayanapura
+PC24	AC152	W008	Kodigehalli
+PC24	AC152	W009	Vidyaranyapura
+PC24	AC152	W010	Dodda Bommasandra
+PC24	AC152	W011	Kuvempu Nagar
+PC24	AC155	W012	Shettihalli
+PC24	AC155	W013	Mallasandra
+PC24	AC155	W014	Bagalakunte
+PC24	AC155	W015	T Dasarahalli
+PC23	AC154	W016	Jalahalli
+PC23	AC154	W017	J P Park
+PC24	AC151	W018	Radhakrishna Temple Ward
+PC24	AC158	W018	Radhakrishna Temple Ward
+PC24	AC158	W019	Sanjaya Nagar
+PC24	AC158	W020	Ganga Nagar
+PC24	AC158	W021	Hebbala
+PC24	AC158	W022	Vishwanath Nagenahalli
+PC25	AC160	W023	Nagavara
+PC25	AC160	W024	HBR Layout
+PC24	AC151	W025	Horamavu
+PC24	AC151	W026	Ramamurthy Nagar
+PC25	AC160	W027	Banasavadi
+PC25	AC160	W028	Kammanahalli
+PC25	AC160	W029	Kacharkanahalli
+PC25	AC160	W030	Kadugondanahalli
+PC24	AC159	W031	Kushal Nagar
+PC24	AC159	W032	Kaval Bairasandra
+PC24	AC158	W033	Manorayanapalya
+PC24	AC158	W034	Gangenahalli
+PC24	AC157	W035	Aramane Nagara
+PC24	AC157	W036	Mattikere
+PC23	AC154	W037	Yeshwanthpura
+PC23	AC154	W038	HMT Ward
+PC24	AC155	W039	Chokkasandra
+PC24	AC153	W040	Dodda Bidarakallu
+PC24	AC155	W041	Peenya Industrial Area
+PC23	AC154	W042	Lakshmi Devi Nagar
+PC24	AC156	W043	Nandini Layout
+PC24	AC156	W044	Marappana Palya
+PC24	AC157	W045	Malleswaram
+PC24	AC158	W046	Jayachamarajendra Nagar
+PC24	AC159	W047	Devara Jeevanahalli
+PC24	AC159	W048	Muneshwara Nagar
+PC25	AC160	W049	Lingarajapura
+PC25	AC161	W050	Benniganahalli
+PC24	AC151	W051	Vijnanapura
+PC24	AC151	W052	K R Puram
+PC24	AC151	W053	Basavanapura
+PC25	AC174	W054	Hudi
+PC24	AC151	W055	Devasandra
+PC24	AC151	W056	A Narayanapura
+PC25	AC161	W057	C V Raman Nagar
+PC24	AC151	W058	New Tippasandara
+PC25	AC161	W058	New Tippasandara
+PC25	AC160	W059	Maruthi Seva Nagar
+PC24	AC159	W060	Sagayarapuram
+PC24	AC159	W061	S K Garden
+PC25	AC162	W062	Ramaswamy Palya
+PC25	AC162	W063	Jayamahal
+PC24	AC157	W064	Rajamahal Guttahalli
+PC24	AC157	W065	Kadu Malleshwar Ward
+PC24	AC157	W066	Subramanya Nagar
+PC24	AC156	W067	Nagapura
+PC24	AC156	W068	Mahalakshimpuram
+PC23	AC154	W069	Laggere
+PC24	AC155	W070	Rajagopal Nagar
+PC24	AC155	W071	Hegganahalli
+PC24	AC153	W072	Herohalli
+PC23	AC154	W073	Kottegepalya
+PC24	AC156	W074	Shakthi Ganapathi Nagar
+PC24	AC156	W075	Shankar Matt
+PC24	AC157	W076	Gayithri Nagar
+PC25	AC164	W077	Dattatreya Temple
+PC24	AC159	W078	Pulikeshinagar
+PC25	AC161	W079	Sarvagna Nagar
+PC25	AC161	W080	Hoysala Nagar
+PC24	AC151	W081	Vijnana Nagar
+PC25	AC174	W082	Garudachar Playa
+PC25	AC174	W083	Kadugodi
+PC25	AC174	W084	Hagadur
+PC25	AC174	W085	Dodda Nekkundi
+PC25	AC174	W086	Marathahalli
+PC24	AC151	W087	HAL Airport
+PC25	AC161	W088	Jeevanbhima Nagar
+PC25	AC163	W089	Jogupalya
+PC25	AC162	W090	Halsoor
+PC25	AC162	W091	Bharathi Nagar
+PC25	AC162	W092	Shivaji Nagar
+PC25	AC162	W093	Vasanth Nagar
+PC25	AC164	W094	Gandhinagar
+PC25	AC164	W095	Subhash Nagar
+PC25	AC164	W096	Okalipuram
+PC25	AC165	W097	Dayananda Nagar
+PC25	AC165	W098	Prakash Nagar
+PC25	AC165	W099	Rajaji Nagar
+PC25	AC165	W100	Basaveshwara Nagar
+PC25	AC165	W101	Kamakshipalya
+PC24	AC156	W102	Vrisabhavathi Nagar
+PC26	AC166	W103	Kaveripura
+PC26	AC166	W104	Govindaraja Nagar
+PC26	AC166	W105	Agrahara Dasarahalli
+PC26	AC166	W106	Dr. Raj Kumar Ward
+PC25	AC165	W107	Shivanagara
+PC25	AC165	W108	Sriramamandir
+PC25	AC164	W109	Chickpete
+PC25	AC162	W110	Sampangiram Nagar
+PC25	AC163	W111	Shantala Nagar
+PC25	AC163	W112	Domlur
+PC25	AC161	W113	Konena Agrahara
+PC25	AC163	W114	Agaram
+PC25	AC163	W115	Vannarpet
+PC25	AC163	W116	Nilasandra
+PC25	AC163	W117	Shanthi Nagar
+PC26	AC169	W118	Sudham Nagara
+PC26	AC169	W119	Dharmaraya Swamy Temple wa
+PC25	AC164	W120	Cottonpete
+PC25	AC164	W121	Binnipete
+PC26	AC167	W122	Kempapura Agrahara
+PC26	AC167	W123	Vijayanagar
+PC26	AC167	W124	Hosahalli
+PC26	AC166	W125	Marenahalli
+PC26	AC166	W126	Maruthi Mandir ward
+PC26	AC166	W127	Mudalapalya
+PC26	AC166	W128	Nagarabhavi
+PC23	AC154	W129	Jnana Bharathi ward
+PC24	AC153	W130	Ullalu
+PC26	AC166	W131	Nayandahalli
+PC26	AC167	W132	Attiguppe
+PC26	AC167	W133	Hampi Nagar
+PC26	AC167	W134	Bapuji Nagar
+PC25	AC168	W135	Padarayanapura
+PC25	AC168	W136	Jagajivanaramnagar
+PC25	AC168	W137	Rayapuram
+PC25	AC168	W138	Chalavadipalya
+PC25	AC168	W139	K R Market
+PC25	AC168	W140	Chamrajapet
+PC25	AC168	W141	Azad Nagar
+PC26	AC169	W142	Sunkenahalli
+PC26	AC169	W143	Vishveshwara Puram
+PC26	AC169	W144	Siddapura
+PC26	AC169	W145	Hombegowda Nagara
+PC26	AC172	W146	Lakkasandra
+PC26	AC172	W147	Adugodi
+PC26	AC172	W148	Ejipura
+PC25	AC174	W149	Varthuru
+PC25	AC174	W150	Bellanduru
+PC26	AC172	W151	Koramangala
+PC26	AC172	W152	Suddagunte Palya
+PC26	AC169	W153	Jayanagar
+PC26	AC170	W154	Basavanagudi
+PC26	AC170	W155	Hanumanth Nagar
+PC26	AC170	W156	Srinagar
+PC26	AC167	W157	Gali Anjenaya
+PC26	AC167	W158	Deepanjali Nagar
+PC24	AC153	W159	Kengeri
+PC23	AC154	W160	Rajarajeshwari Nagar
+PC26	AC171	W161	Hosakerehalli
+PC26	AC170	W162	Girinagar
+PC26	AC170	W163	Katriguppe
+PC26	AC170	W164	Vidyapeeta ward
+PC26	AC171	W165	Ganesh Mandir ward
+PC26	AC171	W166	Karisandra
+PC26	AC171	W167	Yediyur
+PC26	AC173	W168	Pattabhiram Nagar
+PC26	AC173	W169	Byrasandra
+PC26	AC173	W170	Jayanagar East
+PC26	AC173	W171	Gurappanapalya
+PC26	AC172	W172	Madivala
+PC26	AC172	W173	Jakkasandra
+PC26	AC175	W174	HSR Layout
+PC26	AC175	W175	Bommanahalli
+PC26	AC172	W176	BTM Layout
+PC26	AC173	W177	J P Nagar
+PC26	AC173	W178	Sarakki
+PC26	AC173	W179	Shakambari Nagar
+PC26	AC171	W180	Banashankari Temple ward
+PC26	AC171	W181	Kumaraswamy Layout
+PC26	AC171	W182	Padmanabha Nagar
+PC26	AC171	W183	Chikkalsandra
+PC23	AC176	W184	Uttarahalli
+PC23	AC176	W185	Yelchenahalli
+PC26	AC175	W186	Jaraganahalli
+PC26	AC175	W187	Puttenahalli
+PC26	AC175	W188	Bilekhalli
+PC26	AC175	W189	Hongasandra
+PC26	AC175	W190	Mangammanapalya
+PC26	AC175	W191	Singasandra
+PC23	AC176	W192	Begur
+PC26	AC175	W193	Arakere
+PC23	AC176	W194	Gottigere
+PC23	AC176	W195	Konankunte
+PC23	AC176	W196	Anjanapura
+PC23	AC176	W197	Vasanthpura
+PC24	AC153	W198	Hemmigepura

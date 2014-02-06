@@ -16,6 +16,10 @@ def add_places(parent):
 def get_pc(code):
     return db.select("places", where="type='PC' AND code=$code", vars=locals())[0]
 
+@web.memoize
+def get_ac(code):
+    return db.select("places", where="type='AC' AND code=$code", vars=locals())[0]
+
 def add_acs(state):
     for line in open("places/ac.txt"):
         pc, ac, name = line.strip().split(" - ", 2)
@@ -31,6 +35,20 @@ def add_pcs(state):
         if not db.select("places", where="type='PC' AND code=$code", vars=locals()):
             db.insert("places", name=name, type="PC", code=code, parent_id=state.id, state_id=state.id)
 
+def add_wards(state):
+    for line in open("places/wards.txt"):
+        pc, ac, code, name = line.strip().split("\t")
+        name = code + " - " + name
+        if not db.select("places", where="type='WARD' AND code=$code", vars=locals()):
+            parent = get_ac(ac)
+            ac_id = parent.id
+            pc_id = get_pc(pc).id
+            db.insert("places", name=name, type="WARD", code=code, 
+                parent_id=parent.id,
+                state_id=state.id,
+                pc_id=pc_id,
+                ac_id=ac_id)
+
 def main():
     if not db.select("places", where="type='STATE' AND code='karnataka'"):
         db.insert("places", name="Karnataka", type="STATE", code="karnataka", parent_id=None)
@@ -38,6 +56,7 @@ def main():
     #add_places(state)
     add_pcs(state)
     add_acs(state)
-
+    add_wards(state)
+    
 if __name__ == '__main__':
     main()
