@@ -13,7 +13,8 @@ class PhoneValidator(form.Validator):
 
 AddPeopleForm = form.Form(
     form.Textbox("name", form.notnull),
-    form.Textbox("email"),
     form.Textbox("phone", form.notnull, PhoneValidator()),
+    form.Textbox("email"),
+    form.Textbox("voterid"),
 )
 

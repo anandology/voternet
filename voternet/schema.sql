@@ -30,6 +30,9 @@ create table people (
     name text,
     email text,
     phone text,
+    voterid text,
+    active boolean default 't',
+    added timestamp default(current_timestamp at time zone 'utc'),
     place_id integer references places
 );
 

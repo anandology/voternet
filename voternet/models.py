@@ -45,8 +45,8 @@ class Place(web.storage):
         result = get_db().select("people", where="place_id=$place_id", vars={"place_id": self.id})
         return [Place(row) for row in result]
 
-    def add_volunteer(self, name, email, phone):
-        get_db().insert("people", name=name, email=email, phone=phone, place_id=self.id)
+    def add_volunteer(self, name, email, phone, voterid=None):
+        get_db().insert("people", name=name, email=email, phone=phone, voterid=voterid, place_id=self.id)
 
     @property
     def type_label(self):
