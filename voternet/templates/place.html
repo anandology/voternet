@@ -34,13 +34,16 @@ $if place.subtype:
     <h2>$plural(place.subtype_label)</h2>
     <table class="table">
         $ subtypes = place.get_all_subtypes()
+        $ serial = counter()
         <tr>
+            <th>#</th>
             <th>Name</th>
             $for t in subtypes:
                 <th>$t.code</th>
         <tr> 
         $def render_place(p, klass):
-            <tr class="$klass">                
+            <tr class="$klass">   
+                <td>$serial.next()</td>             
                 <td><a href="$p.get_url()">$p.name</a></td>
                 $for t in subtypes:
                     <td>

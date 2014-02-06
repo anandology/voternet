@@ -32,6 +32,9 @@ tglobals = {
     "plural": plural,
     "markdown": markdown.markdown,
     "sum": sum,
+
+    # iter to count from 1
+    "counter": lambda: iter(range(1, 100000))
 }
 
 path = os.path.join(os.path.dirname(__file__), "templates")
