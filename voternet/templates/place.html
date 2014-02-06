@@ -10,6 +10,7 @@ $var title: $place.name
 
 <h1>$place.name <span class="small">$place.type_label</span></h1>
 
+
 <a href="$place.url/info">See info about this place</a>
 
 <h2>Volunteers</h2>
@@ -30,7 +31,7 @@ $else:
 <h2>Graphs</h2>
 
 $if place.subtype:
-    <h2>$plural(place.subtype_label) <a href="$place.get_url()/edit"><span class="small">edit</span></a></h2>
+    <h2>$plural(place.subtype_label)</h2>
     <table class="table">
         $ subtypes = place.get_all_subtypes()
         <tr>
