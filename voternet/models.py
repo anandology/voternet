@@ -19,7 +19,7 @@ class Place(web.storage):
         PS="Polling Station",
         PB="Polling Booth")
 
-    TYPES = ['STATE', 'PC', 'AC', 'WARD', 'PS', 'PB']
+    TYPES = ['STATE', 'PC', 'AC', 'WARD', 'PB']
 
     @property
     def url(self):
@@ -87,7 +87,9 @@ class Place(web.storage):
     def get_places(self):
         db = get_db()
         id = self.id
-        result = db.select("places", where="parent_id=$id", vars=locals())
+        subtype = self.subtype
+        column = self.type_column
+        result = db.select("places", where="%s=$id and type=$subtype" % column, order="code", vars=locals())
         return [Place(row) for row in result]
 
     def get_places_text(self):
