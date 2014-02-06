@@ -8,25 +8,40 @@ $var title: $place.name
     <li class="active">$place.name</li>
 </ul>
 
-<h1>$place.name <span class="small">$place.type_label</span></h1>
+<div class="row">
+  <div class="col-md-9">
+    <h1>$place.name <span class="small">$place.type_label</span></h1>
+    <a href="$place.url/info">See info about this place</a>
+    <h2>Volunteers</h2>
+    $if not place.volunteers:
+        <em>None found.</em>
+    $else:
+        <table class="table">
+            $for person in place.volunteers:
+                <tr><td>$loop.index</td><td>$person.name</td><td>$person.email</td><td>$person.phone</td></tr>
+        </table>
+    <div>
+        <br/>
+        <a href="$place.get_url()/add-people">Add volunteers?</a>
+    </div>
+  </div>
+  <div class="col-md-3 sidebar">
+    $if place.type != 'STATE':
+        $for p in place.get_parents()[1:]:
+            <div class="header">
+                <a href="$p.get_url()">$p.name</a><br><small>$p.type_label</small>
+            </div>
 
-
-<a href="$place.url/info">See info about this place</a>
-
-<h2>Volunteers</h2>
-
-$if not place.volunteers:
-    <em>None found.</em>
-$else:
-    <table class="table">
-        $for person in place.volunteers:
-            <tr><td>$loop.index</td><td>$person.name</td><td>$person.email</td><td>$person.phone</td></tr>
-    </table>
-
-<div>
-<br/>
-<a href="$place.get_url()/add-people">Add volunteers?</a>
+        <ul class="list-unstyled parents" style="padding: 10px;">
+            $for p in place.parent.get_places():
+                $if p.id == place.id:
+                    <li><strong>$p.name</strong></li>
+                $else:
+                    <li><a href="$p.get_url()">$p.name</a></li>
+        </ul>
+  </div>
 </div>
+
 
 <h2>Graphs</h2>
 
