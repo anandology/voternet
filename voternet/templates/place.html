@@ -32,6 +32,8 @@ $var title: $place.name
                 <a href="$p.get_url()">$p.name</a><br><small>$p.type_label</small>
             </div>
 
+        <div class="header"><strong>$plural(place.type_label)</strong></div>
+
         <ul class="list-unstyled parents" style="padding: 10px;">
             $for p in place.parent.get_places():
                 $if p.id == place.id:
