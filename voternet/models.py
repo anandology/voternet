@@ -45,8 +45,14 @@ class Place(web.storage):
 
     @property
     def volunteers(self):
-        result = get_db().select("people", where="place_id=$place_id", vars={"place_id": self.id})
-        return [Place(row) for row in result]
+        return self.get_people(['coordinator', 'volunteer'])
+
+    def get_people(self, roles):
+        result = get_db().select("people",
+            where="place_id=$place_id AND role IN $roles",
+            order='role, id',
+            vars={"place_id": self.id, "roles": roles})
+        return [Person(row) for row in result]
 
     def add_volunteer(self, name, email, phone, voterid=None, role=None):
         get_db().insert("people", name=name, email=email, phone=phone, voterid=voterid, role=role, place_id=self.id, )

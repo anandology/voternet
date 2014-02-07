@@ -15,6 +15,7 @@ urls = (
     "/login", "login",
     "/logout", "logout",
     "/login/oauth2callback", "oauth2callback",
+    "/users", "users",
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
@@ -136,6 +137,31 @@ class add_people:
             raise web.redirect(place.url)
         else:
             return render.add_people(place, form)
+
+class users:
+    def GET(self):
+        i = web.input(action="")
+        place = Place.find(code="karnataka")
+
+        form = AddPeopleForm()
+        if i.action == "add":
+            return render.add_people(place, form, add_users=True)
+        else:
+            roles = ['admin', 'user']
+            users = place.get_people(roles)
+            return render.users(users)
+
+    def POST(self):
+        place = Place.find(code="karnataka")
+        if not place:
+            raise web.notfound()
+        i = web.input()
+        form = AddPeopleForm()
+        if form.validates(i):
+            place.add_volunteer(i.name.strip(), i.email.strip(), i.phone.strip(), i.voterid.strip(), i.role.strip())
+            raise web.redirect("/users")
+        else:
+            return render.add_people(place, form, add_users=True)
 
 class login:
     def GET(self):

@@ -1,4 +1,4 @@
-$def with (place, form)
+$def with (place, form, add_users=False)
 
 $var title: $place.name
 
@@ -8,7 +8,10 @@ $var title: $place.name
     <li><a href="$place.get_url()">$place.name</a></li>
 </ul>
 
-<h1><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Add Volunteers</h1>
+$if add_users:
+  <h1>Add User</h1>
+$else:
+  <h1><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Add Volunteer</h1>
 
 <form role="form" method="POST">
   <div class="form-group $input_class(form.name)">
@@ -39,8 +42,12 @@ $var title: $place.name
   <div class="form-group $input_class(form.role)">
     <label for="role">Role</label><br/>
     <select name="role" id="role">
-      <option value="volunteer">Volunteer</option>
-      <option value="coordinator">Coordinator</option>      
+      $if add_users:
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      $else:
+        <option value="volunteer">Volunteer</option>
+        <option value="coordinator">Coordinator</option>
     </select>
     $if form.role.note:        
         <span class="help-inline">$form.role.note</span>
