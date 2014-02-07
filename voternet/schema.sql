@@ -25,12 +25,16 @@ create index places_ac_id_idx on places(ac_id);
 create index places_ward_id_idx on places(ward_id);
 create index places_ps_id_idx on places(ps_id);
 
+CREATE TYPE role_type AS ENUM (
+    'coordinator', 'volunteer', 'admin', 'user');
+
 create table people (
     id serial primary key,
     name text,
     email text,
     phone text,
     voterid text,
+    role role_type default 'volunteer',
     active boolean default 't',
     added timestamp default(current_timestamp at time zone 'utc'),
     place_id integer references places

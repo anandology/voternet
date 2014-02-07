@@ -16,5 +16,6 @@ AddPeopleForm = form.Form(
     form.Textbox("phone", form.notnull, PhoneValidator()),
     form.Textbox("email"),
     form.Textbox("voterid"),
+    form.Dropdown("role", args=["volunteer", "coordinator"], value="volunteer"),
 )
 

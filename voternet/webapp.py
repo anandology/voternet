@@ -132,7 +132,7 @@ class add_people:
         i = web.input()
         form = AddPeopleForm()
         if form.validates(i):
-            place.add_volunteer(i.name.strip(), i.email.strip(), i.phone.strip(), i.voterid.strip())
+            place.add_volunteer(i.name.strip(), i.email.strip(), i.phone.strip(), i.voterid.strip(), i.role.strip())
             raise web.redirect(place.url)
         else:
             return render.add_people(place, form)

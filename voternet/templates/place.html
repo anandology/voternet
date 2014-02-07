@@ -16,18 +16,30 @@ $var title: $place.name
     $if not place.volunteers:
         <em>None found.</em>
     $else:
-        <table class="table">
+        <table class="table table-bordered">
             $for person in place.volunteers:
-                <tr><td>$loop.index</td><td>$person.name</td><td>$person.email</td><td>$person.phone</td></tr>
+                <tr>
+                    <td style="width: 20px;">$loop.index</td>
+                    <td><strong>$person.name</strong> <small>$person.role.title()</small><br/>
+                        $if person.email:
+                            <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$person.email">$person.email</a></div>
+                        $if person.phone:
+                            <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$person.phone">$person.phone</a></div>
+                    </td>
+                </tr>
         </table>
-    <div>
-        <br/>
-        <a href="$place.get_url()/add-people">Add volunteers?</a>
-    </div>
+        <div>
+        <a href="$place.get_url()/add-people" class="btn btn-primary active" role="button"><span class="
+glyphicon glyphicon-plus"></span> Volunteer</a>
+        </div>
     <h2>Graphs</h2>
+    $ subtypes = place.get_all_subtypes()
+    $for t in subtypes:
+        $#$:render_template("graph", place.get_stats(t.code + "-people"), "graph-" + t.code, "Volunteers at %s level" % t.code)
+
     $if place.subtype:
         <h2>$plural(place.subtype_label)</h2>
-        <table class="table">
+        <table class="table table-bordered">
             $ subtypes = place.get_all_subtypes()
             $ serial = counter()
             <tr>

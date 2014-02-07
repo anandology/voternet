@@ -36,5 +36,15 @@ $var title: $place.name
         <span class="help-inline">$form.voterid.note</span>
   </div>
 
+  <div class="form-group $input_class(form.role)">
+    <label for="role">Role</label><br/>
+    <select name="role" id="role">
+      <option value="volunteer">Volunteer</option>
+      <option value="coordinator">Coordinator</option>      
+    </select>
+    $if form.role.note:        
+        <span class="help-inline">$form.role.note</span>
+  </div>
+
   <button type="submit" class="btn btn-default">Add</button>
 </form>
