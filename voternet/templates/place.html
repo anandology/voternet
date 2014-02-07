@@ -14,7 +14,7 @@ $var title: $place.name
     <a href="$place.url/info">See info about this place</a>
     <h2>Volunteers</h2>
     $if not place.volunteers:
-        <em>None found.</em>
+        <p><em>None found.</em></p>
     $else:
         <table class="table table-bordered">
             $for person in place.volunteers:
@@ -28,10 +28,9 @@ $var title: $place.name
                     </td>
                 </tr>
         </table>
-        <div>
-        <a href="$place.get_url()/add-people" class="btn btn-primary active" role="button"><span class="
-glyphicon glyphicon-plus"></span> Volunteer</a>
-        </div>
+    <div>
+      <a href="$place.get_url()/add-people" class="btn btn-primary active" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
+    </div>
     <h2>Graphs</h2>
     $ subtypes = place.get_all_subtypes()
     $for t in subtypes:
