@@ -159,10 +159,13 @@ class oauth2callback:
                 account.set_login_cookie(userinfo.email)
         raise web.seeother("/")
 
-if __name__ == "__main__":
+def main():
     if "--config" in sys.argv:
         index = sys.argv.index("--config")
         configfile = sys.argv[index+1]
         sys.argv = sys.argv[:index] + sys.argv[index+2:]
         web.config.update(yaml.load(open(configfile)))
     app.run()
+
+if __name__ == "__main__":
+    main()
