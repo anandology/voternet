@@ -29,11 +29,14 @@ class Place(web.storage):
         if self.type in ['STATE', 'PC', 'AC']:            
             return "/" + self.code
         else:
-            return self.parent.url + "/" + self.code
+            return self.get_ac().url + "/" + self.code
 
     @property
     def parent(self):
-        return Place.from_id(self.parent_id)
+        return Place.from_id(self[self.parent_column])
+
+    def get_ac(self):
+        return Place.from_id(self.ac_id)
 
     def get_parents(self):
         if self.type == 'STATE':
@@ -55,6 +58,11 @@ class Place(web.storage):
     @property
     def type_column(self):
         return self.type.lower() + "_id"
+
+    @property
+    def parent_column(self):
+        if self.type != "STATE":
+            return self.TYPES[self.TYPES.index(self.type)-1].lower() + "_id"
 
     @property
     def subtype(self):
