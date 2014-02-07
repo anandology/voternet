@@ -1,11 +1,20 @@
-import web
 import os
+import sys
+import markdown
+import yaml
+import web
+import json
+
 from models import Place
 from forms import AddPeopleForm
-import markdown
+import googlelogin
+import account
 
 urls = (
     "/", "index",
+    "/login", "login",
+    "/logout", "logout",
+    "/login/oauth2callback", "oauth2callback",
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
@@ -27,14 +36,18 @@ def plural(name):
     else:
         return name + 's'
 
+
 tglobals = {
     "input_class": input_class, 
     "plural": plural,
     "markdown": markdown.markdown,
     "sum": sum,
+    "json_encode": json.dumps,
+    "get_current_user": account.get_current_user,
 
     # iter to count from 1
-    "counter": lambda: iter(range(1, 100000))
+    "counter": lambda: iter(range(1, 100000)),
+
 }
 
 path = os.path.join(os.path.dirname(__file__), "templates")
@@ -124,5 +137,32 @@ class add_people:
         else:
             return render.add_people(place, form)
 
+class login:
+    def GET(self):
+        google = googlelogin.GoogleLogin()
+        return google.redirect()
+
+class logout:
+    def POST(self):
+        account.logout()
+        raise web.seeother("/")
+
+
+class oauth2callback:
+    def GET(self):
+        i = web.input(code=None, error=None, state=None)
+        if i.code:
+            google = googlelogin.GoogleLogin()
+            token = google.get_token(i.code)
+            userinfo = google.get_userinfo(token.access_token)
+            if userinfo:
+                account.set_login_cookie(userinfo.email)
+        raise web.seeother("/")
+
 if __name__ == "__main__":
+    if "--config" in sys.argv:
+        index = sys.argv.index("--config")
+        configfile = sys.argv[index+1]
+        sys.argv = sys.argv[:index] + sys.argv[index+2:]
+        web.config.update(yaml.load(open(configfile)))
     app.run()
