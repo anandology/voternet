@@ -2,6 +2,7 @@ import random
 import hmac
 import web
 import datetime, time
+import models
 
 def get_secret_key():
     return web.config.secret_key
@@ -37,4 +38,4 @@ def _get_current_user():
     except ValueError:
         return
     if check_salted_hash(email + "," + login_time, digest):
-        return email
+        return models.Person.find(email) or models.DummyPerson()

@@ -1,5 +1,7 @@
-$def with (users)
+$def with (place, users)
 $var title: Users
+
+$ place_writable = place.writable_by(get_current_user())
 
 <h1>Users</h1>
 <table class="table table-bordered">
@@ -15,7 +17,8 @@ $var title: Users
         </tr>
 </table>
 
-<div>
-<a href="/users?action=add" class="btn btn-primary active" role="button"><span class="
-glyphicon glyphicon-plus"></span> User</a>
-</div>
+$if place_writable:
+    <div>
+    <a href="/users?action=add" class="btn btn-primary active" role="button"><span class="
+    glyphicon glyphicon-plus"></span> User</a>
+    </div>

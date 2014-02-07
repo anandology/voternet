@@ -76,6 +76,10 @@ class delete_place:
         place = Place.find(code=code)
         if not place:
             raise web.notfound()
+        elif not place.writable_by(account.get_current_user(), roles=['admin']):
+            # only admins can delete places
+            raise web.seeother(place.url)
+
         i = web.input(action=None)
         if i.action == "cancel":
             raise web.seeother(place.url)
@@ -95,6 +99,9 @@ class edit_place:
         place = Place.find(code=code)
         if not place:
             raise web.notfound()
+        elif not place.writable_by(account.get_current_user(), roles=['admin']):
+            # only admins can edit places
+            raise web.seeother("/users")
         i = web.input(places="")
         place.add_places(i.places)
         raise web.seeother(place.url)
@@ -130,11 +137,13 @@ class add_people:
         place = Place.find(code=code)
         if not place:
             raise web.notfound()
+        elif not place.writable_by(account.get_current_user()):
+            raise web.seeother(place.url)
         i = web.input()
         form = AddPeopleForm()
         if form.validates(i):
             place.add_volunteer(i.name.strip(), i.email.strip(), i.phone.strip(), i.voterid.strip(), i.role.strip())
-            raise web.redirect(place.url)
+            raise web.seeother(place.url)
         else:
             return render.add_people(place, form)
 
@@ -149,12 +158,15 @@ class users:
         else:
             roles = ['admin', 'user']
             users = place.get_people(roles)
-            return render.users(users)
+            return render.users(place, users)
 
     def POST(self):
         place = Place.find(code="karnataka")
         if not place:
             raise web.notfound()
+        elif not place.writable_by(account.get_current_user()):
+            raise web.seeother("/users")
+
         i = web.input()
         form = AddPeopleForm()
         if form.validates(i):

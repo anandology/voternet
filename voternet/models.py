@@ -221,10 +221,28 @@ class Place(web.storage):
     def __repr__(self):           
         return "<Place: %s>" % dict(self)
 
+    def writable_by(self, user, roles=['coordinator', 'admin']):
+        place_ids = [self.id, self.state_id, self.pc_id, self.ac_id, self.ward_id]
+        return user and user.role in roles and user.place_id in place_ids
+
 class Person(web.storage):
     @property
     def place(self):
         return Place.from_id(self.place_id)
 
+    @staticmethod
+    def find(email):
+        result = get_db().select("people", where="email=$email", vars=locals())
+        if result:
+            return Person(result[0])
+
     def __repr__(self):           
         return "<Person: %s>" % dict(self)
+
+class DummyPerson(web.storage):
+    def __init__(self, email):
+        web.storage.__init__(self)
+        self.email = email
+        self.id = None
+        self.role = "none"
+        self.place_id = None
