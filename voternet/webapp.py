@@ -25,6 +25,17 @@ urls = (
 
 app = web.application(urls, globals())
 
+def login_requrired(handler):
+    if not web.ctx.path.startswith("/login") and web.ctx.path != "/logout":
+        user = account.get_current_user()
+        if not user:
+            raise web.seeother("/login")
+        elif not user.is_authorized():
+            return render.permission_denied()
+    return handler()
+
+app.add_processor(login_requrired)
+
 def input_class(input):
     if input.note:
         return "has-error"
@@ -178,7 +189,7 @@ class users:
 class login:
     def GET(self):
         google = googlelogin.GoogleLogin()
-        return google.redirect()
+        return render.login(google.get_redirect_url())
 
 class logout:
     def POST(self):

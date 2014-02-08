@@ -38,4 +38,4 @@ def _get_current_user():
     except ValueError:
         return
     if check_salted_hash(email + "," + login_time, digest):
-        return models.Person.find(email) or models.DummyPerson()
+        return models.Person.find(email=email) or models.DummyPerson(email)

@@ -230,11 +230,23 @@ class Person(web.storage):
     def place(self):
         return Place.from_id(self.place_id)
 
+    def get_url(self):
+        return "/people/%d" % self.id
+
     @staticmethod
-    def find(email):
-        result = get_db().select("people", where="email=$email", vars=locals())
+    def find(**kwargs):
+        result = get_db().where("people", **kwargs)
         if result:
             return Person(result[0])
+
+    @staticmethod
+    def find_by_id(id):
+        result = get_db().select("people", where="id=$id", vars=locals())
+        if result:
+            return Person(result[0])
+
+    def is_authorized(self):
+        return True
 
     def __repr__(self):           
         return "<Person: %s>" % dict(self)
@@ -246,3 +258,6 @@ class DummyPerson(web.storage):
         self.id = None
         self.role = "none"
         self.place_id = None
+
+    def is_authorized(self):
+        return False

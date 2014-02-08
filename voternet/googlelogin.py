@@ -19,13 +19,16 @@ class GoogleLogin:
         self.redirect_uri = web.config.GOOGLELOGIN_REDIRECT_URI
 
     def redirect(self):
+        raise web.seeother(self.get_redirect_url())
+
+    def get_redirect_url(self):
         params = {
             "response_type": "code",
             "client_id": self.client_id,
             "redirect_uri": self.redirect_uri,
             "scope": self.scope
         }
-        raise web.seeother(GOOGLE_OAUTH2_AUTH_URL + "?" + urllib.urlencode(params))
+        return GOOGLE_OAUTH2_AUTH_URL + "?" + urllib.urlencode(params)
 
     def get_token(self, code):
         """Exchanges code for a token.
