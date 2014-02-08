@@ -4,7 +4,22 @@ $var title: $place.name
 
 $ place_writable = place.writable_by(get_current_user())
 
-<ul class="breadcrumb">
+$def render_people(people):
+    <table class="table table-bordered">
+        $for person in people:
+            <tr class="person person-$person.role">
+                <td style="width: 20px;">$loop.index</td>
+                <td><strong>$person.name</strong> <small>$person.role.title()</small><br/>
+                    $if person.email:
+                        <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$person.email">$person.email</a></div>
+                    $if person.phone:
+                        <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$person.phone">$person.phone</a></div>
+                </td>
+            </tr>
+    </table>
+
+
+<ul class="breadcrumb hidden-print">
     $for p in place.get_parents():
         <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
     <li class="active">$place.name</li>
@@ -13,7 +28,11 @@ $ place_writable = place.writable_by(get_current_user())
 <div class="row">
   <div class="col-md-9">
     <h1>$place.name <span class="small">$place.type_label</span></h1>
-    <a href="$place.url/info">See info about this place</a>
+
+    <div class="hidden-print">
+        <a href="$place.url/info">See info about this place</a>
+    </div>
+
     <h2>Volunteers</h2>
     $if place_writable:
         $ volunteers = place.get_people(roles=["coordinator", "volunteer"])
@@ -22,18 +41,7 @@ $ place_writable = place.writable_by(get_current_user())
     $if not volunteers:
         <p><em>None found.</em></p>
     $else:
-        <table class="table table-bordered">
-            $for person in volunteers:
-                <tr class="person person-$person.role">
-                    <td style="width: 20px;">$loop.index</td>
-                    <td><strong>$person.name</strong> <small>$person.role.title()</small><br/>
-                        $if person.email:
-                            <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$person.email">$person.email</a></div>
-                        $if person.phone:
-                            <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$person.phone">$person.phone</a></div>
-                    </td>
-                </tr>
-        </table>
+        $:render_people(volunteers)
     $if place_writable:
         <div>
           <a href="$place.get_url()/add-people" class="btn btn-primary active hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
@@ -51,18 +59,45 @@ $ place_writable = place.writable_by(get_current_user())
             <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>Coordinators</th>
+                <th>Volunteers</th>
+                <th style="width: 200px;">Coverage</th>
+                <!--
                 $for t in subtypes:
                     <th>$t.code</th>
+                -->
             <tr> 
             $def render_place(p, klass):
                 <tr class="$klass">   
                     <td>$serial.next()</td>             
                     <td><a href="$p.get_url()">$p.name</a></td>
+                    <td>
+                        $for person in p.get_people(roles=["coordinator"]):
+                            <div>
+                                <strong>$person.name</strong><br/>
+                                $if person.email:
+                                    <div><a href="mailto:$person.email">$person.email</a></div>
+                                $if person.phone:
+                                    <div>$person.phone</a></div>
+                            </div>
+                    </td>
+                    <td>
+                        <ul class="list-unstyled">
+                            $for t in subtypes:
+                                <li><strong>$vcounts.get(t.code, 0)</strong> volunteers in <strong>$counts.get(t.code, 0)</strong> $plural(t.label)</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>3.27%</strong><br/>
+                        <small>2546 out of 2345677 houses visited.</small>
+                    </td>
+                    <!--
                     $for t in subtypes:
                         <td>
                             <strong>$vcounts.get(t.code, 0)</strong> volunteers / 
                             <strong>$counts.get(t.code, 0)</strong> places
                         </td>
+                    -->
                 </tr>
 
             $for p in place.get_places():

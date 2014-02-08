@@ -58,6 +58,12 @@ $def with (page)
       padding: 5px 0px;
     }
 
+    @media print {
+      a[href]:after {
+          content: "" !important;
+      }
+    }
+
     </style>
 </head>
 <body>
