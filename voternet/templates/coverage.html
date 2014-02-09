@@ -1,0 +1,53 @@
+$def with (place, date)
+
+$var title: Coverage
+
+<h4><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span></h4>
+<h1 style="margin-top: 0px;">Coverage for $date</h1>
+
+<div id="example">
+</div>
+
+<br/>
+<br/>
+<a href="javascript;" id="save" class="btn btn-primary">Save</a>
+
+<script type="text/javascript">
+\$(function() {
+    var data = $:json_encode(place.get_coverage(date));
+
+    \$('#example').handsontable({
+      data: data,
+      colHeaders: ["Name", "Phone Number", "Email", "Address", "Voter ID"], // "Member?", "Supporter?", "Donor?", "Neighbour?", "Volunteer?"],
+      minSpareRows: 5,
+      contextMenu: true,
+      colWidths: [150, 150, 150, 250, 100]
+    });
+});
+
+\$(function() {
+    \$("a#save").click(function(e) {
+        e.preventDefault();
+
+        handsontable = \$("#example").data("handsontable");
+        console.log(handsontable.getData());
+        \$.ajax({
+            url: "$place.get_url()/$date",
+            data: JSON.stringify({"data": handsontable.getData()}),
+            dataType: "json",
+            type: 'POST',
+            success: function (res) {
+              if (res.result === 'ok') {
+                alert('Data saved');
+              }
+              else {
+                alert('Save error');
+              }
+            },
+            error: function () {
+                alert('Save error');
+            }
+        });
+    });
+});
+</script>

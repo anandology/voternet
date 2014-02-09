@@ -41,3 +41,13 @@ create table people (
 );
 
 create index people_place_id_idx on people(place_id);
+
+create table coverage (
+    id serial primary key,
+    place_id integer references places,
+    date date,
+    data text
+);
+
+create index coverage_place_id_idx on coverage(place_id);
+create index coverage_date_idx on coverage(date);

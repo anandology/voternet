@@ -21,6 +21,7 @@ urls = (
     "/([\w/]+)/info", "place_info",
     "/([\w/]+)/add-people", "add_people",
     "/([\w/]+)", "place",
+    "/(AC\d+/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
 )
 
 app = web.application(urls, globals())
@@ -185,6 +186,36 @@ class users:
             raise web.redirect("/users")
         else:
             return render.add_people(place, form, add_users=True)
+
+class coverage:
+    def GET(self, code, date):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+
+        user = account.get_current_user()
+        if not place.writable_by(user, roles=['coordinator', 'volunteer', 'admin']):
+            raise web.seeother(place.url)
+
+        return render.coverage(place, date)
+
+    def POST(self, code, date):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+
+        user = account.get_current_user()
+        if not place.writable_by(user, roles=['coordinator', 'volunteer', 'admin']):
+            raise web.seeother(place.url)
+
+        data = json.loads(web.data())['data']
+
+        # skip empty rows
+        data = [row for row in data if any(row)]
+
+        place.add_coverage(date, data)
+        web.header("content-type", "application/json")
+        return '{"result": "ok"}'
 
 class login:
     def GET(self):

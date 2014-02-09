@@ -46,10 +46,26 @@ $def render_people(people):
         <div>
           <a href="$place.get_url()/add-people" class="btn btn-primary active hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
         </div>
-    <h2>Graphs</h2>
-    $ subtypes = place.get_all_subtypes()
-    $for t in subtypes:
-        $#$:render_template("graph", place.get_stats(t.code + "-people"), "graph-" + t.code, "Volunteers at %s level" % t.code)
+    $if place.type == "PB":
+        <h2>Coverage</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>Date</th>
+                <th>#houses visited</th>
+            </tr>
+            <tr>
+                <td><a href="$place.get_url()/2014-02-09">February 09</a></td>
+                <td><a href="$place.get_url()/2014-02-09">$len(place.get_coverage('2014-02-09'))</a></td>
+            </tr>
+            <tr>
+                <td><a href="$place.get_url()/2014-02-10">February 10</a></td>
+                <td><a href="$place.get_url()/2014-02-10">$len(place.get_coverage('2014-02-10'))</a></td>
+            </tr>
+            <tr>
+                <td><a href="$place.get_url()/2014-02-11">February 11</a></td>
+                <td><a href="$place.get_url()/2014-02-11">$len(place.get_coverage('2014-02-11'))</a></td>
+            </tr>
+        </table>
 
     $if place.subtype:
         <h2>$plural(place.subtype_label)</h2>

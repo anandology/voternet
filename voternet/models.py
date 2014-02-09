@@ -1,5 +1,6 @@
 import web
 import re
+import json
 
 @web.memoize
 def get_db():
@@ -224,6 +225,20 @@ class Place(web.storage):
     def writable_by(self, user, roles=['coordinator', 'admin']):
         place_ids = [self.id, self.state_id, self.pc_id, self.ac_id, self.ward_id]
         return user and user.role in roles and user.place_id in place_ids
+
+    def add_coverage(self, date, coverage):
+        db = get_db()
+        coverage_json = json.dumps(coverage)
+        with db.transaction():
+            db.delete("coverage", where="place_id=$self.id AND date=$date", vars=locals())
+            db.insert("coverage", place_id=self.id, date=date, data=coverage_json)
+
+    def get_coverage(self, date):
+        result = get_db().select("coverage", where="place_id=$self.id AND date=$date", vars=locals())
+        if result:
+            return json.loads(result[0].data)
+        else:
+            return []
 
 class Person(web.storage):
     @property
