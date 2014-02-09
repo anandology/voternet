@@ -213,7 +213,7 @@ class coverage:
         # skip empty rows
         data = [row for row in data if any(row)]
 
-        place.add_coverage(date, data)
+        place.add_coverage(date, data, account.get_current_user())
         web.header("content-type", "application/json")
         return '{"result": "ok"}'
 

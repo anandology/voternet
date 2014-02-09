@@ -226,12 +226,12 @@ class Place(web.storage):
         place_ids = [self.id, self.state_id, self.pc_id, self.ac_id, self.ward_id]
         return user and user.role in roles and user.place_id in place_ids
 
-    def add_coverage(self, date, coverage):
+    def add_coverage(self, date, coverage, user):
         db = get_db()
         coverage_json = json.dumps(coverage)
         with db.transaction():
             db.delete("coverage", where="place_id=$self.id AND date=$date", vars=locals())
-            db.insert("coverage", place_id=self.id, date=date, data=coverage_json)
+            db.insert("coverage", place_id=self.id, date=date, count=len(coverage), data=coverage_json, editor_id=user.id)
 
     def get_coverage(self, date):
         result = get_db().select("coverage", where="place_id=$self.id AND date=$date", vars=locals())

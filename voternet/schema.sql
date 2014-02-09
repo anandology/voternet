@@ -46,7 +46,9 @@ create table coverage (
     id serial primary key,
     place_id integer references places,
     date date,
-    data text
+    count integer,
+    data text,
+    editor_id integer references people
 );
 
 create index coverage_place_id_idx on coverage(place_id);
