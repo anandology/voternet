@@ -14,7 +14,8 @@ $var title: Coverage
 
 <script type="text/javascript">
 \$(function() {
-    var data = $:json_encode(place.get_coverage(date));
+    $ coverage = place.get_coverage(date) or [["", "", "", "", ""]]
+    var data = $:json_encode(coverage);
 
     \$('#example').handsontable({
       data: data,
