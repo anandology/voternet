@@ -88,8 +88,8 @@ $def render_people(people):
                         </ul>
                     </td>
                     <td>
-                        <strong>3.27%</strong><br/>
-                        <small>2546 out of 2345677 houses visited.</small>
+                        <strong class="fixme">3.27%</strong><br/>
+                        <small class="fixme">2546 out of 2345677 houses visited.</small>
                     </td>
                     <!--
                     $for t in subtypes:
@@ -114,30 +114,30 @@ $def render_people(people):
         </table>    
   </div>
   <div class="col-md-3 sidebar hidden-print">
-    <section class="header"><strong>Info</strong></section>
     <section>
-        <ul class="list-unstyled">
-            <li>#voters: xxx</li>
-            <li>population: xxx</li>
+        <div class="header"><strong>Info</strong></div>
+        <ul class="list-unstyled section-body">
+            <li class="fixme">#voters: xxx</li>
+            <li class="fixme">population: xxx</li>
             <li><a href="$place.get_url()/info">see more ...</a></li>
         </ul>
     </section>
 
     $if place.type != 'STATE':
-        $for p in place.get_parents()[1:]:
-            <section class="header">
-                <a href="$p.get_url()">$p.name</a><br><small>$p.type_label</small>
-            </section>
-
-        <section class="header"><strong>$plural(place.type_label)</strong></section>
-
-        <ul class="list-unstyled parents" style="padding: 10px;">
-            $for p in place.parent.get_places():
-                $if p.id == place.id:
-                    <li><strong>$p.name</strong></li>
-                $else:
-                    <li><a href="$p.get_url()">$p.name</a></li>
-        </ul>
+        <section>
+            $for p in place.get_parents()[1:]:
+                <div class="header">
+                    <a href="$p.get_url()">$p.name</a><br><small>$p.type_label</small>
+                </div>
+            <div class="header"><strong>$plural(place.type_label)</strong></div>
+            <ul class="list-unstyled parents section-body" style="padding: 10px;">
+                $for p in place.parent.get_places():
+                    $if p.id == place.id:
+                        <li><strong>$p.name</strong></li>
+                    $else:
+                        <li><a href="$p.get_url()">$p.name</a></li>
+            </ul>
+        </section>
   </div>
 </div>
 

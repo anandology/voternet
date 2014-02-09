@@ -5,6 +5,10 @@ $def with (page)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$page.title</title>
 
+    <script type="text/javascript" src="/static/jquery.js"></script>
+    <script type="text/javascript" src="/static/jquery.flot.js"></script>
+    <script type="text/javascript" src="/static/jquery.flot.time.js"></script>
+
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
 
@@ -12,6 +16,7 @@ $def with (page)
     <link rel="stylesheet" type="text/css" media="screen" href="/static/style.css" />
     -->
     <style type="text/css">
+
     tr.inactive {
         background: #eee;
     }
@@ -21,7 +26,7 @@ $def with (page)
 
     tr.person-coordinator, tr.person-coordinator td,
     tr.person-admin, tr.person-admin td {
-        background: #ffffdd !important;
+        background: #ffffdd !important;      
     }
 
     .parents {
@@ -29,20 +34,24 @@ $def with (page)
     }
 
     .sidebar {
-        border: 1px solid #444;
-        padding: 0px;
         margin-top: 20px;
     }
 
     .sidebar section {
-        padding: 10px;
+        border: 1px solid #444;
+        padding: 0px;
+        margin-bottom: 10px;
     }
 
-    .sidebar .header {
+    .sidebar section .header {
         background: #444;
         color: white;
         padding: 10px;
         border-bottom: 1px solid #666;
+    }
+
+    .sidebar section .section-body {
+        padding: 10px;
     }
 
     .sidebar .header a {
@@ -56,6 +65,10 @@ $def with (page)
     ul.parents li {
       border-bottom: 1px solid #eee;
       padding: 5px 0px;
+    }
+
+    .fixme {
+      background: #ffcd8e;
     }
 
     @media print {
@@ -80,28 +93,26 @@ $def with (page)
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
 
-
         <p class="navbar-text navbar-right">
           $ user = get_current_user()
           $if user:
-            Welcome $user.email |
+            Welcome $user.email | 
             <a href="#" onclick="document.forms['logout'].submit();">Log out</a>
             <div class="hidden">
                 <form name='logout' action="/logout" method="post"></form>
-            </div>
+            </div>            
           $else:
             <a href="/login">Log In</a>
-        </p>
-
+        </p>          
 
       </div>
     </nav>
 
-    <div class="container">
+    <div class="container">   
         $:page
     </div>
     <!--
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
--->
+    -->
 </body>
 </html>
