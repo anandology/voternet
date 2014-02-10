@@ -240,6 +240,34 @@ class Place(web.storage):
         else:
             return []
 
+    def get_coverage_count(self):
+        if self.type == "PB":
+            column = "id"
+        else:
+            column = self.type_column
+        result = get_db().query(
+                    "SELECT sum(count) as count" +
+                    " FROM coverage, places" +
+                    " WHERE coverage.place_id=places.id" +
+                    "   AND places.%s=$self.id" % column, vars=locals())
+        if result:
+            return result[0].count or 0
+        else:
+            return 0
+
+    def get_coverage_counts_by_date(self):
+        if self.type == "PB":
+            column = "id"
+        else:
+            column = self.type_column
+        result = get_db().query(
+                    "SELECT date, sum(count) as count" +
+                    " FROM coverage, places" +
+                    " WHERE coverage.place_id=places.id" +
+                    "   AND places.%s=$self.id" % column +
+                    " GROUP BY date", vars=locals())
+        return result
+
 class Person(web.storage):
     @property
     def place(self):

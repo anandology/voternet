@@ -66,6 +66,19 @@ $def render_people(people):
                 <td><a href="$place.get_url()/2014-02-11">$len(place.get_coverage('2014-02-11'))</a></td>
             </tr>
         </table>
+    $else:
+        <h2>Coverage</h2>
+        <table class="table table-bordered">
+            <tr>
+                <th>Date</th>
+                <th>#houses visited</th>
+            </tr>
+            $for row in place.get_coverage_counts_by_date():
+                <tr>
+                    <td>$row.date</td>
+                    <td>$row.count</td>
+                </tr>
+        </table>
 
     $if place.subtype:
         <h2>$plural(place.subtype_label)</h2>
@@ -104,8 +117,8 @@ $def render_people(people):
                         </ul>
                     </td>
                     <td>
-                        <strong class="fixme">3.27%</strong><br/>
-                        <small class="fixme">2546 out of 2345677 houses visited.</small>
+                        <strong>$p.get_coverage_count()</strong>
+                        <small>houses visited</small>
                     </td>
                     <!--
                     $for t in subtypes:
