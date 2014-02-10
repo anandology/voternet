@@ -108,7 +108,10 @@ $def render_people(people):
                     <td>
                         $for person in p.get_people(roles=["coordinator"]):
                             <div>
-                                <strong>$person.name</strong><br/>
+                                $if place_writable:
+                                    <a href="$person.get_url()"><strong>$person.name</strong></a>
+                                $else:
+                                    <strong>$person.name</strong>
                                 $if person.email:
                                     <div><a href="mailto:$person.email">$person.email</a></div>
                                 $if person.phone:
