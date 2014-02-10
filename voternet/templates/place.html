@@ -3,6 +3,7 @@ $def with (place)
 $var title: $place.name
 
 $ place_writable = place.writable_by(get_current_user())
+$ subtypes = place.get_all_subtypes()
 
 $def render_people(people):
     <table class="table table-bordered">
@@ -38,19 +39,33 @@ $def render_people(people):
         <a href="$place.url/info">See info about this place</a>
     </div>
 
-    <h2>Volunteers</h2>
-    $if place_writable:
-        $ volunteers = place.get_people(roles=["coordinator", "volunteer"])
-    $else:
-        $ volunteers = place.get_coordinators()
-    $if not volunteers:
-        <p><em>None found.</em></p>
-    $else:
-        $:render_people(volunteers)
-    $if place_writable:
-        <div>
-          <a href="$place.get_url()/add-people" class="btn btn-primary active hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Volunteers</h2>
+            $if place_writable:
+                $ volunteers = place.get_people(roles=["coordinator", "volunteer"])
+            $else:
+                $ volunteers = place.get_coordinators()
+            $if not volunteers:
+                <p><em>None found.</em></p>
+            $else:
+                $:render_people(volunteers)
+            $if place_writable:
+                <div>
+                  <a href="$place.get_url()/add-people" class="btn btn-primary active hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
+                </div>
         </div>
+        <div class="col-md-6">
+            <h3>Summary</h3>
+            <ul class="list-unstyled" style="border-left: 5px solid #ddd; padding-left: 10px">
+                $ counts = place.get_counts()
+                $ vcounts = place.get_volunteer_counts()
+
+                $for t in subtypes:
+                    <li><strong>$vcounts.get(t.code, 0)</strong> volunteers in <strong>$counts.get(t.code, 0)</strong> $plural(t.label)</li>
+            </ul>            
+        </div>        
+    </div>
     $if place.type == "PB":
         <h2>Coverage</h2>
         <table class="table table-bordered">
@@ -88,7 +103,6 @@ $def render_people(people):
     $if place.subtype:
         <h2>$plural(place.subtype_label)</h2>
         <table class="table table-bordered">
-            $ subtypes = place.get_all_subtypes()
             $ serial = counter()
             <tr>
                 <th>#</th>
@@ -96,10 +110,6 @@ $def render_people(people):
                 <th>Coordinators</th>
                 <th>Volunteers</th>
                 <th style="width: 200px;">Coverage</th>
-                <!--
-                $for t in subtypes:
-                    <th>$t.code</th>
-                -->
             <tr> 
             $def render_place(p, klass):
                 <tr class="$klass">   
@@ -120,7 +130,7 @@ $def render_people(people):
                     </td>
                     <td>
                         <ul class="list-unstyled">
-                            $for t in subtypes:
+                            $for t in subtypes[1:]:
                                 <li><strong>$vcounts.get(t.code, 0)</strong> volunteers in <strong>$counts.get(t.code, 0)</strong> $plural(t.label)</li>
                         </ul>
                     </td>

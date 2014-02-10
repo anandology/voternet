@@ -111,8 +111,10 @@ class Place(web.storage):
             db.query("DELETE FROM places WHERE id=$self.id OR %s=$self.id" % self.type_column, vars=locals())
 
     def get_all_subtypes(self):
+        """Returns all subtypes including type of this place.
+        """
         index = self.TYPES.index(self.type)
-        return [web.storage(code=type, label=self.TYPE_LABELS[type]) for type in self.TYPES[index+1:]]
+        return [web.storage(code=type, label=self.TYPE_LABELS[type]) for type in self.TYPES[index:]]
 
     def get_places(self):
         db = get_db()
