@@ -42,7 +42,7 @@ $def render_people(people):
     $if place_writable:
         $ volunteers = place.get_people(roles=["coordinator", "volunteer"])
     $else:
-        $ volunteers = place.get_people(roles=["coordinator"])
+        $ volunteers = place.get_coordinators()
     $if not volunteers:
         <p><em>None found.</em></p>
     $else:
@@ -106,7 +106,7 @@ $def render_people(people):
                     <td>$serial.next()</td>             
                     <td><a href="$p.get_url()">$p.name</a></td>
                     <td>
-                        $for person in p.get_people(roles=["coordinator"]):
+                        $for person in p.get_coordinators():
                             <div>
                                 $if place_writable:
                                     <a href="$person.get_url()"><strong>$person.name</strong></a>

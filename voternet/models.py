@@ -1,6 +1,7 @@
 import web
 import re
 import json
+import cache
 
 @web.memoize
 def get_db():
@@ -55,8 +56,22 @@ class Place(web.storage):
             vars={"place_id": self.id, "roles": roles})
         return [Person(row) for row in result]
 
+    @cache.object_memoize(key="coordinators")
+    def get_coordinators(self):
+        return self.get_people(["coordinator"])
+
     def add_volunteer(self, name, email, phone, voterid=None, role=None):
-        get_db().insert("people", name=name, email=email, phone=phone, voterid=voterid, role=role, place_id=self.id, )
+        get_db().insert("people", 
+            place_id=self.id, 
+            name=name,
+            email=email,
+            phone=phone,
+            voterid=voterid,
+            role=role)
+        self._invalidate_object_cache()
+
+    def _invalidate_object_cache(self):
+        cache.invalidate_object_cache(objects=[self] + self.get_parents())
 
     @property
     def type_label(self):
@@ -177,6 +192,7 @@ class Place(web.storage):
         if result:
             return Place(result[0])
 
+    @cache.object_memoize(key="counts")
     def get_counts(self):
         if self.type != "PB":
             result = get_db().query(
@@ -187,6 +203,7 @@ class Place(web.storage):
             return dict((row.type, row.count) for row in result)
         return dict()
 
+    @cache.object_memoize(key="volunteer_counts")
     def get_volunteer_counts(self):
         if self.type != "PB":
             result = get_db().query(
@@ -199,6 +216,7 @@ class Place(web.storage):
         return dict()
 
     @staticmethod
+    @cache.memoize
     def find(code):
         db = get_db()
         if "/" in code:
@@ -213,6 +231,7 @@ class Place(web.storage):
             return Place(result[0])
 
     @staticmethod
+    @cache.memoize
     def from_id(id):
         db = get_db()
         result = db.select("places", where="id=$id", vars=locals())
@@ -236,6 +255,7 @@ class Place(web.storage):
         with db.transaction():
             db.delete("coverage", where="place_id=$self.id AND date=$date", vars=locals())
             db.insert("coverage", place_id=self.id, date=date, count=len(coverage), data=coverage_json, editor_id=user.id)
+        self._invalidate_object_cache()
 
     def get_coverage(self, date):
         result = get_db().select("coverage", where="place_id=$self.id AND date=$date", vars=locals())
@@ -244,6 +264,7 @@ class Place(web.storage):
         else:
             return []
 
+    @cache.object_memoize(key="coverage_count")
     def get_coverage_count(self):
         if self.type == "PB":
             column = "id"
@@ -259,6 +280,7 @@ class Place(web.storage):
         else:
             return 0
 
+    @cache.object_memoize(key="coverage_count_by_date")
     def get_coverage_counts_by_date(self):
         if self.type == "PB":
             column = "id"
@@ -335,7 +357,11 @@ class Person(web.storage):
     def is_authorized(self):
         return True
 
-    def save(self):
+    def update(self, values):
+        web.storage.update(self, values)
+        # update cache before and after as the place can change.
+
+        self.place._invalidate_object_cache()
         get_db().update("people", where="id=$self.id", vars=locals(),
             place_id=self.place_id,
             name=self.name,
@@ -343,12 +369,15 @@ class Person(web.storage):
             phone=self.phone,
             voterid=self.voterid,
             role=self.role)
+        self.place._invalidate_object_cache()
 
     def delete(self):
         db = get_db()
+        place = self.place
         with db.transaction():
             db.update("coverage", editor_id=None, where="editor_id=$self.id", vars=locals())
             db.delete("people", where="id=$self.id", vars=locals())
+        place._invalidate_object_cache()
 
     def __repr__(self):           
         return "<Person: %s>" % dict(self)
