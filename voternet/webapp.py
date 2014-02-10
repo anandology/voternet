@@ -15,6 +15,7 @@ urls = (
     "/login", "login",
     "/logout", "logout",
     "/login/oauth2callback", "oauth2callback",
+    "/sudo", "sudo",
     "/users", "users",
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
@@ -248,6 +249,16 @@ class links:
         place.save_links(links)
         return '{"result": "ok"}'
 
+class sudo:
+    def GET(self):
+        user = account.get_current_user()
+        if not user or user.role != 'admin':
+            return render.permission_denied()
+
+        i = web.input(email=None)
+        if i.email:
+            account.set_login_cookie(i.email)
+        raise web.seeother("/")
 
 class login:
     def GET(self):
