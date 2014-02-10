@@ -152,6 +152,20 @@ $def render_people(people):
         </ul>
     </section>
 
+    <section>
+        <div class="header"><strong>Links</strong></div>
+        <ul class="list-unstyled section-body parents">
+            $ links = place.get_links()
+            $if links:
+                $for link in links:
+                    <li><a href="$link.url">$link.title</a></li>
+            $else:
+                <li><em>None found</em></li>
+            $if place_writable:
+                <li><a class="btn btn-primary" href="$place.get_url()/links">Edit links</a></li>
+        </ul>
+    </section>
+
     $if place.type != 'STATE':
         <section>
             $for p in place.get_parents()[1:]:

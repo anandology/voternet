@@ -20,6 +20,7 @@ urls = (
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
     "/([\w/]+)/add-people", "add_people",
+    "/([\w/]+)/links", "links",
     "/([\w/]+)", "place",
     "/(AC\d+/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
 )
@@ -216,6 +217,30 @@ class coverage:
         place.add_coverage(date, data, account.get_current_user())
         web.header("content-type", "application/json")
         return '{"result": "ok"}'
+
+class links:
+    def GET(self, code):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+        user = account.get_current_user()
+        if not place.writable_by(user, roles=['coordinator', 'admin']):
+            raise web.seeother(place.url)
+        return render.links(place)
+
+    def POST(self, code):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+        user = account.get_current_user()
+        if not place.writable_by(user, roles=['coordinator', 'admin']):
+            raise web.seeother(place.url)
+
+        links = json.loads(web.data())['data']
+        links = [link for link in links if link.get('url')]
+        place.save_links(links)
+        return '{"result": "ok"}'
+
 
 class login:
     def GET(self):

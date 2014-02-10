@@ -268,6 +268,39 @@ class Place(web.storage):
                     " GROUP BY date", vars=locals())
         return result
 
+    def get_data(self, suffix=""):
+        if suffix:
+            key = self.code + "/" + suffix
+        else:
+            key = self.code
+        row = self._get_data_row(key)
+        data = row and json.loads(row.data) or {}
+        return web.storage(data)
+
+    def _get_data_row(self, key):
+        result = get_db().select("things", where="key=$key", vars=locals())
+        return result and result[0] or None
+
+    def put_data(self, data, suffix="", type="place"):
+        if suffix:
+            key = self.code + "/" + suffix
+        else:
+            key = self.code
+
+        row = self._get_data_row(key)
+        if row:
+            get_db().update("things", where="id=$row.id", data=json.dumps(data), vars=locals())
+        else:
+            get_db().insert("things", key=key, type=type, data=json.dumps(data))
+
+    def get_links(self):
+        return [web.storage(link) for link in self.get_data().get("links", [])]
+
+    def save_links(self, links):
+        data = self.get_data()
+        data['links'] = links
+        self.put_data(data)
+
 class Person(web.storage):
     @property
     def place(self):

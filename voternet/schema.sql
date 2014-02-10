@@ -25,6 +25,16 @@ create index places_ac_id_idx on places(ac_id);
 create index places_ward_id_idx on places(ward_id);
 create index places_ps_id_idx on places(ps_id);
 
+
+create table things (
+    id serial primary key,
+    key text unique,
+    type text,
+    data text
+);
+
+create index things_type_idx on things(type);
+
 CREATE TYPE role_type AS ENUM (
     'coordinator', 'volunteer', 'admin', 'user');
 
