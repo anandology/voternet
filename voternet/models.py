@@ -224,7 +224,11 @@ class Place(web.storage):
 
     def writable_by(self, user, roles=['coordinator', 'admin']):
         place_ids = [self.id, self.state_id, self.pc_id, self.ac_id, self.ward_id]
-        return user and user.role in roles and user.place_id in place_ids
+        result = get_db().query("SELECT * FROM people" +
+            " WHERE email=$user.email" +
+            "   AND place_id in $place_ids" +
+            "   AND role IN $roles", vars=locals())
+        return bool(result)
 
     def add_coverage(self, date, coverage, user):
         db = get_db()
