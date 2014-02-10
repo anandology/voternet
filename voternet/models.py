@@ -313,6 +313,13 @@ class Person(web.storage):
     def get_url(self):
         return self.place.get_url() + "/people/%d" % self.id
 
+    def find_dups(self):
+        if not self.email:
+            return []
+        else:
+            result = get_db().select("people", where="id!=$id AND email=$email", vars=self)
+            return [Person(row) for row in result]
+
     @staticmethod
     def find(**kwargs):
         result = get_db().where("people", **kwargs)
