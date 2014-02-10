@@ -47,24 +47,26 @@ $var title: Edit $person.name
       <button type="submit" name="action" value="delete" class="btn btn-danger pull-right">Delete</button>
     </form>
     <div class="col-md-6">
-    $ dups = person.find_dups()
-    $if dups:
-        <div class="alert alert-warning">
-            <strong>Warning!</strong><br/><br/>
-
-            Found $len(dups) more entries for with the same email.
-        
-            <ul class="list-unstyled">
-            $for p in dups:
-                <li style="padding: 10px;">
-                    <strong>$p.name</strong> - 
-                    <small>$p.role.title() for <a href="$p.place.get_url()">$p.place.name $p.place.type_label</a></small><br/>
-                    $if p.email:
-                        <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$p.email">$p.email</a></div>
-                    $if p.phone:
-                        <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$p.phone">$p.phone</a></div>
-                </li>
-            </ul>
-        </div>        
+        $ dups = person.find_dups()
+        $if dups:
+            <div class="alert alert-warning">
+                <strong>Oops!</strong> Found $len(dups) more entries with the same email.
+            
+                <ul class="list-unstyled">
+                $for p in dups:
+                    <li style="padding: 10px;">
+                        <strong>$p.name</strong> - 
+                        <small>$p.role.title() for <a href="$p.place.get_url()">$p.place.name $p.place.type_label</a></small><br/>
+                        $if p.email:
+                            <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$p.email">$p.email</a></div>
+                        $if p.phone:
+                            <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$p.phone">$p.phone</a></div>
+                    </li>
+                </ul>
+            </div>
+        $else:
+            <div class="alert alert-success">
+                <strong>Yay!</strong> No duplicate entries of this person are found.
+            </div>
     </div>
 </div>
