@@ -294,7 +294,7 @@ class Place(web.storage):
                     " WHERE coverage.place_id=places.id" +
                     "   AND places.%s=$self.id" % column +
                     " GROUP BY date", vars=locals())
-        return result
+        return result.list()
 
     def get_data(self, suffix=""):
         if suffix:
