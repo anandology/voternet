@@ -9,7 +9,12 @@ $def render_people(people):
         $for person in people:
             <tr class="person person-$person.role">
                 <td style="width: 20px;">$loop.index</td>
-                <td><strong>$person.name</strong> <small>$person.role.title()</small><br/>
+                <td>
+                    $if place_writable:
+                        <a href="$person.get_url()"><strong>$person.name</strong></a>
+                    $else:
+                        <strong>$person.name</strong>
+                    <small>$person.role.title()</small><br/>
                     $if person.email:
                         <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$person.email">$person.email</a></div>
                     $if person.phone:
@@ -107,7 +112,7 @@ $def render_people(people):
                                 $if person.email:
                                     <div><a href="mailto:$person.email">$person.email</a></div>
                                 $if person.phone:
-                                    <div>$person.phone</a></div>
+                                    <div><a href="tel:$person.phone">$person.phone</a></div>
                             </div>
                     </td>
                     <td>

@@ -13,7 +13,7 @@ $if add_users:
 $else:
   <h1><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Add Volunteer</h1>
 
-<form role="form" method="POST">
+<form role="form" method="POST" style="width: 400px">
   <div class="form-group $input_class(form.name)">
     <label for="name">Name</label>
     <input type="text" name="name" class="form-control" id="name" placeholder="Enter name" value="$form.name.value">

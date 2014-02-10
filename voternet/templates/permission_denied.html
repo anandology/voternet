@@ -1,9 +1,12 @@
-$def with ()
+$def with (user=None)
 
 $var title: Permission Denied
 
 <h1 class="text-danger">Permission Denied</h1>
 
-<p>Only volunteers of AAP Karnataka can access this system.</p>
+$if not user or not user.is_authorized():
+    <p>Only volunteers of AAP Karnataka can access this system.</p>
 
-<p>If you would like to become a volunteer, please sign up at <a href="http://ka.aapvol.in/">http://ka.aapvol.in/</a>.</p>
+    <p>If you would like to become a volunteer, please sign up at <a href="http://ka.aapvol.in/">http://ka.aapvol.in/</a>.</p>
+$else:
+    <p>Your current role does not allow you to perform this action. Please contact your coordinator for help.</p>

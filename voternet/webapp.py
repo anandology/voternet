@@ -4,8 +4,9 @@ import markdown
 import yaml
 import web
 import json
+import functools
 
-from models import Place
+from models import Place, Person
 from forms import AddPeopleForm
 import googlelogin
 import account
@@ -21,6 +22,7 @@ urls = (
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
     "/([\w/]+)/add-people", "add_people",
+    "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
     "/([\w/]+)", "place",
     "/(AC\d+/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
@@ -38,6 +40,29 @@ def login_requrired(handler):
     return handler()
 
 app.add_processor(login_requrired)
+
+def placify(f=None, roles=None):
+    """Decorator that converts the first argument from place code to place.
+    Also makes sure if the current user has the specified permission.
+    """
+    if not f:
+        return lambda f: placify(f=f, roles=roles)
+
+    print "placify", f, roles
+
+    @functools.wraps(f)
+    def g(self, code, *args):
+        print "g", code, args
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+
+        if roles:
+            user = account.get_current_user()
+            if not user or not place.writable_by(user, roles=roles):
+                return render.permission_denied(user=user)
+        return f(self, place, *args)
+    return g
 
 def input_class(input):
     if input.note:
@@ -59,6 +84,12 @@ def limitname(s, length=50):
     else:
         return s
 
+def render_option(value, label, select_value):
+    if value == select_value:
+        return '<option value="%s" selected>%s</option>' % (value, label)
+    else:
+        return '<option value="%s">%s</option>' % (value, label)
+
 tglobals = {
     "input_class": input_class, 
     "plural": plural,
@@ -67,6 +98,7 @@ tglobals = {
     "json_encode": json.dumps,
     "get_current_user": account.get_current_user,
     "limitname": limitname,
+    "render_option": render_option,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
@@ -80,10 +112,8 @@ class index:
         raise web.redirect("/karnataka")
 
 class place:
-    def GET(self, code):
-        place = Place.find(code=code)
-        if not place:
-            raise web.notfound()
+    @placify
+    def GET(self, place):
         return render.place(place)
 
 class delete_place:
@@ -147,19 +177,13 @@ class place_info:
         raise web.seeother(place.url + "/info")
 
 class add_people:
-    def GET(self, code):
-        place = Place.find(code=code)
-        if not place:
-            raise web.notfound()
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
         form = AddPeopleForm()
         return render.add_people(place, form)
 
-    def POST(self, code):
-        place = Place.find(code=code)
-        if not place:
-            raise web.notfound()
-        elif not place.writable_by(account.get_current_user()):
-            raise web.seeother(place.url)
+    @placify(roles=['admin', 'coordinator'])
+    def POST(self, place):
         i = web.input()
         form = AddPeopleForm()
         if form.validates(i):
@@ -195,6 +219,30 @@ class users:
             raise web.redirect("/users")
         else:
             return render.add_people(place, form, add_users=True)
+
+class edit_person:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place, id):
+        person = Person.find(place_id=place.id, id=id)
+        if not person:
+            raise web.notfound()
+        form = AddPeopleForm()
+        form.fill(person)
+        return render.person(person, form)
+
+    @placify(roles=['admin', 'coordinator'])
+    def POST(self, place, id):
+        person = Person.find(place_id=place.id, id=id)
+        if not person:
+            raise web.notfound()
+
+        i = web.input()
+        if i.action == "save":
+            person.update(dict(name=i.name, email=i.email, phone=i.phone, voterid=i.voterid, role=i.role))
+            person.save()
+        elif i.action == "delete":
+            person.delete()
+        raise web.seeother(place.url)
 
 class coverage:
     def GET(self, code, date):

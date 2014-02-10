@@ -311,7 +311,7 @@ class Person(web.storage):
         return Place.from_id(self.place_id)
 
     def get_url(self):
-        return "/people/%d" % self.id
+        return self.place.get_url() + "/people/%d" % self.id
 
     @staticmethod
     def find(**kwargs):
@@ -327,6 +327,21 @@ class Person(web.storage):
 
     def is_authorized(self):
         return True
+
+    def save(self):
+        get_db().update("people", where="id=$self.id", vars=locals(),
+            place_id=self.place_id,
+            name=self.name,
+            email=self.email,
+            phone=self.phone,
+            voterid=self.voterid,
+            role=self.role)
+
+    def delete(self):
+        db = get_db()
+        with db.transaction():
+            db.update("coverage", editor_id=None, where="editor_id=$self.id", vars=locals())
+            db.delete("people", where="id=$self.id", vars=locals())
 
     def __repr__(self):           
         return "<Person: %s>" % dict(self)
