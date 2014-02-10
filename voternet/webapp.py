@@ -48,11 +48,8 @@ def placify(f=None, roles=None):
     if not f:
         return lambda f: placify(f=f, roles=roles)
 
-    print "placify", f, roles
-
     @functools.wraps(f)
     def g(self, code, *args):
-        print "g", code, args
         place = Place.find(code=code)
         if not place:
             raise web.notfound()
