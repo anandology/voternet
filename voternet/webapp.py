@@ -50,6 +50,13 @@ def plural(name):
     else:
         return name + 's'
 
+def limitname(s, length=50):
+    if len(s) > length:
+        # show ... and last 5 characters and limit the total length
+        # by slicing at the beginning
+        return s[:length-8] + "..." + s[-5:]
+    else:
+        return s
 
 tglobals = {
     "input_class": input_class, 
@@ -58,10 +65,10 @@ tglobals = {
     "sum": sum,
     "json_encode": json.dumps,
     "get_current_user": account.get_current_user,
+    "limitname": limitname,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
-
 }
 
 path = os.path.join(os.path.dirname(__file__), "templates")

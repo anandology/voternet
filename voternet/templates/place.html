@@ -158,7 +158,9 @@ $def render_people(people):
             $ links = place.get_links()
             $if links:
                 $for link in links:
-                    <li><a href="$link.url">$link.title</a></li>
+                    <li><a href="$link.url">${link.title or limitname(link.url, 40)}</a><br/>
+                        <a href="$link.url" style="color: gray;"><small>$limitname(link.url, 40)</small></a>
+                    </li>
             $else:
                 <li><em>None found</em></li>
             $if place_writable:
