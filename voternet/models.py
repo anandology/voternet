@@ -293,7 +293,7 @@ class Place(web.storage):
                     " FROM coverage, places" +
                     " WHERE coverage.place_id=places.id" +
                     "   AND places.%s=$self.id" % column +
-                    " GROUP BY date", vars=locals())
+                    " GROUP BY date ORDER BY date", vars=locals())
         return result.list()
 
     def get_data(self, suffix=""):
