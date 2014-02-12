@@ -237,7 +237,6 @@ class edit_person:
         i = web.input()
         if i.action == "save":
             person.update(dict(name=i.name, email=i.email, phone=i.phone, voterid=i.voterid, role=i.role))
-            person.save()
         elif i.action == "delete":
             person.delete()
         raise web.seeother(place.url)
