@@ -334,12 +334,15 @@ class oauth2callback:
                 account.set_login_cookie(userinfo.email)
         raise web.seeother("/")
 
+def load_config(configfile):
+    web.config.update(yaml.load(open(configfile)))
+
 def main():
     if "--config" in sys.argv:
         index = sys.argv.index("--config")
         configfile = sys.argv[index+1]
         sys.argv = sys.argv[:index] + sys.argv[index+2:]
-        web.config.update(yaml.load(open(configfile)))
+        load_config(configfile)
 
     if web.config.get('error_email_recipients'):
         app.internalerror = web.emailerrors(
