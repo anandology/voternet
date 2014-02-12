@@ -307,9 +307,14 @@ class sudo:
 
 class debug:
     def GET(self):
-        i = web.input(fail=None)
+        i = web.input(fail=None, dev=None)
         if i.fail:
             raise Exception('failed')
+        elif i.dev:
+            web.header("Content-type", "text/plain")
+            return ("\nTo access this website programatically,\n" +
+                    "add the following header to your requests.\n\n" +
+                    "Cookie: " + web.cookies().session + "\n\n")
         return "hello world!"
 
 class login:
