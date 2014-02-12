@@ -11,7 +11,24 @@ $var title: Search
     <span>Found $nmatched matches.<br/><br/>
 </div>
 
-<ul>
+<ul class="list-unstyled search-results">
 $for p in results:
-    <li><a href="$p.url">$p.name</a></li>
+    <li style="padding: 10px 0px; border-bottom: 1px solid #ddd;">
+        $if p.type not in ["STATE", "PC"]:
+            <ol class="breadcrumb">
+                $for parent in p.get_parents()[1:]:
+                    <li><a href="$parent.get_url()"><span class="small">$parent.name</span></a></li>
+            </ol>
+        <h4><a href="$p.get_url()">$p.name</a> <small>$p.type_label</small></h4>
+        $for person in p.get_coordinators():
+            <div class="person person-coordinator">
+                <strong>$person.name</strong>
+                <small>$person.role.title()</small><br/>
+                $if person.email:
+                    <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$person.email">$person.email</a></div>
+                $if person.phone:
+                    <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$person.phone">$person.phone</a></div>
+            </div>
+        <div class="clearfix"/>
+    </li>
 </ul>

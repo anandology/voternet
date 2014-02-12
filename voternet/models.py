@@ -35,13 +35,16 @@ class Place(web.storage):
 
     @property
     def parent(self):
-        return Place.from_id(self[self.parent_column])
+        if self.type != 'STATE':
+            parent_id = self[self.parent_column]
+            return parent_id and Place.from_id(parent_id)
 
     def get_ac(self):
         return Place.from_id(self.ac_id)
 
     def get_parents(self):
-        if self.type == 'STATE':
+        parent = self.parent
+        if self.type == 'STATE' or not parent:
             return []
         return self.parent.get_parents() + [self.parent]
 

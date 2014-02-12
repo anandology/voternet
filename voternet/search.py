@@ -6,11 +6,12 @@ def search(s, page=0):
     conn = xappy.SearchConnection(config.search_db)
     q = conn.query_parse(conn.spell_correct(s))
     result = conn.search(q, page*20, page*20+20)
-    return result.matches_estimated, [x.data for x in result]
+    return result.matches_estimated, [models.Place.from_id(x.data['id']) for x in result]
 
 def index():
     """Index entire database."""
     indexer = xappy.IndexerConnection(config.search_db)
+    #indexer.add_field_action("id", xappy.FieldActions.STORE_CONTENT)
     indexer.add_field_action("name", xappy.FieldActions.INDEX_FREETEXT, spell=True)
     indexer.add_field_action("code", xappy.FieldActions.INDEX_EXACT)
     indexer.add_field_action("type", xappy.FieldActions.INDEX_EXACT)
@@ -27,7 +28,7 @@ def index():
         add_field(doc, "type", place.type)
         add_field(doc, "url", place.type)
         doc = indexer.process(doc)
-        doc.data = place
+        doc.data = {"id": place.id}
         indexer.replace(doc)
 
     places = models.Place.find_all()
