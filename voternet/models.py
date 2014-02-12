@@ -100,6 +100,7 @@ class Place(web.storage):
 
     def update_info(self, info):
         get_db().update("places", where='id=$self.id', info=info, vars=locals())
+        self._invalidate_object_cache()
 
     def delete(self):
         db = get_db()
