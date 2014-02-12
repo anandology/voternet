@@ -236,6 +236,7 @@ class Place(web.storage):
         if result:
             return Place(result[0])
 
+    @staticmethod
     def find_all():
         db = get_db()
         return [Place(row) for row in db.select("places")]

@@ -10,6 +10,7 @@ from models import Place, Person
 from forms import AddPeopleForm
 import googlelogin
 import account
+import search
 
 urls = (
     "/", "index",
@@ -19,6 +20,7 @@ urls = (
     "/sudo", "sudo",
     "/users", "users",
     "/debug", "debug",
+    "/search", "do_search",    
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
@@ -316,6 +318,16 @@ class debug:
                     "add the following header to your requests.\n\n" +
                     "Cookie: " + web.cookies().session + "\n\n")
         return "hello world!"
+
+class do_search:
+    def GET(self):
+        i = web.input(q="", page=1)
+        page = int(i.page)
+        nmatched, results = search.search(i.q, page=page-1)
+        if len(results) == 1 and page == 1:
+            raise web.seeother(results[0].url)
+        else:
+            return render.search(i.q, nmatched, results)
 
 class login:
     def GET(self):

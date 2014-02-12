@@ -1,0 +1,17 @@
+$def with (query, nmatched, results)
+
+$var title: Search
+
+<h1>Search</h1>
+<div>
+    <form>
+        <input type="text" name="q" value="$query"/>
+        <input type="submit" value="Search"/>
+    </form>
+    <span>Found $nmatched matches.<br/><br/>
+</div>
+
+<ul>
+$for p in results:
+    <li><a href="$p.url">$p.name</a></li>
+</ul>

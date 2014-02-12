@@ -27,6 +27,7 @@ def index():
         add_field(doc, "type", place.type)
         add_field(doc, "url", place.type)
         doc = indexer.process(doc)
+        doc.data = place
         indexer.replace(doc)
 
     places = models.Place.find_all()
@@ -41,6 +42,9 @@ if __name__ == "__main__":
     import webapp
     webapp.load_config(sys.argv[1])
     if len(sys.argv) > 2:
-        print sorted(d.name for d in search(sys.argv[2]))
+        matches, result = search(sys.argv[2])
+        print matches, "matches"
+        for d in result:
+            print repr(d)
     else:
         index()
