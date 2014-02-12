@@ -18,6 +18,7 @@ urls = (
     "/login/oauth2callback", "oauth2callback",
     "/sudo", "sudo",
     "/users", "users",
+    "/debug", "debug",
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
@@ -305,6 +306,13 @@ class sudo:
             account.set_login_cookie(i.email)
         raise web.seeother("/")
 
+class debug:
+    def GET(self):
+        i = web.input(fail=None)
+        if i.fail:
+            raise Exception('failed')
+        return "hello world!"
+
 class login:
     def GET(self):
         google = googlelogin.GoogleLogin()
@@ -334,11 +342,11 @@ def main():
         sys.argv = sys.argv[:index] + sys.argv[index+2:]
         web.config.update(yaml.load(open(configfile)))
 
-    if config.get('error_email_recipients')
+    if web.config.get('error_email_recipients'):
         app.internalerror = web.emailerrors(
-            config.error_email_recipients, 
+            web.config.error_email_recipients, 
             app.internalerror, 
-            config.get('from_address'))
+            web.config.get('from_address'))
 
     app.run()
 
