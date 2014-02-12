@@ -72,6 +72,8 @@ class Place(web.storage):
 
     def _invalidate_object_cache(self):
         cache.invalidate_object_cache(objects=[self] + self.get_parents())
+        cache.invalidate_cache("Place.find", self.code)
+        cache.invalidate_cache("Place.find", code=self.code)
 
     @property
     def type_label(self):
@@ -220,7 +222,7 @@ class Place(web.storage):
         return dict()
 
     @staticmethod
-    @cache.memoize
+    @cache.memoize(key="Place.find")
     def find(code):
         db = get_db()
         if "/" in code:
