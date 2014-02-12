@@ -333,6 +333,13 @@ def main():
         configfile = sys.argv[index+1]
         sys.argv = sys.argv[:index] + sys.argv[index+2:]
         web.config.update(yaml.load(open(configfile)))
+
+    if config.get('error_email_recipients')
+        app.internalerror = web.emailerrors(
+            config.error_email_recipients, 
+            app.internalerror, 
+            config.get('from_address'))
+
     app.run()
 
 if __name__ == "__main__":
