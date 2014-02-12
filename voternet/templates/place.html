@@ -62,7 +62,7 @@ $def render_people(people):
                 $ vcounts = place.get_volunteer_counts()
 
                 $for t in subtypes:
-                    <li><strong>$vcounts.get(t.code, 0)</strong> volunteers in <strong>$counts.get(t.code, 0)</strong> $plural(t.label)</li>
+                    <li><strong>$vcounts.get(t.code, 0)</strong> vols in <strong>$counts.get(t.code, 0)</strong> $plural(t.code)</li>
             </ul>            
         </div>        
     </div>
@@ -139,7 +139,7 @@ $def render_people(people):
                     <td>
                         <ul class="list-unstyled">
                             $for t in subtypes[1:]:
-                                <li><strong>$vcounts.get(t.code, 0)</strong> volunteers in <strong>$counts.get(t.code, 0)</strong> $plural(t.label)</li>
+                                <li><strong>$vcounts.get(t.code, 0)</strong> vols in <strong>$counts.get(t.code, 0)</strong> $plural(t.code)</li>
                         </ul>
                     </td>
                     <td>
