@@ -202,27 +202,34 @@ class Place(web.storage):
 
     @cache.object_memoize(key="counts")
     def get_counts(self):
-        if self.type != "PB":
-            result = get_db().query(
-                "SELECT type, count(*) as count" +
-                " FROM places" +
-                " WHERE %s=$self.id OR id=$self.id"  % self.type_column +
-                " GROUP BY type", vars=locals())
-            return dict((row.type, row.count) for row in result)
+        if self.type == "PB":
+            where = "places.id=$self.id"
+        else:
+            where = "(places.%s=$self.id OR places.id=$self.id)" % self.type_column
+
+        result = get_db().query(
+            "SELECT type, count(*) as count" +
+            " FROM places" +
+            " WHERE " + where +
+            " GROUP BY type", vars=locals())
+        return dict((row.type, row.count) for row in result)
         return dict()
 
     @cache.object_memoize(key="volunteer_counts")
     def get_volunteer_counts(self):
-        if self.type != "PB":
-            roles = ['coordinator', 'volunteer']
-            result = get_db().query(
-                "SELECT type, count(*) as count" +
-                " FROM places" +
-                " JOIN people ON places.id=people.place_id" +
-                " WHERE %s=$self.id OR places.id=$self.id AND role in $roles" % self.type_column + 
-                " GROUP BY type", vars=locals())
-            return dict((row.type, row.count) for row in result)
-        return dict()
+        if self.type == "PB":
+            where = "places.id=$self.id"
+        else:
+            where = "(places.%s=$self.id OR places.id=$self.id)" % self.type_column
+
+        roles = ['coordinator', 'volunteer']
+        result = get_db().query(
+            "SELECT type, count(*) as count" +
+            " FROM places" +
+            " JOIN people ON places.id=people.place_id" +
+            " WHERE %s AND role in $roles" % where + 
+            " GROUP BY type", vars=locals())
+        return dict((row.type, row.count) for row in result)
 
     @staticmethod
     @cache.memoize(key="Place.find")
