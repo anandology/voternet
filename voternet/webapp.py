@@ -5,6 +5,7 @@ import yaml
 import web
 import json
 import functools
+from cStringIO import StringIO
 
 from models import Place, Person
 from forms import AddPeopleForm
@@ -309,7 +310,7 @@ class sudo:
 
 class debug:
     def GET(self):
-        i = web.input(fail=None, dev=None)
+        i = web.input(fail=None, dev=None, backdoor=None)
         if i.fail:
             raise Exception('failed')
         elif i.dev:
@@ -319,8 +320,9 @@ class debug:
                     "Cookie: " + web.cookies().session + "\n\n")
         elif i.backdoor:
             try:
-                env = {}
+                env = {"out": StringIO()}
                 execfile("backdoor.py", env, env)
+                return env['out'].getvalue()
             except IOError:
                 raise web.notfound()
         return "hello world!"
