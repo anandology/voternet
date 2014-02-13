@@ -4,7 +4,13 @@ from web import config
 
 def search(s, page=0):
     conn = xappy.SearchConnection(config.search_db)
-    q = conn.query_parse(conn.spell_correct(s))
+
+    # disable spell corrector.
+    # It was converting PB0119 to PB0019.
+
+    #q = conn.query_parse(conn.spell_correct(s))
+    q = conn.query_parse(s)
+
     result = conn.search(q, page*20, page*20+20)
     return result.matches_estimated, [models.Place.from_id(x.data['id']) for x in result]
 
