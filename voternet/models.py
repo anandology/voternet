@@ -370,7 +370,7 @@ class Person(web.storage):
     @staticmethod
     def find(**kwargs):
         if 'email' in kwargs:
-            kwargs["lower('email)'"] = kwargs['email'].lower()
+            kwargs["lower(email)"] = kwargs['email'].lower()
             del kwargs['email']
         result = get_db().where("people", **kwargs)
         if result:
