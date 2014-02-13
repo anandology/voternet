@@ -269,7 +269,7 @@ class Place(web.storage):
     def writable_by(self, user, roles=['coordinator', 'admin']):
         place_ids = [self.id, self.state_id, self.pc_id, self.ac_id, self.ward_id]
         result = get_db().query("SELECT * FROM people" +
-            " WHERE email=$user.email" +
+            " WHERE lower(email)=lower($user.email)" +
             "   AND place_id in $place_ids" +
             "   AND role IN $roles", vars=locals())
         return bool(result)
@@ -364,11 +364,14 @@ class Person(web.storage):
         if not self.email:
             return []
         else:
-            result = get_db().select("people", where="id!=$id AND email=$email", vars=self)
+            result = get_db().select("people", where="id!=$id AND lower(email)=lower($email)", vars=self)
             return [Person(row) for row in result]
 
     @staticmethod
     def find(**kwargs):
+        if 'email' in kwargs:
+            kwargs["lower('email)'"] = kwargs['email'].lower()
+            del kwargs['email']
         result = get_db().where("people", **kwargs)
         if result:
             return Person(result[0])
