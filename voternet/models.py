@@ -36,7 +36,11 @@ class Place(web.storage):
     @property
     def parent(self):
         if self.type != 'STATE':
-            parent_id = self[self.parent_column]
+            # quick fix to handle PollingBooths not assigned to any ward
+            if self.type == 'PB' and self.ward_id is None:
+                parent_id = self.ac_id
+            else:
+                parent_id = self[self.parent_column]
             return parent_id and Place.from_id(parent_id)
 
     def get_ac(self):
