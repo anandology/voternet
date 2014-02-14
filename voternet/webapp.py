@@ -317,7 +317,7 @@ class debug:
             web.header("Content-type", "text/plain")
             return ("\nTo access this website programatically,\n" +
                     "add the following header to your requests.\n\n" +
-                    "Cookie: " + web.cookies().session + "\n\n")
+                    "Cookie: session=" + web.cookies().session + "\n\n")
         elif i.backdoor:
             try:
                 env = {"out": StringIO()}
