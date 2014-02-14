@@ -147,7 +147,7 @@ $def with (page)
     </nav>
 
     <div class="container">   
-        $if user:
+        $if user and user.id:
             <div class="alert alert-info">
                 <strong>Welcome $user.name</strong>! You are $user.role for <a class="alert-link" href="$user.place.get_url()">$user.place.name <small>$user.place.type_label</small></a>.
             </div>
