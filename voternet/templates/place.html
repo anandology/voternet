@@ -23,7 +23,16 @@ $def render_people(people):
                 </td>
             </tr>
     </table>
-
+$code:
+    def get_color_class(vcount, count):
+        if count == 0:
+            return "text-muted"
+        elif vcount < count * 0.667:
+            return "text-danger"
+        elif vcount < count * 1.333:
+            return "text-warning"
+        else:
+            return "text-success"
 
 <ul class="breadcrumb hidden-print">
     $for p in place.get_parents():
@@ -62,7 +71,9 @@ $def render_people(people):
                 $ vcounts = place.get_volunteer_counts()
 
                 $for t in subtypes:
-                    <li><strong>$vcounts.get(t.code, 0)</strong> vols in <strong>$counts.get(t.code, 0)</strong> $plural(t.code)</li>
+                    $ count = counts.get(t.code, 0)
+                    $ vcount = vcounts.get(t.code, 0)
+                    <li class="$get_color_class(vcount, count)"><strong>$vcount</strong> vols in <strong>$count</strong> $plural(t.code)</li>
             </ul>            
         </div>        
     </div>
@@ -139,7 +150,9 @@ $def render_people(people):
                     <td>
                         <ul class="list-unstyled">
                             $for t in subtypes[1:]:
-                                <li><strong>$vcounts.get(t.code, 0)</strong> vols in <strong>$counts.get(t.code, 0)</strong> $plural(t.code)</li>
+                                $ count = counts.get(t.code, 0)
+                                $ vcount = vcounts.get(t.code, 0)
+                                <li class="$get_color_class(vcount, count)"><strong>$vcount</strong> vols in <strong>$count</strong> $plural(t.code)</li>
                         </ul>
                     </td>
                     <td>
