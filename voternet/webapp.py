@@ -106,6 +106,7 @@ tglobals = {
     "limitname": limitname,
     "render_option": render_option,
     "render_template": render_template,
+    "config": web.config,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
