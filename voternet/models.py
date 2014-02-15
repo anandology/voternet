@@ -320,6 +320,27 @@ class Place(web.storage):
                     " GROUP BY date ORDER BY date", vars=locals())
         return result.list()
 
+    def daterange(self, start, end):
+        date = start
+        while date <= end:
+            yield date
+            date += datetime.timedelta(days=1)
+
+    def get_coverge_summary(self):
+        result = self.get_coverage_counts_by_date()
+        d = dict((row.date, row.count) for row in result)
+
+        today = datetime.date.today()
+        yesterday = today - datetime.timedelta(days=1)
+        thisweek = self.daterange(today-datetime.timedelta(days=6), today)
+
+        return {
+            "today": d.get(today, 0),
+            "yesterday": d.get(yesterday, 0),
+            "thisweek": sum(d.get(date, 0) for date in thisweek),
+            "total": sum(d.values())
+        }
+
     def get_coverage_data_for_graph(self):
         today = datetime.date.today()
         yday = today - datetime.timedelta(days=1)
@@ -331,13 +352,11 @@ class Place(web.storage):
 
         d = dict((row.date, row.count) for row in result)
 
-        date = mindate
         x = []
         count = 0
-        while date <= maxdate:
+        for date in self.daterange(mindate, maxdate):
             count += d.get(date, 0)
             x.append([time.mktime(date.timetuple()) * 1000, count])
-            date += datetime.timedelta(days=1)
         return x
 
     def get_data(self, suffix=""):
@@ -434,6 +453,7 @@ class Person(web.storage):
 class DummyPerson(web.storage):
     def __init__(self, email):
         web.storage.__init__(self)
+        self.name = None
         self.email = email
         self.id = None
         self.role = "none"

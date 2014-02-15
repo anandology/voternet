@@ -114,8 +114,21 @@ $code:
             </tr>
         </table>
     $else:
-        <h2>Coverage</h2>
-        $:render_template("graph", place.get_coverage_data_for_graph(), "coverage-graph")
+        <h2>Coverage <small>Total #houses visited</small></h2>
+        <div class="row">
+            <div class="col-md-6">
+                $:render_template("graph", place.get_coverage_data_for_graph(), "coverage-graph")
+            </div>
+            <div class="col-md-6">
+                $ summary = place.get_coverge_summary()
+                <ul class="list-unstyled">
+                    <li>$summary['today'] houses visited today</li>
+                    <li>$summary['yesterday'] houses visited yesterday</li>
+                    <li>$summary['thisweek'] houses visited this week</li>
+                    <li><strong>$summary['total'] houses visited so far</strong></li>
+                </ul>
+            </div>
+        </div>
 
     $if place.subtype:
         <h2>$plural(place.subtype_label)</h2>
