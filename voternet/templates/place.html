@@ -77,9 +77,25 @@ $code:
             </ul>            
         </div>        
     </div>
-    $if place.type == "PB":
-        <h2>Coverage</h2>
-        <table class="table table-bordered">
+    <h2>Coverage <small>Total #houses visited</small></h2>
+    <div class="row">
+        <div class="col-md-6">
+            $:render_template("graph", place.get_coverage_data_for_graph(), "coverage-graph")
+        </div>
+        <div class="col-md-6">
+            $ summary = place.get_coverge_summary()
+            <ul class="list-unstyled">
+                <li>$summary['today'] houses visited today</li>
+                <li>$summary['yesterday'] houses visited yesterday</li>
+                <li>$summary['thisweek'] houses visited this week</li>
+                <li><strong>$summary['total'] houses visited so far</strong></li>
+            </ul>
+        </div>
+    </div>
+
+
+    $if place.type == "PB" and place_writable:
+        <table class="table table-bordered" style="margin-top: 20px;">
             <tr>
                 <th>Date</th>
                 <th>#houses visited</th>
@@ -112,23 +128,15 @@ $code:
                 <td><a href="$place.get_url()/2014-02-15">February 15</a></td>
                 <td><a href="$place.get_url()/2014-02-15">$len(place.get_coverage('2014-02-15'))</a></td>
             </tr>
+            <tr>
+                <td><a href="$place.get_url()/2014-02-16">February 16</a></td>
+                <td><a href="$place.get_url()/2014-02-16">$len(place.get_coverage('2014-02-16'))</a></td>
+            </tr>
+            <tr>
+                <td><a href="$place.get_url()/2014-02-17">February 17</a></td>
+                <td><a href="$place.get_url()/2014-02-17">$len(place.get_coverage('2014-02-17'))</a></td>
+            </tr>
         </table>
-    $else:
-        <h2>Coverage <small>Total #houses visited</small></h2>
-        <div class="row">
-            <div class="col-md-6">
-                $:render_template("graph", place.get_coverage_data_for_graph(), "coverage-graph")
-            </div>
-            <div class="col-md-6">
-                $ summary = place.get_coverge_summary()
-                <ul class="list-unstyled">
-                    <li>$summary['today'] houses visited today</li>
-                    <li>$summary['yesterday'] houses visited yesterday</li>
-                    <li>$summary['thisweek'] houses visited this week</li>
-                    <li><strong>$summary['total'] houses visited so far</strong></li>
-                </ul>
-            </div>
-        </div>
 
     $if place.subtype:
         <h2>$plural(place.subtype_label)</h2>
