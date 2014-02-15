@@ -2,6 +2,7 @@ import web
 import re
 import json
 import cache
+import time, datetime
 
 @web.memoize
 def get_db():
@@ -318,6 +319,26 @@ class Place(web.storage):
                     "   AND places.%s=$self.id" % column +
                     " GROUP BY date ORDER BY date", vars=locals())
         return result.list()
+
+    def get_coverage_data_for_graph(self):
+        today = datetime.date.today()
+        yday = today - datetime.timedelta(days=1)
+
+        result = self.get_coverage_counts_by_date() or [web.storage(date=today, count=0)]
+
+        mindate = min(result[0].date, yday)
+        maxdate = max(result[-1].date, today)
+
+        d = dict((row.date, row.count) for row in result)
+
+        date = mindate
+        x = []
+        count = 0
+        while date <= maxdate:
+            count += d.get(date, 0)
+            x.append([time.mktime(date.timetuple()) * 1000, count])
+            date += datetime.timedelta(days=1)
+        return x
 
     def get_data(self, suffix=""):
         if suffix:

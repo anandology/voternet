@@ -115,17 +115,7 @@ $code:
         </table>
     $else:
         <h2>Coverage</h2>
-        <table class="table table-bordered">
-            <tr>
-                <th>Date</th>
-                <th>#houses visited</th>
-            </tr>
-            $for row in place.get_coverage_counts_by_date():
-                <tr>
-                    <td>$row.date</td>
-                    <td>$row.count</td>
-                </tr>
-        </table>
+        $:render_template("graph", place.get_coverage_data_for_graph(), "coverage-graph")
 
     $if place.subtype:
         <h2>$plural(place.subtype_label)</h2>

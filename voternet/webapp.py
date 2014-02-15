@@ -91,7 +91,12 @@ def render_option(value, label, select_value):
     else:
         return '<option value="%s">%s</option>' % (value, label)
 
+def render_template(name, *args, **kwargs):
+    t = getattr(xrender, name)
+    return t(*args, **kwargs)
+
 tglobals = {
+    "str": str,
     "input_class": input_class, 
     "plural": plural,
     "markdown": markdown.markdown,
@@ -100,6 +105,7 @@ tglobals = {
     "get_current_user": account.get_current_user,
     "limitname": limitname,
     "render_option": render_option,
+    "render_template": render_template,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
@@ -107,6 +113,7 @@ tglobals = {
 
 path = os.path.join(os.path.dirname(__file__), "templates")
 render = web.template.render(path, base="site", globals=tglobals)
+xrender = web.template.render(path, globals=tglobals)
 
 class index:
     def GET(self):

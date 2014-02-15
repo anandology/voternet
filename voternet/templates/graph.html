@@ -1,0 +1,24 @@
+$def with (data, id, label=None)
+
+<div class="graph">
+    <div id="$id" class="plot" style="width:500px;height:150px; border: 1px solid gray;"></div>
+</div>
+
+<script type="text/javascript">
+    \$(function() {
+        var data = $:json_encode(data);
+        var options = {
+            xaxis: {
+                mode: "time",
+                timeformat: "%b %d",
+                minTickSize: [1, "day"]                
+            },
+            yaxis: {
+                min: 0,
+                minTickSize: 1,
+                tickDecimals: 0
+            }
+        };
+        \$.plot("#$id", [data], options);
+    });
+</script>    
