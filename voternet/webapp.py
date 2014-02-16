@@ -29,6 +29,7 @@ urls = (
     "/([\w/]+)/add-people", "add_people",
     "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
+    "/([\w/]+)/coordinators.xls", "download_coordinators",
     "/([\w/]+)", "place",
     "/(AC\d+/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
 )
@@ -359,6 +360,19 @@ class download:
     def download_contacts(self):
         dataset = get_all_coordinators_as_dataset()
         web.header("Content-disposition", "attachment; filename=coordinator-contacts.xls")
+        web.header("Content-Type", "application/vnd.ms-excel")
+        return dataset.xls
+
+class download_coordinators:
+    def GET(self, code):
+        place = Place.find(code=code)
+        if not place:
+            raise web.notfound()
+        user = account.get_current_user()
+        if not place.writable_by(user, roles=['coordinator', 'admin']):
+            raise web.seeother(place.url)
+        dataset = place.get_all_coordinators_as_dataset()
+        web.header("Content-disposition", "attachment; filename=%s-coordinators.xls" % place.code)
         web.header("Content-Type", "application/vnd.ms-excel")
         return dataset.xls
 

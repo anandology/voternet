@@ -393,6 +393,26 @@ class Place(web.storage):
         data['links'] = links
         self.put_data(data)
 
+    def get_all_coordinators_as_dataset(self, types=['STATE', 'PC', 'AC', 'WARD']):
+        result = get_db().query(
+            "SELECT places.type, places.pc_id, places.ac_id, places.ward_id, places.name as place," +
+            " people.name as coordinator, people.email, people.phone" +
+            " FROM people, places" +
+            " WHERE people.place_id=places.id AND role='coordinator' AND places.type IN $types" +
+            " AND places.%s=$self.id" % self.type_column +
+            " ORDER by place_id", vars=locals())
+        rows = result.list()
+        for row in rows:
+            row.pc = row.pc_id and Place.from_id(row.pc_id).name or "-"
+            row.ac = row.ac_id and Place.from_id(row.ac_id).name or "-"
+            row.ward = row.ward_id and Place.from_id(row.ward_id).name or "-"
+            row[row.type.lower()] = row.place
+
+        dataset = tablib.Dataset(headers=['Parliamentary Constituency', 'Assembly Constituency', 'Ward', 'Coordinator', 'email', 'phone'])
+        for row in rows:
+            dataset.append([row.pc, row.ac, row.ward, row.coordinator, row.email, row.phone])
+        return dataset
+
 class Person(web.storage):
     @property
     def place(self):
