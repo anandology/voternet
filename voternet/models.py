@@ -70,7 +70,7 @@ class Place(web.storage):
         return self.get_people(["coordinator"])
 
     def add_volunteer(self, name, email, phone, voterid=None, role=None):
-        get_db().insert("people", 
+        person_id = get_db().insert("people",
             place_id=self.id, 
             name=name,
             email=email,
@@ -78,6 +78,7 @@ class Place(web.storage):
             voterid=voterid,
             role=role)
         self._invalidate_object_cache()
+        self.record_activity("volunteer-added", volunteer_id=person_id, volunteer_name=name)
 
     def _invalidate_object_cache(self):
         cache.invalidate_object_cache(objects=[self] + self.get_parents())
@@ -280,9 +281,29 @@ class Place(web.storage):
         db = get_db()
         coverage_json = json.dumps(coverage)
         with db.transaction():
+            count = len(self.get_coverage(date))
             db.delete("coverage", where="place_id=$self.id AND date=$date", vars=locals())
             db.insert("coverage", place_id=self.id, date=date, count=len(coverage), data=coverage_json, editor_id=user.id)
+            if count == 0:
+                self.record_activity("coverage-added", count=len(coverage))
+            else:
+                self.record_activity("coverage-updated", count=len(coverage), old_count=count)
         self._invalidate_object_cache()
+
+    def get_activity(self):
+        if self.type == 'PB':
+            where = "places.id=$self.id"
+        else:
+            where = "(places.id=$self.id OR places.%s=$self.id)" % self.type_column
+        result = get_db().query(
+            "SELECT activity.*" +
+            " FROM activity, places" +
+            " WHERE activity.place_id=places.id AND " + where,
+            vars=locals())
+        return [Activity(a) for a in result]
+
+    def record_activity(self, type, **kwargs):
+        Activity.record(type, self.id, **kwargs)
 
     def get_coverage(self, date):
         result = get_db().select("coverage", where="place_id=$self.id AND date=$date", vars=locals())
@@ -470,6 +491,36 @@ class Person(web.storage):
 
     def __repr__(self):           
         return "<Person: %s>" % dict(self)
+
+class Activity(web.storage):
+    def get_place(self):
+        return Place.from_id(self.place_id)
+
+    def get_person(self):
+        return Person.find_by_id(self.person_id)
+
+    def get_data(self):
+        return json.loads(self['data'])
+
+    def get_volunteer(self):
+        return Person.find_by_id(self.get_data()['volunteer_id'])
+
+    def get_volunteer_name(self):
+        return self.get_data()['volunteer_name']
+
+    def get_coverage_count(self):
+        return self.get_data()['count']
+
+    @staticmethod
+    def record(event_type, place_id, **kwargs):
+        import account
+        who = account.get_current_user()
+        db = get_db()
+        db.insert("activity", type=event_type, place_id=place_id, person_id=who.id, data=json.dumps(kwargs))
+
+    def __repr__(self):
+        return "<Activity: %s>" % dict(self)
+
 
 class DummyPerson(web.storage):
     def __init__(self, email):

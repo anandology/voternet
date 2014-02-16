@@ -30,6 +30,7 @@ urls = (
     "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
     "/([\w/]+)/coordinators.xls", "download_coordinators",
+    "/([\w/]+)/activity", "activity",
     "/([\w/]+)", "place",
     "/(AC\d+/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
 )
@@ -109,6 +110,7 @@ tglobals = {
     "render_option": render_option,
     "render_template": render_template,
     "config": web.config,
+    "datestr": web.datestr,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
@@ -375,6 +377,12 @@ class download_coordinators:
         web.header("Content-disposition", "attachment; filename=%s-coordinators.xls" % place.code)
         web.header("Content-Type", "application/vnd.ms-excel")
         return dataset.xls
+
+class activity:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        activities = place.get_activity()
+        return render.activity(place, activities)
 
 class login:
     def GET(self):

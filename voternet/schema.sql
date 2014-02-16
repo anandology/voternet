@@ -63,3 +63,17 @@ create table coverage (
 
 create index coverage_place_id_idx on coverage(place_id);
 create index coverage_date_idx on coverage(date);
+
+create table activity (
+    id serial primary key,
+    type text,
+    place_id integer references places,
+    person_id integer references people,
+    data text,
+    tstamp timestamp default (current_timestamp at time zone 'UTC')
+);
+
+create index activity_type_idx on activity(type);
+create index activity_place_id_idx on activity(place_id);
+create index activity_person_id_idx on activity(type);
+create index activity_tstamp_idx on activity(tstamp);
