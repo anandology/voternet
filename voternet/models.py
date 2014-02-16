@@ -3,6 +3,7 @@ import re
 import json
 import cache
 import time, datetime
+import tablib
 
 @web.memoize
 def get_db():
@@ -461,3 +462,15 @@ class DummyPerson(web.storage):
 
     def is_authorized(self):
         return False
+
+def get_all_coordinators_as_dataset(types=['STATE', 'PC', 'AC', 'WARD']):
+    result = get_db().query(
+                "SELECT places.type, places.code, places.name as place," +
+                " people.name as coordinator, people.email, people.phone" +
+                " FROM people, places" +
+                " WHERE people.place_id=places.id AND role='coordinator' AND places.type in $types" +
+                " ORDER by place_id", vars=locals())
+    dataset = tablib.Dataset(headers=['type', 'place', 'coordinator', 'email', 'phone'])
+    for row in result:
+        dataset.append([row.type, row.place, row.coordinator, row.email, row.phone])
+    return dataset

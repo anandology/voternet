@@ -7,7 +7,7 @@ import json
 import functools
 from cStringIO import StringIO
 
-from models import Place, Person
+from models import Place, Person, get_all_coordinators_as_dataset
 from forms import AddPeopleForm
 import googlelogin
 import account
@@ -22,6 +22,7 @@ urls = (
     "/users", "users",
     "/debug", "debug",
     "/search", "do_search",    
+    "/download/(.*)", "download",
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
@@ -344,6 +345,22 @@ class do_search:
             raise web.seeother(results[0].url)
         else:
             return render.search(i.q, nmatched, results)
+
+class download:
+    def GET(self, name):
+        user = account.get_current_user()
+        if name == "contacts.xls":
+            is_admin = user and user.role == 'admin'
+            is_coordinator = user and user.role == 'coordinator' and user.place.type in ['STATE', 'PC']
+            if is_admin or is_coordinator:
+                return self.download_contacts()
+        raise web.notfound()
+
+    def download_contacts(self):
+        dataset = get_all_coordinators_as_dataset()
+        web.header("Content-disposition", "attachment; filename=coordinator-contacts.xls")
+        web.header("Content-Type", "application/vnd.ms-excel")
+        return dataset.xls
 
 class login:
     def GET(self):
