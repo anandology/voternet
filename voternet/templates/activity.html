@@ -19,13 +19,14 @@ $var title: $place.name - Activity
         <tr>
     $for a in activities:
         $if a.type in ["volunteer-added", "coverage-added"]:
+            $ data = a.get_data()
             <tr>
                 <td>$datestr(a.tstamp)</td>
                 <td><strong>$a.get_person().name</strong></td>
                 $if a.type == "volunteer-added":
-                    <td>Added <strong>$a.get_volunteer_name()</strong> as volunteer</td>
+                    <td>Added <strong>$data['name']</strong> as $data['role']</td>
                 $elif a.type == "coverage-added":
-                    <td>Visited $a.get_coverage_count() houses</td>
+                    <td>Visited $data['count'] houses</td>
                 $ p = a.get_place()
                 <td><a href="$p.get_url()">$p.name <small>$p.type_label</small></td>
             <tr>

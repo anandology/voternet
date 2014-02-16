@@ -78,7 +78,7 @@ class Place(web.storage):
             voterid=voterid,
             role=role)
         self._invalidate_object_cache()
-        self.record_activity("volunteer-added", volunteer_id=person_id, volunteer_name=name)
+        self.record_activity("volunteer-added", volunteer_id=person_id, name=name, role=role)
 
     def _invalidate_object_cache(self):
         cache.invalidate_object_cache(objects=[self] + self.get_parents())
@@ -298,7 +298,8 @@ class Place(web.storage):
         result = get_db().query(
             "SELECT activity.*" +
             " FROM activity, places" +
-            " WHERE activity.place_id=places.id AND " + where,
+            " WHERE activity.place_id=places.id AND " + where +
+            " ORDER by tstamp",
             vars=locals())
         return [Activity(a) for a in result]
 
@@ -500,7 +501,7 @@ class Activity(web.storage):
         return Person.find_by_id(self.person_id)
 
     def get_data(self):
-        return json.loads(self['data'])
+        return web.storage(json.loads(self['data']))
 
     def get_volunteer(self):
         return Person.find_by_id(self.get_data()['volunteer_id'])
