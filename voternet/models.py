@@ -401,7 +401,7 @@ class Place(web.storage):
             " WHERE people.place_id=places.id AND role='coordinator' AND places.type IN $types" +
             " AND places.%s=$self.id" % self.type_column +
             " ORDER by place_id", vars=locals())
-        rows = result.list()
+        rows = sorted(result, key=lambda row: (row.pc_id, row.ac_id, row.ward_id))
         for row in rows:
             row.pc = row.pc_id and Place.from_id(row.pc_id).name or "-"
             row.ac = row.ac_id and Place.from_id(row.ac_id).name or "-"
