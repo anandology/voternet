@@ -70,7 +70,7 @@ class Place(web.storage):
         return self.get_people(["coordinator"])
 
     def add_volunteer(self, name, email, phone, voterid=None, role=None):
-        person_id = get_db().insert("people",
+        person_id = get_db().insert("people", 
             place_id=self.id, 
             name=name,
             email=email,
@@ -290,16 +290,16 @@ class Place(web.storage):
                 self.record_activity("coverage-updated", count=len(coverage), old_count=count)
         self._invalidate_object_cache()
 
-    def get_activity(self):
+    def get_activity(self, offset=0, limit=100):
         if self.type == 'PB':
             where = "places.id=$self.id"
         else:
             where = "(places.id=$self.id OR places.%s=$self.id)" % self.type_column
         result = get_db().query(
             "SELECT activity.*" +
-            " FROM activity, places" +
+            " FROM activity, places" + 
             " WHERE activity.place_id=places.id AND " + where +
-            " ORDER by tstamp",
+            " ORDER by tstamp DESC OFFSET $offset LIMIT $limit",
             vars=locals())
         return [Activity(a) for a in result]
 
@@ -519,7 +519,7 @@ class Activity(web.storage):
         db = get_db()
         db.insert("activity", type=event_type, place_id=place_id, person_id=who.id, data=json.dumps(kwargs))
 
-    def __repr__(self):
+    def __repr__(self):           
         return "<Activity: %s>" % dict(self)
 
 
