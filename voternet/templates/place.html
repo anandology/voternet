@@ -149,11 +149,13 @@ $code:
 
     $if place_readable:
         <h2>Activity</h2>
-        $ activities = place.get_activity(limit=5)
+        $if place.type in ["STATE", "PC"]:
+            $ activities = place.get_activity(limit=5, types=['volunteer-added'])
+        $else:
+            $ activities = place.get_activity(limit=5)
         $if activities:
             $:render_template("activity", place, activities, header=False)
-            $if len(activities) == 5:
-                <div><a href="$place.get_url()/activity">See more ...</a></div>
+            <div><a href="$place.get_url()/activity">See more ...</a></div>
         $else:
             <em>No activity yet.</em>
 

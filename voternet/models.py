@@ -290,7 +290,9 @@ class Place(web.storage):
                 self.record_activity("coverage-updated", count=len(coverage), old_count=count)
         self._invalidate_object_cache()
 
-    def get_activity(self, offset=0, limit=100):
+    def get_activity(self, types=None, offset=0, limit=100):
+        if types is None:
+            types = ['volunteer-added', 'coverage-added']
         if self.type == 'PB':
             where = "places.id=$self.id"
         else:
@@ -298,7 +300,7 @@ class Place(web.storage):
         result = get_db().query(
             "SELECT activity.*" +
             " FROM activity, places" + 
-            " WHERE activity.place_id=places.id AND " + where +
+            " WHERE activity.place_id=places.id AND activity.type IN $types AND " + where +
             " ORDER by tstamp DESC OFFSET $offset LIMIT $limit",
             vars=locals())
         return [Activity(a) for a in result]
