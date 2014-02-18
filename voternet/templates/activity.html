@@ -1,15 +1,23 @@
-$def with (place, activities)
+$def with (place, activities=None, header=True)
 
 $var title: $place.name - Activity
 
-<ul class="breadcrumb breadcrumb-collapse hidden-print">
-    $for p in place.get_parents():
-        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
-</ul>
+$if not activities:
+    $ activities = place.get_activities()
+
+$if header:
+    <ul class="breadcrumb breadcrumb-collapse hidden-print">
+        $for p in place.get_parents():
+            <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+    </ul>
 
 <div>
-    <h1 class="place-h1"><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Activity</h1>
+    $if header:
+        <h1 class="place-h1"><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Activity</h1>
 
+$if not activities:
+    <em>No activity yet.</em>
+$else:
     <table class="table">
         <tr>
             <th>When</th>

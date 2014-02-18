@@ -4,6 +4,7 @@ $var title: $place.name
 
 $ user = get_current_user()
 $ place_writable = place.writable_by(user)
+$ place_readable = place.writable_by(user, roles=['admin', 'coordinator', 'volunteer'])
 $ subtypes = place.get_all_subtypes()
 
 $def render_people(people):
@@ -51,7 +52,7 @@ $code:
     <div class="row">
         <div class="col-md-6">
             <h2>Volunteers</h2>
-            $if place_writable:
+            $if place_readable:
                 $ volunteers = place.get_people(roles=["coordinator", "volunteer"])
             $else:
                 $ volunteers = place.get_coordinators()
@@ -145,6 +146,16 @@ $code:
                 <td><a href="$place.get_url()/2014-02-19">$len(place.get_coverage('2014-02-19'))</a></td>
             </tr>
         </table>
+
+    $if place_readable:
+        <h2>Activity</h2>
+        $ activities = place.get_activity(limit=5)
+        $if activities:
+            $:render_template("activity", place, activities, header=False)
+            $if len(activities) == 5:
+                <div><a href="$place.get_url()/activity">See more ...</a></div>
+        $else:
+            <em>No activity yet.</em>
 
     $if place.subtype:
         <h2>$plural(place.subtype_label)</h2>
