@@ -1,0 +1,46 @@
+$def with (place)
+
+$ user = get_current_user()
+$ place_writable = place.writable_by(user)
+$ place_readable = place.writable_by(user, roles=['admin', 'coordinator', 'volunteer'])
+
+<section>
+    <div class="header"><strong>Info</strong></div>
+    <ul class="list-unstyled section-body">
+        <li class="fixme">#voters: xxx</li>
+        <li class="fixme">population: xxx</li>
+        <li><a href="$place.get_url()/info">see more ...</a></li>
+    </ul>
+</section>
+
+<section>
+    <div class="header"><strong>Links</strong></div>
+    <ul class="list-unstyled section-body parents">
+        $ links = place.get_links()
+        $if links:
+            $for link in links:
+                <li><a href="$link.url">${link.title or limitname(link.url, 40)}</a><br/>
+                    <a href="$link.url" style="color: gray;"><small>$limitname(link.url, 40)</small></a>
+                </li>
+        $else:
+            <li><em>None found</em></li>
+        $if place_writable:
+            <li><a class="btn btn-primary" href="$place.get_url()/links">Edit links</a></li>
+    </ul>
+</section>
+
+$if place.type != 'STATE':
+    <section>
+        $for p in place.get_parents():
+            <div class="header">
+                <a href="$p.get_url()">$p.name</a><br><small>$p.type_label</small>
+            </div>
+        <div class="header"><strong>$plural(place.type_label)</strong></div>
+        <ul class="list-unstyled parents section-body" style="padding: 10px;">
+            $for p in place.parent.get_places():
+                $if p.id == place.id:
+                    <li><strong>$p.name</strong></li>
+                $else:
+                    <li><a href="$p.get_url()">$p.name</a></li>
+        </ul>
+    </section>
