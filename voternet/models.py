@@ -487,6 +487,7 @@ class Person(web.storage):
         place = self.place
         with db.transaction():
             db.update("coverage", editor_id=None, where="editor_id=$self.id", vars=locals())
+            db.delete("activity", where="person_id=$self.id", vars=locals())
             db.delete("people", where="id=$self.id", vars=locals())
         place._invalidate_object_cache()
 
