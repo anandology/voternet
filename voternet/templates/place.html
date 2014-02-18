@@ -74,7 +74,7 @@ $code:
                 $for t in subtypes:
                     $ count = counts.get(t.code, 0)
                     $ vcount = vcounts.get(t.code, 0)
-                    <li class="$get_color_class(vcount, count)"><strong>$vcount</strong> vols in <strong>$count</strong> $plural(t.code)</li>
+                    <li class="$get_color_class(vcount, count)"><strong>$commify(vcount)</strong> vols in <strong>$commify(count)</strong> $plural(t.code)</li>
             </ul>            
         </div>        
     </div>
@@ -86,10 +86,10 @@ $code:
         <div class="col-md-6">
             $ summary = place.get_coverge_summary()
             <ul class="list-unstyled">
-                <li>$summary['today'] houses visited today</li>
-                <li>$summary['yesterday'] houses visited yesterday</li>
-                <li>$summary['thisweek'] houses visited this week</li>
-                <li><strong>$summary['total'] houses visited so far</strong></li>
+                <li>$commify(summary['today']) houses visited today</li>
+                <li>$commify(summary['yesterday']) houses visited yesterday</li>
+                <li>$commify(summary['thisweek']) houses visited this week</li>
+                <li><strong>$commify(summary['total']) houses visited so far</strong></li>
             </ul>
         </div>
     </div>

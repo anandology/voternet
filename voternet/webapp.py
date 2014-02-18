@@ -111,6 +111,7 @@ tglobals = {
     "render_template": render_template,
     "config": web.config,
     "datestr": web.datestr,
+    "commify": web.commify,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
