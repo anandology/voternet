@@ -36,7 +36,7 @@ $else:
                 $elif a.type == "coverage-added":
                     <td>Visited $data['count'] houses</td>
                 $ p = a.get_place()
-                <td><a href="$p.get_url()">$p.name <small>$p.type_label</small></td>
+                <td><a href="$p.get_url()" title="$p.name">$limitname(p.name, suffixlength=15) <small>$p.type_label</small></td>
             <tr>
     </table>
 </div>

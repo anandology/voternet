@@ -80,11 +80,11 @@ def plural(name):
     else:
         return name + 's'
 
-def limitname(s, length=50):
+def limitname(s, length=50, suffixlength=5):
     if len(s) > length:
         # show ... and last 5 characters and limit the total length
         # by slicing at the beginning
-        return s[:length-8] + "..." + s[-5:]
+        return s[:length-suffixlength-3] + "..." + s[-suffixlength:]
     else:
         return s
 
