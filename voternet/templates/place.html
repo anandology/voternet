@@ -159,8 +159,39 @@ $code:
         $else:
             <em>No activity yet.</em>
 
-    $if place.subtype:
-        <h2>$plural(place.subtype_label)</h2>
+    $def render_place(p, klass, index):
+        <tr class="$klass">   
+            <td>$index</td>             
+            <td><a href="$p.get_url()">$p.name</a></td>
+            <td>
+                $for person in p.get_coordinators():
+                    <div>
+                        $if place_writable:
+                            <a href="$person.get_url()"><strong>$person.name</strong></a>
+                        $else:
+                            <strong>$person.name</strong>
+                        $if person.email:
+                            <div><a href="mailto:$person.email">$person.email</a></div>
+                        $if person.phone:
+                            <div><a href="tel:$person.phone">$person.phone</a></div>
+                    </div>
+            </td>
+            <td>
+                <ul class="list-unstyled">
+                    $for t in subtypes[1:]:
+                        $ count = counts.get(t.code, 0)
+                        $ vcount = vcounts.get(t.code, 0)
+                        <li class="$get_color_class(vcount, count)"><strong>$vcount</strong> vols in <strong>$count</strong> $plural(t.code)</li>
+                </ul>
+            </td>
+            <td>
+                <strong>$p.get_coverage_count()</strong>
+                <small>houses visited</small>
+            </td>
+        </tr>
+
+    $def render_places_table(places, label):            
+        <h2>$label</h2>
         <table class="table table-bordered">
             $ serial = counter()
             <tr>
@@ -170,56 +201,26 @@ $code:
                 <th>Volunteers</th>
                 <th style="width: 200px;">Coverage</th>
             <tr> 
-            $def render_place(p, klass):
-                <tr class="$klass">   
-                    <td>$serial.next()</td>             
-                    <td><a href="$p.get_url()">$p.name</a></td>
-                    <td>
-                        $for person in p.get_coordinators():
-                            <div>
-                                $if place_writable:
-                                    <a href="$person.get_url()"><strong>$person.name</strong></a>
-                                $else:
-                                    <strong>$person.name</strong>
-                                $if person.email:
-                                    <div><a href="mailto:$person.email">$person.email</a></div>
-                                $if person.phone:
-                                    <div><a href="tel:$person.phone">$person.phone</a></div>
-                            </div>
-                    </td>
-                    <td>
-                        <ul class="list-unstyled">
-                            $for t in subtypes[1:]:
-                                $ count = counts.get(t.code, 0)
-                                $ vcount = vcounts.get(t.code, 0)
-                                <li class="$get_color_class(vcount, count)"><strong>$vcount</strong> vols in <strong>$count</strong> $plural(t.code)</li>
-                        </ul>
-                    </td>
-                    <td>
-                        <strong>$p.get_coverage_count()</strong>
-                        <small>houses visited</small>
-                    </td>
-                    <!--
-                    $for t in subtypes:
-                        <td>
-                            <strong>$vcounts.get(t.code, 0)</strong> volunteers / 
-                            <strong>$counts.get(t.code, 0)</strong> places
-                        </td>
-                    -->
-                </tr>
-
-            $for p in place.get_places():
+            $for p in places:
                 $ counts = p.get_counts()
                 $ vcounts = p.get_volunteer_counts()
                 $if sum(vcounts.values()):
-                    $:render_place(p, "active")
+                    $:render_place(p, "active", serial.next())
 
-            $for p in place.get_places():
+            $for p in places:
                 $ counts = p.get_counts()
                 $ vcounts = p.get_volunteer_counts()
                 $if not sum(vcounts.values()):
-                    $:render_place(p, "inactive")
+                    $:render_place(p, "inactive", serial.next())
         </table>    
+
+    $if place.subtype:
+        $:render_places_table(place.get_places(), plural(place.subtype_label))
+
+    $if place.type == "AC":
+        $ pbs = place.get_unassigned_polling_booths()
+        $if pbs:
+            $:render_places_table(pbs, "Polling Booths Not Assigned to Any Ward")
   </div>
   <div class="col-md-3 sidebar hidden-print">
     $:render_template("place_sidebar", place)

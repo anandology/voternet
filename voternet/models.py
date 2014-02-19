@@ -137,6 +137,10 @@ class Place(web.storage):
         result = db.select("places", where="%s=$id and type=$subtype" % column, order="code", vars=locals())
         return [Place(row) for row in result]
 
+    def get_unassigned_polling_booths(self):
+        result = get_db().select("places", where="ac_id=$self.id and ward_id is NULL and type='PB'", order="code", vars=locals())
+        return [Place(row) for row in result]
+
     def get_places_text(self):
         return "\n".join(str(p) for p in self.get_places())
 
