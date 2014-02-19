@@ -178,6 +178,8 @@ $code:
             </td>
             <td>
                 <ul class="list-unstyled">
+                    $ counts = p.get_counts()
+                    $ vcounts = p.get_volunteer_counts()                    
                     $for t in subtypes[1:]:
                         $ count = counts.get(t.code, 0)
                         $ vcount = vcounts.get(t.code, 0)
