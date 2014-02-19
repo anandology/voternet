@@ -388,7 +388,7 @@ class activity:
 class login:
     def GET(self):
         google = googlelogin.GoogleLogin()
-        return render.login(google.get_redirect_url())
+        return render.login(google.get_redirect_url(), error=False)
 
 class logout:
     def POST(self):
@@ -399,13 +399,18 @@ class logout:
 class oauth2callback:
     def GET(self):
         i = web.input(code=None, error=None, state=None)
+
         if i.code:
             google = googlelogin.GoogleLogin()
-            token = google.get_token(i.code)
-            userinfo = google.get_userinfo(token.access_token)
-            if userinfo:
-                account.set_login_cookie(userinfo.email)
-        raise web.seeother("/")
+            try:
+                token = google.get_token(i.code)
+                userinfo = google.get_userinfo(token.access_token)
+                if userinfo:
+                    account.set_login_cookie(userinfo.email)
+                    raise web.seeother("/")
+            except IOError:
+                return render.login(google.get_redirect_url(), error=True)
+        raise web.seeother("/login")
 
 def load_config(configfile):
     web.config.update(yaml.load(open(configfile)))

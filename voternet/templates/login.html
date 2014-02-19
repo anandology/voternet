@@ -1,8 +1,13 @@
-$def with (google_url)
+$def with (google_url, error=False)
 
 $var title: Login
 
 <h1>Log In</h1>
+
+$if error:
+    <div class="alert alert-danger">
+        <strong>Oops</strong>! Login failed with unknown error. Please try again after some time.
+    </div>
 
 <p>
 Google account is required to login.
