@@ -415,13 +415,15 @@ class oauth2callback:
 def load_config(configfile):
     web.config.update(yaml.load(open(configfile)))
 
-def main():
+def check_config():
     if "--config" in sys.argv:
         index = sys.argv.index("--config")
         configfile = sys.argv[index+1]
         sys.argv = sys.argv[:index] + sys.argv[index+2:]
         load_config(configfile)
 
+def main():
+    check_config()
     if web.config.get('error_email_recipients'):
         app.internalerror = web.emailerrors(
             web.config.error_email_recipients, 
