@@ -112,6 +112,8 @@ tglobals = {
     "config": web.config,
     "datestr": web.datestr,
     "commify": web.commify,
+    "config": web.config,
+    "get_site_title": lambda: web.config.get("site_title", "Your Favorite Party"),
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
@@ -121,9 +123,13 @@ path = os.path.join(os.path.dirname(__file__), "templates")
 render = web.template.render(path, base="site", globals=tglobals)
 xrender = web.template.render(path, globals=tglobals)
 
+def get_state():
+    return web.config.get("state", "karnataka")
+
 class index:
     def GET(self):
-        raise web.redirect("/karnataka")
+        place = Place.find(code=get_state())        
+        raise web.seeother(place.url)
 
 class place:
     @placify
@@ -209,7 +215,7 @@ class add_people:
 class users:
     def GET(self):
         i = web.input(action="")
-        place = Place.find(code="karnataka")
+        place = Place.find(code=get_state())
 
         form = AddPeopleForm()
         if i.action == "add":
@@ -220,7 +226,7 @@ class users:
             return render.users(place, users)
 
     def POST(self):
-        place = Place.find(code="karnataka")
+        place = Place.find(code=get_state())
         if not place:
             raise web.notfound()
         elif not place.writable_by(account.get_current_user()):

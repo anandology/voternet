@@ -1,0 +1,24 @@
+
+GOOGLELOGIN_CLIENT_ID: "819351028781-orn7ikm2gbtpj41fr19omroon85m1l6d.apps.googleusercontent.com"
+GOOGLELOGIN_CLIENT_SECRET: "qdrzP3VmZau37VxWj2sPnCNQ"
+GOOGLELOGIN_SCOPE: "profile email"
+GOOGLELOGIN_REDIRECT_URI: "http://localhost:8080/login/oauth2callback"
+
+# Specify your state here
+state = "KA"
+
+# Title of the website
+site_title = "Your Favorite Party"
+
+## Optionally you can specify a vounteer signup URL to display on the permission denied page.
+# volunteer_signup_url 
+
+secret_key: "uzVzOlbbYyjOvGfSawkR"
+error_email_recipients:
+    - anandology@gmail.com
+from_address: 
+    - noreply@cms.appvol.in
+
+search_db: xappy
+google_analytics_id: "UA-48110865-1"
+
