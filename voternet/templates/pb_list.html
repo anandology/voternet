@@ -8,9 +8,19 @@ $var title: $place.name / Polling Booths
 <div id="example">
 </div>
 
-<br/>
-<br/>
-<a href="javascript;" id="save" class="btn btn-primary">Save</a>
+<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation" style="background: #eee; min-height: 0px; padding: 10px 0px; border-top: 1px solid #ddd;">
+  <div class="container">
+    <a href="javascript;" id="save" class="btn btn-primary">Save</a>
+    <a href="$place.get_url()" id="cancel" class="btn btn-danger pull-right">Cancel</a>
+  </div>
+</nav>
+
+<style type="text/css">
+    body { padding-bottom: 70px; }
+    .handsontable th, .handsontable td {
+        padding: 5px;
+    }
+</style>
 
 <script type="text/javascript">
 \$(function() {
@@ -28,13 +38,14 @@ $var title: $place.name / Polling Booths
         readOnly: true,
       }, {
         data: "name",
+        readOnly: true,        
       }, {
         data: "ward",
         type: 'dropdown',
         source: wards
       }],
       contextMenu: false,
-      colWidths: [75, 500, 225]
+      colWidths: [75, 800, 225]
     });
 });
 
