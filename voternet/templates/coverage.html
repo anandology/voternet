@@ -34,7 +34,7 @@ $var title: Coverage
         handsontable = \$("#example").data("handsontable");
         console.log(handsontable.getData());
         \$.ajax({
-            url: "$place.get_url()/$date",
+            url: window.location.href,
             data: JSON.stringify({"data": handsontable.getData()}),
             dataType: "json",
             type: 'POST',
