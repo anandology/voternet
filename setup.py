@@ -8,6 +8,7 @@ dependencies = [
     'pyYAML',
     'tablib',
     'xappy',
+    'flup',
 ]
 
 setup(
