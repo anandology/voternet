@@ -151,11 +151,11 @@ class Place(web.storage):
         return [Place(row) for row in result]
 
     def get_wards(self):
-        result = get_db().select("places", where="ac_id=$self.id and type='WARD' and code ~ 'W%' ", order="code", vars=locals())
+        result = get_db().select("places", where="ac_id=$self.id and type='WARD' and code LIKE 'W%' ", order="code", vars=locals())
         return [Place(row) for row in result]
 
     def get_groups(self):
-        result = get_db().select("places", where="ac_id=$self.id and type='WARD' and not code ~ 'W%' ", order="code", vars=locals())
+        result = get_db().select("places", where="ac_id=$self.id and type='WARD' and code NOT LIKE 'W%' ", order="code", vars=locals())
         return [Place(row) for row in result]
 
     def add_group(self, name, code=None):
