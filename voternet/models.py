@@ -172,6 +172,7 @@ class Place(web.storage):
     def set_ward(self, ward):
         self.ward_id = ward and ward.id
         get_db().update("places", ward_id=self.ward_id, where="id=$self.id", vars=locals())
+        self._invalidate_object_cache()
 
     def get_places_text(self):
         return "\n".join(str(p) for p in self.get_places())
