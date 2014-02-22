@@ -239,6 +239,10 @@ class pb_groups:
         i = web.input(action="")
         if i.action == "new-group":
             place.add_group(i.name)
+        elif i.action == "update-group":
+            group = place._find_subplace(i.code)
+            name = "%s - %s" % (i.code, i.name)
+            group.update_name(name)
         raise web.seeother(place.get_url() + "/groups")
 
 class add_people:

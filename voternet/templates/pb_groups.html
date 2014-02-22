@@ -28,7 +28,16 @@ $var title: $place.name / Groups
               <h4>
                 <a href="$g.get_url()">$g.name</a> 
                 <small>$len(g.get_places()) PBs</small>
+                <a href="javascript;" class="edit-group-link pull-right">Edit</a>
               </h4>
+              <form method="POST" class="edit-group-form" style="display: none;">
+                <h4 style="display:inline;">$g.code</h4> 
+                <input type="hidden" name="code" value="$g.code"/>
+                <input type="hidden" name="action" value="update-group"/>
+                <input type="text" name="name" value="$g.name.split('-', 1)[-1]" style="width: 300px;"/>
+                <button class="btn btn-primary">Save</button>
+                <a href="javascript;" class="btn btn-danger edit-group-cancel">Cancel</a>
+              </form>
             </li>
         </ul>
     $else:
@@ -56,3 +65,18 @@ $var title: $place.name / Groups
         <em>This AC has no wards.</em>
   </div>
 </div>
+
+<script type="text/javascript">
+\$(function() {
+  \$(".edit-group-link").click(function() {
+    \$(this).closest("h4").hide();
+    \$(this).closest("li").find(".edit-group-form").show();
+    return false;
+  });
+  \$(".edit-group-cancel").click(function() {
+    \$(this).closest("li").find("h4:first").show();
+    \$(this).closest("li").find(".edit-group-form").hide();
+    return false;
+  });
+});
+</script>
