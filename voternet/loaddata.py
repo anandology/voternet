@@ -99,7 +99,7 @@ def main():
     global db 
     db = get_db()
 
-    if "--set-admin" in sys.argv:
+    if "--add-admin" in sys.argv:
         index = sys.argv.index("--add-admin")
         email = sys.argv[index+1]
         state = Place.find(code=webapp.get_state())
