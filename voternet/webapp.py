@@ -26,6 +26,8 @@ urls = (
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
+    "/([\w/]+)/booths", "pb_list",
+    "/([\w/]+)/groups", "pb_groups",
     "/([\w/]+)/add-people", "add_people",
     "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
@@ -195,6 +197,49 @@ class place_info:
         i = web.input(info="")
         place.update_info(i.info)
         raise web.seeother(place.url + "/info")
+
+class pb_list:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        if place.type != "AC":
+            raise web.notfound()
+        return render.pb_list(place)
+
+    @placify(roles=['admin', 'coordinator'])
+    def POST(self, place):
+        data = json.loads(web.data())['data']
+
+        for row in data:
+            code = place.code + "/" + row['code']
+            pb = Place.find(code)
+
+            if row['ward'] and row['ward'].strip():
+                # Extract te group code from its name
+                code = place.code + "/" + row['ward'].split("-")[0].strip()
+                ward = Place.find(code)
+                if pb.ward_id != ward.id:
+                    pb.set_ward(ward)
+            else:
+                pb.set_ward(None)
+        web.header("content-type", "application/json")
+        return '{"result": "ok"}'
+
+class pb_groups:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        if place.type != "AC":
+            raise web.notfound()
+        return render.pb_groups(place)
+
+    @placify(roles=['admin', 'coordinator'])
+    def POST(self, place):
+        if place.type != "AC":
+            raise web.notfound()
+
+        i = web.input(action="")
+        if i.action == "new-group":
+            place.add_group(i.name)
+        raise web.seeother(place.get_url() + "/groups")
 
 class add_people:
     @placify(roles=['admin', 'coordinator'])

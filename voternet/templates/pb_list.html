@@ -1,0 +1,66 @@
+$def with (place)
+
+$var title: $place.name / Polling Booths
+
+<h4><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span></h4>
+<h1 style="margin-top: 0px;">Polling Booths</h1>
+
+<div id="example">
+</div>
+
+<br/>
+<br/>
+<a href="javascript;" id="save" class="btn btn-primary">Save</a>
+
+<script type="text/javascript">
+\$(function() {
+    $ data = [{"code": p.code, "name": p.name, "ward": p.get_zone()} for p in place.get_all_polling_booths()]
+    var data = $:json_encode(data);
+
+    $ wards = [w.name for w in place.get_wards()] + [w.name for w in place.get_groups()] 
+    var wards = $:json_encode(wards);
+
+    \$('#example').handsontable({
+      data: data,
+      colHeaders: ["Code", "Name", "Ward / Group"], 
+      columns: [{
+        data: "code",
+        readOnly: true,
+      }, {
+        data: "name",
+      }, {
+        data: "ward",
+        type: 'dropdown',
+        source: wards
+      }],
+      contextMenu: false,
+      colWidths: [75, 500, 225]
+    });
+});
+
+\$(function() {
+    \$("a#save").click(function(e) {
+        e.preventDefault();
+
+        handsontable = \$("#example").data("handsontable");
+        console.log(handsontable.getData());
+        \$.ajax({
+            url: window.location.href,
+            data: JSON.stringify({"data": handsontable.getData()}),
+            dataType: "json",
+            type: 'POST',
+            success: function (res) {
+              if (res.result === 'ok') {
+                alert('Data saved');
+              }
+              else {
+                alert('Save error');
+              }
+            },
+            error: function () {
+                alert('Save error');
+            }
+        });
+    });
+});
+</script>

@@ -48,6 +48,11 @@ class Place(web.storage):
     def get_ac(self):
         return Place.from_id(self.ac_id)
 
+    def get_zone(self):
+        w = self.ward_id and Place.from_id(self.ward_id)
+        if w:
+            return w.name
+
     def get_parents(self):
         parent = self.parent
         if self.type == 'STATE' or not parent:
@@ -141,6 +146,33 @@ class Place(web.storage):
         result = get_db().select("places", where="ac_id=$self.id and ward_id is NULL and type='PB'", order="code", vars=locals())
         return [Place(row) for row in result]
 
+    def get_all_polling_booths(self):
+        result = get_db().select("places", where="ac_id=$self.id and type='PB'", order="code", vars=locals())
+        return [Place(row) for row in result]
+
+    def get_wards(self):
+        result = get_db().select("places", where="ac_id=$self.id and type='WARD' and code ~ 'W%' ", order="code", vars=locals())
+        return [Place(row) for row in result]
+
+    def get_groups(self):
+        result = get_db().select("places", where="ac_id=$self.id and type='WARD' and not code ~ 'W%' ", order="code", vars=locals())
+        return [Place(row) for row in result]
+
+    def add_group(self, name, code=None):
+        if not code:
+            groups = self.get_groups()
+            if groups:
+                count = 1 + int(web.numify(max([g.code for g in groups])))
+            else:
+                count = 1
+            code = "G%02d" % count
+            name = "%s - %s" % (code, name)
+        self._add_place(code, name, "WARD")
+
+    def set_ward(self, ward):
+        self.ward_id = ward and ward.id
+        get_db().update("places", ward_id=self.ward_id, where="id=$self.id", vars=locals())
+
     def get_places_text(self):
         return "\n".join(str(p) for p in self.get_places())
 
@@ -187,6 +219,22 @@ class Place(web.storage):
                     db.update("places", name=row.name, where="code=$code AND type=$type AND parent_id=parent_id", vars=row)
                 else:
                     db.insert("places", **row)
+
+    def _add_place(self, code, name, type):
+        row = web.storage(
+            type=type, 
+            code=code, 
+            name=name,
+            state_id=self.state_id,
+            pc_id=self.pc_id,
+            ac_id=self.ac_id,
+            ward_id=self.ward_id,
+            ps_id=self.ps_id,
+            parent_id=self.id)
+
+        # set the parent id in the apprpriate field
+        row[self.type.lower() + "_id"] = self.id
+        get_db().insert("places", **row)
 
     re_place_line = re.compile("([^{}]*) {{(.*)}}")
     def process_place_line(self, line):

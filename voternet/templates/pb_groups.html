@@ -1,0 +1,55 @@
+$def with (place)
+
+$var title: $place.name / Groups
+
+<h4><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span></h4>
+<h1 style="margin-top: 0px;">Polling Booth Groups</h1>
+
+<p>Polling Booths are divided in to groups for ease of managing.</p>
+
+<p>There are two kinds of Polling Booth Groups:
+  <ul>
+    <li>wards - defined by the system and can't be modified</li>
+    <li>groups - added by the coordinators</li>
+  </ul>
+</p>
+<p>
+  The <a href="$place.get_url()/booths">Polling Booths</a> page has provision to assign any polling booth to an existing group/ward.
+</p>
+
+<div class="row" style="background: #f7f7f9; border: 1px solid #e1e1e8; padding-bottom: 20px;">
+  <div class="col-md-6">
+    <h2>Groups</h2>
+    $ groups = place.get_groups()
+    $if groups:
+        <ul class="list-unstyled">
+        $for g in groups:
+            <li class="place" style="border-bottom: 1px solid #ddd; padding: 10px">
+              <h4>
+                <a href="$g.get_url()">$g.name</a> 
+                <small>$len(g.get_places()) PBs</small>
+              </h4>
+            </li>
+        </ul>
+    $else:
+        <em>No groups added yet.</em>
+    <h3>Add New Group</h3>
+    <form method="POST">
+      <input type="text" name="name" value="" placeholder="Enter name of the group" style="width: 300px;"/>
+      <button type="submit" name="action" value="new-group">Add</button>
+    </form>
+  </div>
+  <div class="col-md-6">
+    <h2>Wards</h2>
+    $ wards = place.get_wards()
+    $if wards:
+        <ul class="">
+        $for w in wards:
+            <li class="place">
+              <a href="$w.get_url()">$w.name</a> <small>$len(w.get_places()) PBs</small>
+            </li>
+        </ul>
+    $else:
+        <em>This AC has no wards.</em>
+  </div>
+</div>
