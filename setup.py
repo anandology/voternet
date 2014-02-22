@@ -5,6 +5,9 @@ dependencies = [
     'web.py',
     'psycopg2',
     'markdown',
+    'yaml',
+    'tablib',
+    'xappy',
 ]
 
 setup(
