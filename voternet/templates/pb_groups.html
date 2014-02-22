@@ -43,10 +43,13 @@ $var title: $place.name / Groups
     <h2>Wards</h2>
     $ wards = place.get_wards()
     $if wards:
-        <ul class="">
+        <ul class="list-unstyled">
         $for w in wards:
-            <li class="place">
-              <a href="$w.get_url()">$w.name</a> <small>$len(w.get_places()) PBs</small>
+            <li class="place" style="border-bottom: 1px solid #ddd; padding: 10px">
+              <h4>
+                <a href="$w.get_url()">$w.name</a> 
+                <small>$len(w.get_places()) PBs</small>
+              </h4>
             </li>
         </ul>
     $else:
