@@ -87,8 +87,10 @@ class Place(web.storage):
 
     def _invalidate_object_cache(self):
         cache.invalidate_object_cache(objects=[self] + self.get_parents())
-        cache.invalidate_cache("Place.find", self.code)
-        cache.invalidate_cache("Place.find", code=self.code)
+        # We need the full code here, like AC123/PB123
+        code = self.get_url()[1:] # remove / at the beginning
+        cache.invalidate_cache("Place.find", code)
+        cache.invalidate_cache("Place.find", code=code)
 
     @property
     def type_label(self):
@@ -241,6 +243,8 @@ class Place(web.storage):
         # set the parent id in the apprpriate field
         row[self.type.lower() + "_id"] = self.id
         get_db().insert("places", **row)
+        place = Place(row)
+        place._invalidate_object_cache()
 
     re_place_line = re.compile("([^{}]*) {{(.*)}}")
     def process_place_line(self, line):
