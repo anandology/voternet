@@ -300,6 +300,38 @@ class Place(web.storage):
             " GROUP BY type", vars=locals())
         return dict((row.type, row.count) for row in result)
 
+    @cache.object_memoize(key="volunteer_counts_by_date")
+    def get_volunteer_counts_by_date(self):
+        if self.type == "PB":
+            column = "id"
+        else:
+            column = self.type_column
+        result = get_db().query(
+            "SELECT to_char(added, 'YYYY-MM-DD')::date as date, count(*) as count" +
+            " FROM people, places" +
+            " WHERE people.place_id=places.id AND places.%s=$self.id" % column + 
+            " GROUP BY 1" + 
+            " ORDER BY 1", vars=locals())
+        return result.list()
+
+    def get_volunteer_summary(self):        
+        result = self.get_volunteer_counts_by_date()
+        d = dict((row.date, row.count) for row in result)
+
+        today = datetime.date.today()
+        yesterday = today - datetime.timedelta(days=1)
+        thisweek = self.daterange(today-datetime.timedelta(days=6), today)
+
+        return {
+            "today": d.get(today, 0),
+            "yesterday": d.get(yesterday, 0),
+            "thisweek": sum(d.get(date, 0) for date in thisweek),
+            "total": sum(d.values())
+        }
+
+    def get_volunteer_data_for_graph(self):
+        return self.prepare_data_for_graph(self.get_volunteer_counts_by_date())
+
     @staticmethod
     @cache.memoize(key="Place.find")
     def find(code):
@@ -428,23 +460,27 @@ class Place(web.storage):
             "total": sum(d.values())
         }
 
-    def get_coverage_data_for_graph(self):
+    def prepare_data_for_graph(self, rows):
+        """Expects each row to have date and count fields.
+        """
         today = datetime.date.today()
         yday = today - datetime.timedelta(days=1)
 
-        result = self.get_coverage_counts_by_date() or [web.storage(date=today, count=0)]
+        rows = rows or [web.storage(date=today, count=0)]
 
-        mindate = min(result[0].date, yday)
-        maxdate = max(result[-1].date, today)
+        mindate = min(rows[0].date, yday)
+        maxdate = max(rows[-1].date, today)
 
-        d = dict((row.date, row.count) for row in result)
-
+        d = dict((row.date, row.count) for row in rows)
         x = []
         count = 0
         for date in self.daterange(mindate, maxdate):
             count += d.get(date, 0)
             x.append([time.mktime(date.timetuple()) * 1000, count])
         return x
+
+    def get_coverage_data_for_graph(self):
+        return self.prepare_data_for_graph(self.get_coverage_counts_by_date())
 
     def get_data(self, suffix=""):
         if suffix:
