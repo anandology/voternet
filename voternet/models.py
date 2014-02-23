@@ -309,7 +309,7 @@ class Place(web.storage):
         result = get_db().query(
             "SELECT to_char(added, 'YYYY-MM-DD')::date as date, count(*) as count" +
             " FROM people, places" +
-            " WHERE people.place_id=places.id AND places.%s=$self.id" % column + 
+            " WHERE people.place_id=places.id AND (places.%s=$self.id OR places.id=$self.id)" % column + 
             " GROUP BY 1" + 
             " ORDER BY 1", vars=locals())
         return result.list()
