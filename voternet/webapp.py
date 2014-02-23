@@ -5,7 +5,9 @@ import yaml
 import web
 import json
 import functools
+import datetime
 from cStringIO import StringIO
+import pytz
 
 from models import Place, Person, get_all_coordinators_as_dataset
 from forms import AddPeopleForm
@@ -96,6 +98,15 @@ def render_option(value, label, select_value):
     else:
         return '<option value="%s">%s</option>' % (value, label)
 
+def get_timezone():
+    return pytz.timezone(web.config.get("timezone", "UTC"))
+
+def get_today():
+    return datetime.datetime.now(get_timezone()).today()
+
+def get_yesterday():
+    return get_today() - datetime.timedelta(days=1)
+
 def render_template(name, *args, **kwargs):
     t = getattr(xrender, name)
     return t(*args, **kwargs)
@@ -116,6 +127,8 @@ tglobals = {
     "commify": web.commify,
     "config": web.config,
     "get_site_title": lambda: web.config.get("site_title", "Your Favorite Party"),
+    "get_today": get_today,
+    "get_yesterday": get_yesterday,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),

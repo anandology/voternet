@@ -9,6 +9,7 @@ dependencies = [
     'tablib',
     'xappy',
     'flup',
+    'pytz'
 ]
 
 setup(

@@ -93,80 +93,18 @@ $code:
             </ul>
         </div>
     </div>
+    $if place.type == "PB" and place_readable:    
+        <h4>Add Coverage</h4>
+        <div>
+        $ today = get_today().strftime("%A %b %d")
+        $ yesterday = get_yesterday().strftime("%A %b %d")
 
-
-    $if place.type == "PB" and place_readable:
-        <table class="table table-bordered" style="margin-top: 20px;">
-            <tr>
-                <th>Date</th>
-                <th>#houses visited</th>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-09">February 09</a></td>
-                <td><a href="$place.get_url()/2014-02-09">$len(place.get_coverage('2014-02-09'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-10">February 10</a></td>
-                <td><a href="$place.get_url()/2014-02-10">$len(place.get_coverage('2014-02-10'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-11">February 11</a></td>
-                <td><a href="$place.get_url()/2014-02-11">$len(place.get_coverage('2014-02-11'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-12">February 12</a></td>
-                <td><a href="$place.get_url()/2014-02-12">$len(place.get_coverage('2014-02-12'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-13">February 13</a></td>
-                <td><a href="$place.get_url()/2014-02-13">$len(place.get_coverage('2014-02-13'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-14">February 14</a></td>
-                <td><a href="$place.get_url()/2014-02-14">$len(place.get_coverage('2014-02-14'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-15">February 15</a></td>
-                <td><a href="$place.get_url()/2014-02-15">$len(place.get_coverage('2014-02-15'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-16">February 16</a></td>
-                <td><a href="$place.get_url()/2014-02-16">$len(place.get_coverage('2014-02-16'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-17">February 17</a></td>
-                <td><a href="$place.get_url()/2014-02-17">$len(place.get_coverage('2014-02-17'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-18">February 18</a></td>
-                <td><a href="$place.get_url()/2014-02-18">$len(place.get_coverage('2014-02-18'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-19">February 19</a></td>
-                <td><a href="$place.get_url()/2014-02-19">$len(place.get_coverage('2014-02-19'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-20">February 20</a></td>
-                <td><a href="$place.get_url()/2014-02-20">$len(place.get_coverage('2014-02-20'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-21">February 21</a></td>
-                <td><a href="$place.get_url()/2014-02-21">$len(place.get_coverage('2014-02-21'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-22">February 22</a></td>
-                <td><a href="$place.get_url()/2014-02-22">$len(place.get_coverage('2014-02-22'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-23">February 23</a></td>
-                <td><a href="$place.get_url()/2014-02-23">$len(place.get_coverage('2014-02-23'))</a></td>
-            </tr>
-            <tr>
-                <td><a href="$place.get_url()/2014-02-24">February 24</a></td>
-                <td><a href="$place.get_url()/2014-02-24">$len(place.get_coverage('2014-02-24'))</a></td>
-            </tr>
-
-        </table>
+        <a href="$place.get_url()/$get_today().strftime('%Y-%m-%d')" class="btn btn-default" style="line-height: 1.2;"><strong>For Today</strong><br/><small style="color: #444;">$get_today().strftime("%A %b %d")</small></a>
+        <a href="$place.get_url()/$get_yesterday().strftime('%Y-%m-%d')" class="btn btn-default" style="line-height: 1.2;"><strong>For Yesterday</strong><br/><small style="color: #444;">$get_yesterday().strftime("%A %b %d")</small></a>
+        <a class="btn btn-default" id="coverage-other-date" 
+           data-date-format="yyyy-mm-dd" data-date="$get_today().strftime('%Y-%m-%d')"
+           style="line-height: 1.2;"><strong>Some Other Date?</strong><br/><small style="color: #888;">&nbsp;</small></a>
+        </div>
 
     $if place_readable:
         <h2>Activity</h2>
@@ -249,4 +187,21 @@ $code:
     $:render_template("place_sidebar", place)
   </div>
 </div>
+
+
+<script type="text/javascript">
+var ev_date;
+\$(function() {
+    var now = new Date();
+
+    \$("a#coverage-other-date").datepicker({
+        onRender: function(date) {
+            return date.valueOf() > now.valueOf() ? 'disabled' : '';
+        }
+    }).on("changeDate", function(ev) {
+        var datestr = ev.date.toISOString().slice(0, 10); // take first 10 chars (yyyy-mm-dd)
+        window.location.href = "$place.get_url()/" + datestr;
+    });
+});
+</script>
 
