@@ -16,10 +16,19 @@ How to setup
 
     psql voternet < voternet/schema.sql
 
-* load sample data
+* setup config file
+    
+    cp sample_config.yml config.yml
+    # edit config.yml and make changes as required
 
-    python voternet/initdb.py 
+* load sample data (See places/KA for sample files and required format).
+
+    python voternet/loaddata.py --config config.yml places/KA KA Karnataka
+
+* Add yourself as admin
+
+    python voternet/loaddata.py --config config.yml --add-admin yourname@gmail.com
 
 * run the app
 
-    python votenet/webapp.py
+    python voternet/webapp.py --config config.yml
