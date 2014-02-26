@@ -212,6 +212,10 @@ class Place(web.storage):
         self._invalidate_object_cache()
 
     def set_parent(self, type, parent):
+        if self.get_parent(type) == parent:
+            # nothing to change
+            return
+
         col = self.COLUMN_NAMES[type]
         self[col] = parent and parent.id
         values = {col: self[col]}
@@ -364,6 +368,9 @@ class Place(web.storage):
         result = db.select("places", where="id=$id", vars=locals())
         if result:
             return Place(result[0]) 
+
+    def __eq__(self, other):
+        return self.id is not None and isinstance(other, Place) and self.id == other.id
 
     def __repr__(self):           
         return "<Place: %s>" % dict(self)
