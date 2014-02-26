@@ -16,39 +16,41 @@ How to setup
 
 * clone the repo
 
-    git clone https://github.com/anandology/voternet.git
-    cd voternet
+        git clone https://github.com/anandology/voternet.git
+        cd voternet
 
 * setup virtualenv
 
-    virtualenv . 
-    source bin/activate
+        virtualenv . 
+        source bin/activate
+        # For windows, try the following instead
+        # bin/activate.bat
 
 * install required Python packages
 
-    python setup.py develop
+        python setup.py develop
 
 * create voternet postgres database
 
-    createdb voternet
+        createdb voternet
 
 * create schema
 
-    psql voternet < voternet/schema.sql
+        psql voternet < voternet/schema.sql
 
 * setup config file
     
-    cp sample_config.yml config.yml
-    # edit config.yml and make changes as required
+        cp sample_config.yml config.yml
+        # edit config.yml and make changes as required
 
 * load sample data (See places/KA for sample files and required format).
 
-    python voternet/loaddata.py --config config.yml places/KA KA Karnataka
+        python voternet/loaddata.py --config config.yml places/KA KA Karnataka
 
 * Add yourself as admin
 
-    python voternet/loaddata.py --config config.yml --add-admin yourname@gmail.com
+        python voternet/loaddata.py --config config.yml --add-admin yourname@gmail.com
 
 * run the app
 
-    python voternet/webapp.py --config config.yml
+        python voternet/webapp.py --config config.yml
