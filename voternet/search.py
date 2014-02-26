@@ -1,8 +1,16 @@
-import xappy
+try:
+    import xappy
+except ImportError:
+    xappy = None
+    print "WARNING: unable to import xappy, search functionality will not work."
+
 import models
 from web import config
 
 def search(s, page=0):
+    if not xappy:
+        return 0, []
+
     conn = xappy.SearchConnection(config.search_db)
 
     # disable spell corrector.
