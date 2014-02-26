@@ -30,6 +30,7 @@ urls = (
     "/([\w/]+)/info", "place_info",
     "/([\w/]+)/booths", "pb_list",
     "/([\w/]+)/groups", "pb_groups",
+    "/([\w/]+)/regions", "regions",
     "/([\w/]+)/add-people", "add_people",
     "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
@@ -257,6 +258,50 @@ class pb_groups:
             name = "%s - %s" % (i.code, i.name)
             group.update_name(name)
         raise web.seeother(place.get_url() + "/groups")
+
+
+class regions:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        if place.type != "STATE":
+            raise web.notfound()
+        return render.regions(place)
+
+    @placify(roles=['admin', 'coordinator'])
+    def POST(self, place):
+        if place.type != "STATE":
+            raise web.notfound()
+
+        i = web.input(action="")
+        print i.action
+
+        if i.action == "new-region":
+            place.add_subplace(i.name, "REGION")
+        elif i.action == "update-region":
+            p = place._find_subplace(i.code)
+            name = "%s - %s" % (i.code, i.name)
+            p.update_name(name)
+        elif i.action == "update-pcs":
+            web.header("content-type", "application/json")            
+            data = json.loads(i.data)
+            return self.POST_update_pcs(place, data)
+        raise web.seeother(place.get_url() + "/regions")
+
+    def POST_update_pcs(self, place, data):
+        for row in data:
+            code = place.code + "/" + row['code']
+            pc = Place.find(code)
+
+            if row['region'] and row['region'].strip():
+                # Extract te group code from its name
+                code = place.code + "/" + row['region'].split("-")[0].strip()
+                region = Place.find(code)
+                if pc.region_id != region.id:
+                    pc.set_parent("REGION", region)
+            else:
+                pc.set_parent("REGION", None)
+        web.header("content-type", "application/json")
+        return '{"result": "ok"}'
 
 class add_people:
     @placify(roles=['admin', 'coordinator'])

@@ -17,20 +17,32 @@ def normalize(name):
 class Place(web.storage):
     TYPE_LABELS = dict(
         STATE="State",
+        REGION="Region",
         PC="Parliamentary Constituency",
         AC="Assembly Constituency",
         WARD="Ward",
         PS="Polling Station",
         PB="Polling Booth")
 
-    TYPES = ['STATE', 'PC', 'AC', 'WARD', 'PB']
+    TYPES = ['STATE', 'REGION', 'PC', 'AC', 'WARD', 'PB']
+
+    CODE_PREFIXES = {
+        "STATE": "",
+        "REGION": "R",
+        "PC": "PC",
+        "AC": "AC",
+        "WARD": "W",
+        "PB": "PB"
+    }
+
+    COLUMN_NAMES = dict(STATE="state_id", REGION="region_id", PC="pc_id", AC="ac_id", WARD="ward_id")
 
     @property
     def url(self):
         return self.get_url()
 
     def get_url(self):
-        if self.type in ['STATE', 'PC', 'AC']:            
+        if self.type in ['STATE', 'REGION', 'PC', 'AC']:
             return "/" + self.code
         else:
             return self.get_ac().url + "/" + self.code
@@ -44,6 +56,10 @@ class Place(web.storage):
             else:
                 parent_id = self[self.parent_column]
             return parent_id and Place.from_id(parent_id)
+
+    def get_parent(self, type):
+        col = type.lower() + "_id"
+        return self[col] and Place.from_id(self[col])
 
     def get_ac(self):
         return Place.from_id(self.ac_id)
@@ -136,12 +152,20 @@ class Place(web.storage):
         index = self.TYPES.index(self.type)
         return [web.storage(code=type, label=self.TYPE_LABELS[type]) for type in self.TYPES[index:]]
 
-    def get_places(self):
+    def get_places(self, type=None):
         db = get_db()
         id = self.id
-        subtype = self.subtype
+        type = type or self.subtype
         column = self.type_column
-        result = db.select("places", where="%s=$id and type=$subtype" % column, order="code", vars=locals())
+        result = db.select("places", where="%s=$id and type=$type" % column, order="code", vars=locals())
+        return [Place(row) for row in result]
+
+    def get_unassigned_places(self, type, parent_type):
+        """Returns places of given type inside this subtree, with out parent of parent_type.
+        """
+        col = type.lower() + "_id"
+        where = "%s=$self.id and %s is NULL and type=$type" % (self.type_column, col)
+        result = get_db().select("places", where=where, order="code", vars=locals())
         return [Place(row) for row in result]
 
     def get_unassigned_polling_booths(self):
@@ -171,10 +195,31 @@ class Place(web.storage):
             name = "%s - %s" % (code, name)
         self._add_place(code, name, "WARD")
 
+    def add_subplace(self, name, type, code=None):
+        if not code:
+            places = self.get_places(type=type)
+            if places:
+                count = 1 + int(web.numify(max([p.code for p in places])))
+            else:
+                count = 1
+            code = "{0}{1:02d}".format(self.CODE_PREFIXES[type], count)
+            name = "%s - %s" % (code, name)
+        self._add_place(code, name, type)
+
     def set_ward(self, ward):
         self.ward_id = ward and ward.id
         get_db().update("places", ward_id=self.ward_id, where="id=$self.id", vars=locals())
         self._invalidate_object_cache()
+
+    def set_parent(self, type, parent):
+        col = self.COLUMN_NAMES[type]
+        self[col] = parent and parent.id
+        values = {col: self[col]}
+        where = "id=$self.id OR {0}=$self.id".format(self.type_column)
+        get_db().update("places", where=where, vars=locals(), **values)
+        places = [Place(row) for row in get_db().select("places", where=where, vars=locals())]
+        for p in places:
+            p._invalidate_object_cache()
 
     def update_name(self, name):
         self.name = name
@@ -187,53 +232,13 @@ class Place(web.storage):
     def __str__(self):
         return "%s {{ %s }}" % (self.name, self.code)
 
-    def add_places(self, places_text):
-        lines = places_text.strip().splitlines()
-        rows = [self.process_place_line(line) for line in lines]
-
-        # We may need to generate codes for new entries. 
-        # We should make sure the generated code should be already used.
-        existing_codes = set(place.code for place in self.get_places())
-        codeset = set(existing_codes)
-
-        def generate_code(name):
-            code = normalize(name)[:20]
-            count = 1
-            while code in codeset:
-                code = normalize(name)[:20] + str(count)
-                count += 1
-            codeset.add(code)
-            print "generate_code", repr(name), repr(code)
-            return code
-
-        db = get_db()
-        with db.transaction():
-            for row in rows:
-                if row.code is None:
-                    row.code = generate_code(row.name)
-                row.type = self.subtype
-                row.parent_id = self.id
-
-                row.state_id = self.state_id
-                row.pc_id = self.pc_id
-                row.ac_id = self.ac_id
-                row.ward_id = self.ward_id
-                row.ps_id = self.ps_id
-
-                # sent the parent id in the apprpriate field
-                row[self.type.lower() + "_id"] = self.id
-
-                if row.code in existing_codes:
-                    db.update("places", name=row.name, where="code=$code AND type=$type AND parent_id=parent_id", vars=row)
-                else:
-                    db.insert("places", **row)
-
     def _add_place(self, code, name, type):
         row = web.storage(
             type=type, 
             code=code, 
             name=name,
             state_id=self.state_id,
+            region_id=self.region_id,
             pc_id=self.pc_id,
             ac_id=self.ac_id,
             ward_id=self.ward_id,
@@ -242,7 +247,7 @@ class Place(web.storage):
 
         # set the parent id in the apprpriate field
         row[self.type.lower() + "_id"] = self.id
-        get_db().insert("places", **row)
+        row['id'] = get_db().insert("places", **row)
         place = Place(row)
         place._invalidate_object_cache()
 
@@ -343,7 +348,7 @@ class Place(web.storage):
                 place = place and place._find_subplace(p)
             return place
         else:
-            result = db.select("places", where="code=$code AND type IN ('STATE', 'PC', 'AC')", vars=locals())
+            result = db.select("places", where="code=$code AND type IN ('STATE', 'REGION', 'PC', 'AC')", vars=locals())
         if result:
             return Place(result[0])
 

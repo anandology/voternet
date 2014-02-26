@@ -1,0 +1,131 @@
+$def with (place)
+
+$var title: $place.name / Regions
+
+<h4><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span></h4>
+<h1 style="margin-top: 0px;">Regions</h1>
+
+<p>Parliamenratry Constituencies are divided in to groups for ease of managing.</p>
+
+<div class="row" style="background: #f7f7f9; border: 1px solid #e1e1e8; padding-bottom: 20px;">
+  <div class="col-md-6">
+    <h2>Regions</h2>
+    $ regions = place.get_places(type="REGION")
+    $if regions:
+        <ul class="list-unstyled">
+        $for region in regions:
+            <li class="place" style="border-bottom: 1px solid #ddd; padding: 10px">
+              <h4>
+                <a href="$region.get_url()">$region.name</a> 
+                <small>$len(region.get_places(type="PC")) PCs</small>
+                <a href="javascript;" class="edit-region-link pull-right">Edit</a>
+              </h4>
+              <form method="POST" class="edit-region-form" style="display: none;">
+                <h4 style="display:inline;">$region.code</h4> 
+                <input type="hidden" name="code" value="$region.code"/>
+                <input type="hidden" name="action" value="update-region"/>
+                <input type="text" name="name" value="$region.name.split('-', 1)[-1]" style="width: 300px;"/>
+                <button class="btn btn-primary">Save</button>
+                <a href="javascript;" class="btn btn-danger edit-region-cancel">Cancel</a>
+              </form>
+            </li>
+        </ul>
+    $else:
+        <em>No regions added yet.</em>
+    <h3>Add New Region</h3>
+    <form method="POST">
+      <h4 style="color: #aaa; display: inline;">RXX - </h4><input type="text" name="name" value="" placeholder="Enter name of the region" style="width: 300px; font-size: 18px;"/>
+      <button type="submit" name="action" value="new-region" style="font-size: 18px;">Add</button>
+      <br/>
+      <small>Code for the new region will be assigned automatically.</small>
+    </form>
+  </div>
+  <div class="col-md-6">
+    <h2>Parliamentary Constituencies</h2>
+    <div id="example">
+    </div>
+
+    <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation" style="background: #eee; min-height: 0px; padding: 10px 0px; border-top: 1px solid #ddd;">
+      <div class="container">
+        <a href="javascript;" id="save" class="btn btn-primary">Save</a>
+        <a href="$place.get_url()" id="cancel" class="btn btn-danger pull-right">Cancel</a>
+      </div>
+    </nav>
+
+    <style type="text/css">
+        body { padding-bottom: 70px; }
+        .handsontable th, .handsontable td {
+            padding: 5px;
+        }
+    </style>
+
+    <script type="text/javascript">
+    \$(function() {
+        $ data = [{"code": p.code, "name": p.name, "region": p.get_parent('REGION') and p.get_parent('REGION').name} for p in place.get_places(type="PC")]
+        var data = $:json_encode(data);
+
+        $ regions = [r.name for r in place.get_places(type="REGION")] 
+        var regions = $:json_encode(regions);
+
+        \$('#example').handsontable({
+          data: data,
+          colHeaders: ["Code", "Name", "Region"], 
+          columns: [{
+            data: "code",
+            readOnly: true,
+          }, {
+            data: "name",
+            readOnly: true,        
+          }, {
+            data: "region",
+            type: 'dropdown',
+            source: regions
+          }],
+          contextMenu: false,
+          colWidths: [75, 200, 150]
+        });
+    });
+
+    \$(function() {
+        \$("a#save").click(function(e) {
+            e.preventDefault();
+
+            handsontable = \$("#example").data("handsontable");
+            console.log(handsontable.getData());
+            \$.ajax({
+                url: window.location.href,
+                data: {action: "update-pcs", data: JSON.stringify(handsontable.getData())},
+                dataType: "json",
+                type: 'POST',
+                success: function (res) {
+                  if (res.result === 'ok') {
+                    alert('Data saved');
+                  }
+                  else {
+                    alert('Save error');
+                  }
+                },
+                error: function () {
+                    alert('Save error');
+                }
+            });
+        });
+    });
+    </script>
+  </div>
+</div>
+
+<script type="text/javascript">
+\$(function() {
+  \$(".edit-region-link").click(function() {
+    \$(this).closest("h4").hide();
+    \$(this).closest("li").find(".edit-region-form").show();
+    return false;
+  });
+  \$(".edit-region-cancel").click(function() {
+    \$(this).closest("li").find("h4:first").show();
+    \$(this).closest("li").find(".edit-region-form").hide();
+    return false;
+  });
+});
+</script>
