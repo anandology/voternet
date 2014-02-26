@@ -4,6 +4,13 @@ GOOGLELOGIN_CLIENT_SECRET: "qdrzP3VmZau37VxWj2sPnCNQ"
 GOOGLELOGIN_SCOPE: "profile email"
 GOOGLELOGIN_REDIRECT_URI: "http://localhost:8080/login/oauth2callback"
 
+# change the DB settings if your database settings are different
+db_parameters:
+    dbn: "postgres"
+    db: "voternet"
+    #pw: "secret"
+    #host: "db-server"
+
 # Specify your state here
 state = "KA"
 
@@ -13,12 +20,15 @@ site_title = "Your Favorite Party"
 ## Optionally you can specify a vounteer signup URL to display on the permission denied page.
 # volunteer_signup_url 
 
+# Generate a new random secret key when you are deploying in production.
 secret_key: "uzVzOlbbYyjOvGfSawkR"
+
 error_email_recipients:
-    - anandology@gmail.com
+    - youremail@example.com
+
 from_address: 
-    - noreply@cms.appvol.in
+    - noreply@example.com
 
 search_db: xappy
-google_analytics_id: "UA-48110865-1"
+google_analytics_id: "XXXX"
 
