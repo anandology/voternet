@@ -1,0 +1,28 @@
+PC01	Chikkodi
+PC02	Belgaum
+PC03	Bagalkot
+PC04	Bijapur
+PC05	Gulbarga
+PC06	Raichur
+PC07	Bidar
+PC08	Koppal
+PC09	Bellary
+PC10	Haveri
+PC11	Dharwad
+PC12	Uttara Kannada
+PC13	Davanagere
+PC14	Shimoga
+PC15	Udupi Chikmagalur
+PC16	Hassan
+PC17	Dakshina Kannada
+PC18	Chitradurga
+PC19	Tumkur
+PC20	Mandya
+PC21	Mysore
+PC22	Chamarajanagar
+PC23	Bangalore Rural
+PC24	Bangalore North
+PC25	Bangalore Central
+PC26	Bangalore South
+PC27	Chikballapur
+PC28	Kolar

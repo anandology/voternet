@@ -1,0 +1,224 @@
+PC01	AC001	Nippani
+PC01	AC002	Chikkodi-Sadalga
+PC01	AC003	Athni
+PC01	AC004	Kagawad
+PC01	AC005	Kudachi (SC)
+PC01	AC006	Raybag (SC)
+PC01	AC007	Hukeri
+PC01	AC010	Yemkanmardi (ST)
+PC02	AC008	Arabhavi
+PC02	AC009	Gokak
+PC02	AC011	Belgaum Uttar
+PC02	AC012	Belgaum Dakshin
+PC02	AC013	Belgaum Rural
+PC02	AC016	Bailhongal
+PC02	AC017	Saundatti Yellamma
+PC02	AC018	Ramdurg
+PC03	AC019	Mudhol (SC)
+PC03	AC020	Terdal
+PC03	AC021	Jamkhandi
+PC03	AC022	Bilgi
+PC03	AC023	Badami
+PC03	AC024	Bagalkot
+PC03	AC025	Hungund
+PC03	AC068	Nargund
+PC04	AC026	Muddebihal
+PC04	AC027	Devar Hippargi
+PC04	AC028	Basavana Bagevadi
+PC04	AC029	Babaleshwar
+PC04	AC030	Bijapur City
+PC04	AC031	Nagthan (SC)
+PC04	AC032	Indi
+PC04	AC033	Sindgi
+PC05	AC034	Afzalpur
+PC05	AC035	Jevargi
+PC05	AC039	Gurmitkal
+PC05	AC040	Chitapur (SC)
+PC05	AC041	Sedam
+PC05	AC043	Gulbarga Rural (SC)
+PC05	AC044	Gulbarga Dakshin
+PC05	AC045	Gulbarga Uttar
+PC06	AC036	Shorapur (ST)
+PC06	AC037	Shahpur
+PC06	AC038	Yadgir
+PC06	AC053	Raichur Rural (ST)
+PC06	AC054	Raichur
+PC06	AC055	Manvi (ST)
+PC06	AC056	Devadurga (ST)
+PC06	AC057	Lingasugur (SC)
+PC07	AC042	Chincholi (ST)
+PC07	AC046	Aland
+PC07	AC047	Basavakalyan
+PC07	AC048	Humnabad
+PC07	AC049	Bidar South
+PC07	AC050	Bidar
+PC07	AC051	Bhalki
+PC07	AC052	Aurad (SC)
+PC08	AC058	Sindhanur
+PC08	AC059	Maski (ST)
+PC08	AC060	Kushtagi
+PC08	AC061	Kanakagiri (SC)
+PC08	AC062	Gangavathi
+PC08	AC063	Yelburga
+PC08	AC064	Koppal
+PC08	AC092	Siruguppa (ST)
+PC09	AC088	Hadagalli (SC)
+PC09	AC089	Hagaribommanahalli (SC)
+PC09	AC090	Vijayanagara
+PC09	AC091	Kampli (ST)
+PC09	AC093	Bellary (ST)
+PC09	AC094	Bellary City
+PC09	AC095	Sandur (ST)
+PC09	AC096	Kudligi (ST)
+PC10	AC065	Shirahatti (SC)
+PC10	AC066	Gadag
+PC10	AC067	Ron
+PC10	AC082	Hanagal
+PC10	AC084	Haveri (SC)
+PC10	AC085	Byadagi
+PC10	AC086	Hirekerur
+PC10	AC087	Ranebennuru
+PC11	AC069	Navalgund
+PC11	AC070	Kundgol
+PC11	AC071	Dharwad
+PC11	AC072	Hubli-Dharwad-East (SC)
+PC11	AC073	Hubli-Dharwad-Central
+PC11	AC074	Hubli-Dharwad-West
+PC11	AC075	Kalghatgi
+PC11	AC083	Shiggaon
+PC12	AC014	Khanapur
+PC12	AC015	Kittur
+PC12	AC076	Haliyal
+PC12	AC077	Karwar
+PC12	AC078	Kumta
+PC12	AC079	Bhatkal
+PC12	AC080	Sirsi
+PC12	AC081	Yellapur
+PC13	AC103	Jagalur (ST)
+PC13	AC104	Harapanahalli
+PC13	AC105	Harihar
+PC13	AC106	Davanagere North
+PC13	AC107	Davanagere South
+PC13	AC108	Mayakonda (SC)
+PC13	AC109	Channagiri
+PC13	AC110	Honnali
+PC14	AC111	Shimoga Rural (SC)
+PC14	AC112	Bhadravati
+PC14	AC113	Shimoga
+PC14	AC114	Tirthahalli
+PC14	AC115	Shikaripur
+PC14	AC116	Sorab
+PC14	AC117	Sagar
+PC14	AC118	Byndoor
+PC15	AC119	Kundapura
+PC15	AC120	Udupi
+PC15	AC121	Kapu
+PC15	AC122	Karkal
+PC15	AC123	Sringeri
+PC15	AC124	Mudigere (SC)
+PC15	AC125	Chikmagalur
+PC15	AC126	Tarikere
+PC16	AC127	Kadur
+PC16	AC193	Shravanabelagola
+PC16	AC194	Arsikere
+PC16	AC195	Belur
+PC16	AC196	Hassan
+PC16	AC197	Holenarasipur
+PC16	AC198	Arkalgud
+PC16	AC199	Sakleshpur (SC)
+PC17	AC200	Belthangady
+PC17	AC201	Moodabidri
+PC17	AC202	Mangalore City North
+PC17	AC203	Mangalore City South
+PC17	AC204	Mangalore
+PC17	AC205	Bantval
+PC17	AC206	Puttur
+PC17	AC207	Sullia (SC)
+PC18	AC097	Molakalmuru (ST)
+PC18	AC098	Challakere (ST)
+PC18	AC099	Chitradurga
+PC18	AC100	Hiriyur
+PC18	AC101	Hosadurga
+PC18	AC102	Holalkere (SC)
+PC18	AC136	Sira
+PC18	AC137	Pavagada
+PC19	AC128	Chiknayakanhalli
+PC19	AC129	Tiptur
+PC19	AC130	Turuvekere
+PC19	AC132	Tumkur City
+PC19	AC133	Tumkur Rural
+PC19	AC134	Koratagere (SC)
+PC19	AC135	Gubbi
+PC19	AC138	Madhugiri
+PC20	AC186	Malavalli (SC)
+PC20	AC187	Maddur
+PC20	AC188	Melukote
+PC20	AC189	Mandya
+PC20	AC190	Shrirangapattana
+PC20	AC191	Nagamangala
+PC20	AC192	Krishnarajpet
+PC20	AC211	Krishnarajanagar
+PC21	AC208	Madikeri
+PC21	AC209	Virajpet
+PC21	AC210	Piriyapatna
+PC21	AC212	Hunsur
+PC21	AC215	Chamundeshwari
+PC21	AC216	Krishnaraja
+PC21	AC217	Chamaraja
+PC21	AC218	Narasimharaja
+PC22	AC213	Heggadadevankote (ST)
+PC22	AC214	Nanjangud (SC)
+PC22	AC219	Varuna
+PC22	AC220	T.Narasipur (SC)
+PC22	AC221	Hanur
+PC22	AC222	Kollegal (SC)
+PC22	AC223	Chamarajanagar
+PC22	AC224	Gundlupet
+PC23	AC131	Kunigal
+PC23	AC154	Rajarajeshwarinagar
+PC23	AC176	Bangalore South
+PC23	AC177	Anekal (SC)
+PC23	AC182	Magadi
+PC23	AC183	Ramanagaram
+PC23	AC184	Kanakapura
+PC23	AC185	Channapatna
+PC24	AC151	K.R.Pura
+PC24	AC152	Byatarayanapura
+PC24	AC153	Yeshvanthapura
+PC24	AC155	Dasarahalli
+PC24	AC156	Mahalakshmi Layout
+PC24	AC157	Malleshwaram
+PC24	AC158	Hebbal
+PC24	AC159	Pulakeshinagar (SC)
+PC25	AC160	Sarvagnanagar
+PC25	AC161	C.V. Raman Nagar (SC)
+PC25	AC162	Shivajinagar
+PC25	AC163	Shanti Nagar
+PC25	AC164	Gandhi Nagar
+PC25	AC165	Rajaji Nagar
+PC25	AC168	Chamrajpet
+PC25	AC174	Mahadevapura (SC)
+PC26	AC166	Govindraj Nagar
+PC26	AC167	Vijay Nagar
+PC26	AC169	Chickpet
+PC26	AC170	Basavanagudi
+PC26	AC171	Padmanaba Nagar
+PC26	AC172	B.T.M. Layout
+PC26	AC173	Jayanagar
+PC26	AC175	Bommanahalli
+PC27	AC139	Gauribidanur
+PC27	AC140	Bagepalli
+PC27	AC141	Chikkballapur
+PC27	AC143	Chintamani
+PC27	AC150	Yelahanka
+PC27	AC178	Hosakote
+PC27	AC179	Devanahalli (SC)
+PC27	AC180	Dod Ballapur
+PC27	AC181	Nelamangala (SC)
+PC28	AC142	Sidlaghatta
+PC28	AC144	Srinivaspura
+PC28	AC145	Mulbagal (SC)
+PC28	AC146	Kolar Gold Fields (SC)
+PC28	AC147	Bangarapet (SC)
+PC28	AC148	Kolar
+PC28	AC149	Malur

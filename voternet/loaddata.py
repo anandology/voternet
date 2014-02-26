@@ -37,7 +37,7 @@ def get_ward(ac_id, code):
 
 def add_acs(state, dir):
     with db.transaction():
-        for pc, ac, name in read_csv(dir + "/ac.csv"):
+        for pc, ac, name in read_csv(dir + "/ac.txt"):
             name = ac + " - " + name
             if not db.select("places", where="type='AC' AND state_id=$state.id AND code=$ac", vars=locals()):
                 parent = get_pc(state.id, pc)
@@ -45,7 +45,7 @@ def add_acs(state, dir):
 
 def add_pcs(state, dir):
     with db.transaction():
-        for code, name in read_csv(dir + "/pc.csv"):
+        for code, name in read_csv(dir + "/pc.txt"):
             name = code + " - " + name
             if not db.select("places", where="type='PC' AND state_id=$state.id AND code=$code", vars=locals()):
                 db.insert("places", name=name, type="PC", code=code, parent_id=state.id, state_id=state.id)
@@ -66,7 +66,7 @@ def add_wards(state, dir):
 
 def add_polling_booths(state, dir):
     with db.transaction():
-        for ac_code, code, name in read_csv(dir + "/polling_booths.csv"):
+        for ac_code, code, name in read_csv(dir + "/polling_booths.txt"):
             print "add_polling_booths", state.id, ac_code, code
             name = code + " - " + name
             ac = get_ac(state.id, ac_code)
@@ -75,12 +75,26 @@ def add_polling_booths(state, dir):
             ward_id = None
 
             if not db.select("places", where="type='PB' AND ac_id=$ac_id AND code=$code", vars=locals()):
-                db.insert("places", name=name, type="PB", code=code, 
+                lazy_insert("places", name=name, type="PB", code=code, 
                     parent_id=ac_id,
                     state_id=state.id,
                     pc_id=pc_id,
                     ac_id=ac_id,
                     ward_id=ward_id)
+        commit_lazy_inserts()
+
+_inserts = {}
+def lazy_insert(table, **row):
+    rows = _inserts.setdefault(table, [])
+    rows.append(row)
+    if len(rows) >= 1000:
+        commit_lazy_inserts()
+
+def commit_lazy_inserts():
+    for table, rows in _inserts.items():
+        if rows:
+            db.multiple_insert(table, rows)
+            _inserts[table] = []
 
 def add_state(code, name):
     if not db.select("places", where="type='STATE' AND code=$name", vars=locals()):
@@ -89,7 +103,7 @@ def add_state(code, name):
     return Place.find(code)
 
 def read_csv(filename):
-    return [[c.strip() for c in row] for row in csv.reader(open(filename))]
+    return [[c.strip() for c in row] for row in csv.reader(open(filename), delimiter='\t')]
 
 def main():
     import sys
