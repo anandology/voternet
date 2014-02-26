@@ -5,8 +5,28 @@ System to manage volunteers for election campaign, from state to polling booth l
 
 Currently designed to work with Karnataka.
 
+System Requirements
+===================
+
+* PostgreSQL
+* Python 2.6+
+
 How to setup
 ============
+
+* clone the repo
+
+    git clone https://github.com/anandology/voternet.git
+    cd voternet
+
+* setup virtualenv
+
+    virtualenv . 
+    source bin/activate
+
+* install required Python packages
+
+    python setup.py develop
 
 * create voternet postgres database
 
