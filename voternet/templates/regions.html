@@ -64,7 +64,7 @@ $var title: $place.name / Regions
         $ data = [{"code": p.code, "name": p.name, "region": p.get_parent('REGION') and p.get_parent('REGION').name} for p in place.get_places(type="PC")]
         var data = $:json_encode(data);
 
-        $ regions = [r.name for r in place.get_places(type="REGION")] 
+        $ regions = [r.name for r in place.get_places(type="REGION")] + [""]
         var regions = $:json_encode(regions);
 
         \$('#example').handsontable({
