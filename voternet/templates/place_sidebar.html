@@ -32,15 +32,17 @@ $ place_readable = place.writable_by(user, roles=['admin', 'coordinator', 'volun
 $if place.type != 'STATE':
     <section>
         $for p in place.get_parents():
-            <div class="header">
-                <a href="$p.get_url()">$p.name</a><br><small>$p.type_label</small>
-            </div>
+            $if p:
+                <div class="header">
+                    <a href="$p.get_url()">$p.name</a><br><small>$p.type_label</small>
+                </div>
         <div class="header"><strong>$plural(place.type_label)</strong></div>
         <ul class="list-unstyled parents section-body" style="padding: 10px;">
-            $for p in place.parent.get_places():
-                $if p.id == place.id:
-                    <li><strong>$p.name</strong></li>
-                $else:
-                    <li><a href="$p.get_url()">$p.name</a></li>
+            $if place.parent:
+                $for p in place.parent.get_places():
+                    $if p.id == place.id:
+                        <li><strong>$p.name</strong></li>
+                    $else:
+                        <li><a href="$p.get_url()">$p.name</a></li>
         </ul>
     </section>
