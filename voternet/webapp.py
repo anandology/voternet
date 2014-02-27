@@ -535,8 +535,18 @@ def check_config():
         sys.argv = sys.argv[:index] + sys.argv[index+2:]
         load_config(configfile)
 
+def open_shell():
+    from code import InteractiveConsole
+    console = InteractiveConsole()
+    console.push("import voternet")
+    console.push("from voternet import models")
+    console.interact()
+
 def main():
     check_config()
+    if "--shell" in sys.argv:
+        return open_shell()
+
     if web.config.get('error_email_recipients'):
         app.internalerror = web.emailerrors(
             web.config.error_email_recipients, 
