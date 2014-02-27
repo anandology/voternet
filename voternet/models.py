@@ -163,7 +163,7 @@ class Place(web.storage):
     def get_unassigned_places(self, type, parent_type):
         """Returns places of given type inside this subtree, with out parent of parent_type.
         """
-        col = type.lower() + "_id"
+        col = parent_type.lower() + "_id"
         where = "%s=$self.id and %s is NULL and type=$type" % (self.type_column, col)
         result = get_db().select("places", where=where, order="code", vars=locals())
         return [Place(row) for row in result]
