@@ -42,11 +42,8 @@ class Place(web.storage):
         return self.get_url()
 
     def get_url(self):
-        if self.type in ['STATE', 'REGION', 'PC', 'AC']:
-            return "/" + self.code
-        else:
-            return self.get_ac().url + "/" + self.code
-
+        return "/" + self.key
+        
     @property
     def parent(self):
         if self.type != 'STATE':
@@ -103,10 +100,11 @@ class Place(web.storage):
 
     def _invalidate_object_cache(self):
         cache.invalidate_object_cache(objects=[self] + self.get_parents())
-        # We need the full code here, like AC123/PB123
         code = self.get_url()[1:] # remove / at the beginning
         cache.invalidate_cache("Place.find", code)
         cache.invalidate_cache("Place.find", code=code)
+        cache.invalidate_cache("Place.from_id", self.id)
+        cache.invalidate_cache("Place.from_id", id=self.id)
 
     @property
     def type_label(self):
@@ -192,8 +190,9 @@ class Place(web.storage):
             else:
                 count = 1
             code = "G%02d" % count
+            key = self.key + "/" + code
             name = "%s - %s" % (code, name)
-        self._add_place(code, name, "WARD")
+        self._add_place(key, code, name, "WARD")
 
     def add_subplace(self, name, type, code=None):
         if not code:
@@ -203,8 +202,9 @@ class Place(web.storage):
             else:
                 count = 1
             code = "{0}{1:02d}".format(self.CODE_PREFIXES[type], count)
+            key = self.key + "/" + code
             name = "%s - %s" % (code, name)
-        self._add_place(code, name, type)
+        self._add_place(key, code, name, type)
 
     def set_ward(self, ward):
         self.ward_id = ward and ward.id
@@ -236,9 +236,10 @@ class Place(web.storage):
     def __str__(self):
         return "%s {{ %s }}" % (self.name, self.code)
 
-    def _add_place(self, code, name, type):
+    def _add_place(self, key, code, name, type):
         row = web.storage(
             type=type, 
+            key=key,
             code=code, 
             name=name,
             state_id=self.state_id,
@@ -343,16 +344,9 @@ class Place(web.storage):
 
     @staticmethod
     @cache.memoize(key="Place.find")
-    def find(code):
-        db = get_db()
-        if "/" in code:
-            parts = code.split("/")
-            place = Place.find(parts[0])
-            for p in parts[1:]:
-                place = place and place._find_subplace(p)
-            return place
-        else:
-            result = db.select("places", where="code=$code AND type IN ('STATE', 'REGION', 'PC', 'AC')", vars=locals())
+    def find(key):
+        print "Place.find", key
+        result = get_db().select("places", where="key=$key", vars=locals())
         if result:
             return Place(result[0])
 
@@ -362,7 +356,7 @@ class Place(web.storage):
         return [Place(row) for row in db.select("places")]
 
     @staticmethod
-    @cache.memoize
+    @cache.memoize(key="Place.from_id")
     def from_id(id):
         db = get_db()
         result = db.select("places", where="id=$id", vars=locals())
