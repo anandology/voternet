@@ -37,7 +37,7 @@ urls = (
     "/([\w/]+)/coordinators.xls", "download_coordinators",
     "/([\w/]+)/activity", "activity",
     "/([\w/]+)", "place",
-    "/(AC\d+/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
+    "/(.*/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
 )
 
 app = web.application(urls, globals())
