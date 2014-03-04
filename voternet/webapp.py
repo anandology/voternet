@@ -21,10 +21,10 @@ urls = (
     "/logout", "logout",
     "/login/oauth2callback", "oauth2callback",
     "/sudo", "sudo",
-    "/users", "users",
     "/debug", "debug",
     "/search", "do_search",    
     "/download/(.*)", "download",
+    "/([A-Z][A-Z])/users", "users",    
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
@@ -188,7 +188,7 @@ class edit_place:
             raise web.notfound()
         elif not place.writable_by(account.get_current_user(), roles=['admin']):
             # only admins can edit places
-            raise web.seeother("/users")
+            raise web.seeother(place.url + "/users")
         i = web.input(places="")
         place.add_places(i.places)
         raise web.seeother(place.url)
@@ -320,10 +320,11 @@ class add_people:
             return render.add_people(place, form)
 
 class users:
-    def GET(self):
-        i = web.input(action="")
-        place = Place.find(key=get_state())
+    def GET(self, key):
+        place = Place.find(key=key)
+        self.check_write_access(place)
 
+        i = web.input(action="")
         form = AddPeopleForm()
         if i.action == "add":
             return render.add_people(place, form, add_users=True)
@@ -332,18 +333,25 @@ class users:
             users = place.get_people(roles)
             return render.users(place, users)
 
-    def POST(self):
-        place = Place.find(key=get_state())
+    def check_write_access(self, place):
+        user = account.get_current_user()    
+        if not place.writable_by(user):
+            raise web.ok(render.access_restricted())
+
+    def POST(self, key):
+        place = Place.find(key=key)
+        self.check_write_access(place)
+
         if not place:
             raise web.notfound()
         elif not place.writable_by(account.get_current_user()):
-            raise web.seeother("/users")
+            raise web.seeother(place.url + "/users")
 
         i = web.input()
         form = AddPeopleForm()
         if form.validates(i):
             place.add_volunteer(i.name.strip(), i.email.strip(), i.phone.strip(), i.voterid.strip(), i.role.strip())
-            raise web.redirect("/users")
+            raise web.redirect(place.url + "/users")
         else:
             return render.add_people(place, form, add_users=True)
 
@@ -426,8 +434,8 @@ class links:
 class sudo:
     def GET(self):
         user = account.get_current_user()
-        if not user or user.role != 'admin':
-            return render.permission_denied()
+        if not user or user.email not in web.config.get('super_admins', []):
+            return render.access_restricted()
 
         i = web.input(email=None)
         if i.email:

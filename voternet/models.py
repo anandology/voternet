@@ -370,6 +370,10 @@ class Place(web.storage):
         return "<Place: %s>" % dict(self)
 
     def writable_by(self, user, roles=['coordinator', 'admin']):
+        # super admins can write to any page.
+        if user.email in web.config.get('super_admins', []):
+            return True
+
         place_ids = [self.id, self.state_id, self.pc_id, self.ac_id, self.ward_id]
         result = get_db().query("SELECT * FROM people" +
             " WHERE lower(email)=lower($user.email)" +
