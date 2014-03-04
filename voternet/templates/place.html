@@ -221,7 +221,10 @@ var ev_date;
             return date.valueOf() > now.valueOf() ? 'disabled' : '';
         }
     }).on("changeDate", function(ev) {
-        var datestr = ev.date.toISOString().slice(0, 10); // take first 10 chars (yyyy-mm-dd)
+        var d = ev.date;
+        // Javascript sucks!
+        // This is the shortest I could get to format date as yyyy-mm-dd
+        var datestr = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())).toISOString().slice(0, 10);
         window.location.href = "$place.get_url()/" + datestr;
     });
 });
