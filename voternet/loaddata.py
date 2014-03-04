@@ -38,27 +38,30 @@ def get_ward(ac_id, code):
 def add_acs(state, dir):
     with db.transaction():
         for pc, ac, name in read_csv(dir + "/ac.txt"):
+            key = state.key + "/" + ac
             name = ac + " - " + name
             if not db.select("places", where="type='AC' AND state_id=$state.id AND code=$ac", vars=locals()):
                 parent = get_pc(state.id, pc)
-                db.insert("places", name=name, type="AC", code=ac, parent_id=parent.id, state_id=state.id, pc_id=parent.id)
+                db.insert("places", key=key, name=name, type="AC", code=ac, parent_id=parent.id, state_id=state.id, pc_id=parent.id)
 
 def add_pcs(state, dir):
     with db.transaction():
         for code, name in read_csv(dir + "/pc.txt"):
+            key = state.key + "/" + code
             name = code + " - " + name
-            if not db.select("places", where="type='PC' AND state_id=$state.id AND code=$code", vars=locals()):
-                db.insert("places", name=name, type="PC", code=code, parent_id=state.id, state_id=state.id)
+            if not db.select("places", where="type='PC' AND key=$key", vars=locals()):
+                db.insert("places", key=key, name=name, type="PC", code=code, parent_id=state.id, state_id=state.id)
 
 def add_wards(state, dir):
     for line in open("dir/wards.txt"):
         pc, ac, code, name = line.strip("\n").split("\t")
+        key = "{0}/{1}/{2}".format(state.key, ac, code)
         name = code + " - " + name
         parent = get_ac(state.id, ac)
-        if not db.select("places", where="type='WARD' AND parent_id=$parent.id AND code=$code", vars=locals()):
+        if not db.select("places", where="type='WARD' AND key=$key", vars=locals()):
             ac_id = parent.id
             pc_id = get_pc(state.id, pc).id
-            db.insert("places", name=name, type="WARD", code=code, 
+            db.insert("places", key=key, name=name, type="WARD", code=code,
                 parent_id=parent.id,
                 state_id=state.id,
                 pc_id=pc_id,
@@ -68,14 +71,15 @@ def add_polling_booths(state, dir):
     with db.transaction():
         for ac_code, code, name in read_csv(dir + "/polling_booths.txt"):
             print "add_polling_booths", state.id, ac_code, code
+            key = "{0}/{1}/{2}".format(state.key, ac_code, code)
             name = code + " - " + name
             ac = get_ac(state.id, ac_code)
             ac_id = ac.id
             pc_id = ac.pc_id
             ward_id = None
 
-            if not db.select("places", where="type='PB' AND ac_id=$ac_id AND code=$code", vars=locals()):
-                lazy_insert("places", name=name, type="PB", code=code, 
+            if not db.select("places", where="type='PB' AND key=$key", vars=locals()):
+                lazy_insert("places", key=key, name=name, type="PB", code=code,
                     parent_id=ac_id,
                     state_id=state.id,
                     pc_id=pc_id,
@@ -97,9 +101,8 @@ def commit_lazy_inserts():
             _inserts[table] = []
 
 def add_state(code, name):
-    if not db.select("places", where="type='STATE' AND code=$name", vars=locals()):
-        db.insert("places", name=name, type="STATE", code=code, parent_id=None)    
-
+    if not db.select("places", where="type='STATE' AND key=$code", vars=locals()):
+        db.insert("places", key=code, name=name, type="STATE", code=code, parent_id=None)
     return Place.find(code)
 
 def read_csv(filename):

@@ -4,6 +4,7 @@ CREATE TYPE place_type AS ENUM (
 
 create table places (
     id serial primary key,
+    key text unique,
     name text,
     type place_type,
     code text,

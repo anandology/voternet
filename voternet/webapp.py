@@ -62,7 +62,7 @@ def placify(f=None, roles=None):
 
     @functools.wraps(f)
     def g(self, code, *args):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
 
@@ -144,7 +144,7 @@ def get_state():
 
 class index:
     def GET(self):
-        place = Place.find(code=get_state())        
+        place = Place.find(key=get_state())
         raise web.seeother(place.url)
 
 class place:
@@ -153,14 +153,14 @@ class place:
         return render.place(place)
 
 class delete_place:
-    def GET(self, code):
-        place = Place.find(code=code)
+    def GET(self, key):
+        place = Place.find(key=key)
         if not place:
             raise web.notfound()
         return render.delete_place(place)
 
     def POST(self, code):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
         elif not place.writable_by(account.get_current_user(), roles=['admin']):
@@ -177,13 +177,13 @@ class delete_place:
 
 class edit_place:
     def GET(self, code):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
         return render.edit_place(place)
 
     def POST(self, code):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
         elif not place.writable_by(account.get_current_user(), roles=['admin']):
@@ -195,7 +195,7 @@ class edit_place:
 
 class place_info:
     def GET(self, code):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
         i = web.input(m=None)
@@ -205,7 +205,7 @@ class place_info:
             return render.place_info(place)
 
     def POST(self, code):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
         i = web.input(info="")
@@ -289,13 +289,13 @@ class regions:
 
     def POST_update_pcs(self, place, data):
         for row in data:
-            code = place.code + "/" + row['code']
-            pc = Place.find(code)
+            key = place.key + "/" + row['code']
+            pc = Place.find(key)
 
             if row['region'] and row['region'].strip():
                 # Extract te group code from its name
-                code = place.code + "/" + row['region'].split("-")[0].strip()
-                region = Place.find(code)
+                key = place.key + "/" + row['region'].split("-")[0].strip()
+                region = Place.find(key)
                 if pc.region_id != region.id:
                     pc.set_parent("REGION", region)
             else:
@@ -322,7 +322,7 @@ class add_people:
 class users:
     def GET(self):
         i = web.input(action="")
-        place = Place.find(code=get_state())
+        place = Place.find(key=get_state())
 
         form = AddPeopleForm()
         if i.action == "add":
@@ -333,7 +333,7 @@ class users:
             return render.users(place, users)
 
     def POST(self):
-        place = Place.find(code=get_state())
+        place = Place.find(key=get_state())
         if not place:
             raise web.notfound()
         elif not place.writable_by(account.get_current_user()):
@@ -372,7 +372,7 @@ class edit_person:
 
 class coverage:
     def GET(self, code, date):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
 
@@ -383,7 +383,7 @@ class coverage:
         return render.coverage(place, date)
 
     def POST(self, code, date):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
 
@@ -402,7 +402,7 @@ class coverage:
 
 class links:
     def GET(self, code):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
         user = account.get_current_user()
@@ -411,7 +411,7 @@ class links:
         return render.links(place)
 
     def POST(self, code):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
         user = account.get_current_user()
@@ -481,7 +481,7 @@ class download:
 
 class download_coordinators:
     def GET(self, code):
-        place = Place.find(code=code)
+        place = Place.find(key=code)
         if not place:
             raise web.notfound()
         user = account.get_current_user()

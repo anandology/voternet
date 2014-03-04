@@ -42,6 +42,6 @@ def memoize(f=None, key=None):
         return cache[cache_key]
     return g
 
-def invalidate_cache(key, *args, **kwargs):
-    cache_key = key, args, tuple(sorted(kwargs.items()))
+def invalidate_cache(_key, *args, **kwargs):
+    cache_key = _key, args, tuple(sorted(kwargs.items()))
     cache.pop(cache_key, None)
