@@ -103,7 +103,7 @@ def get_timezone():
     return pytz.timezone(web.config.get("timezone", "UTC"))
 
 def get_today():
-    return datetime.datetime.now(get_timezone()).today()
+    return datetime.datetime.now(get_timezone()).date()
 
 def get_yesterday():
     return get_today() - datetime.timedelta(days=1)
