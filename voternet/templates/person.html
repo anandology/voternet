@@ -2,46 +2,33 @@ $def with (person, form)
 
 $var title: Edit $person.name
 
+$def render_field(field, **kwargs):
+    $ kwargs['class'] = "form-control"
+    $if field.errors:
+        $ klass="has-error"
+    $else:
+        $ klass=''
+    <div class="form-group $klass">
+        $:field.label
+        $:field(**kwargs)
+        <ul class="help-block list-unstyled">
+            $for error in field.errors:
+                <li>$error</li>
+        </ul>
+    </div>    
+
+
 <div class="content">
     <h1>Edit $person.name</h1>
     <h2 style="margin-top: -15px;"><small>$person.role.title() for <a href="$person.place.get_url()">$person.place.name $person.place.type_label</a></small></h2>
 
 <div class="row">
     <form role="form" method="POST" class="col-md-6">
-      <div class="form-group $input_class(form.name)">
-        <label for="name">Name</label>
-        <input type="text" name="name" class="form-control" id="name" placeholder="Enter name" value="$form.name.value">
-        $if form.name.note:        
-            <span class="help-inline">$form.name.note</span>    
-      </div>
-      <div class="form-group $input_class(form.phone)">
-        <label for="phone">Phone Number</label>
-        <input type="phone" name="phone" class="form-control" id="phone" placeholder="Phone Number" value="$form.phone.value">
-        $if form.phone.note:        
-            <span class="help-inline">$form.phone.note</span>
-      </div>
-      <div class="form-group $input_class(form.email)">
-        <label for="email">Email address</label>
-        <input type="email" name="email" class="form-control" id="email" placeholder="Enter email"  value="$form.email.value">
-        $if form.email.note:        
-            <span class="help-inline">$form.email.note</span>
-      </div>
-      <div class="form-group $input_class(form.voterid)">
-        <label for="voterid">Voter ID</label>
-        <input type="text" name="voterid" class="form-control" id="voterid" placeholder="Enter Voter ID"  value="$form.voterid.value">
-        $if form.voterid.note:        
-            <span class="help-inline">$form.voterid.note</span>
-      </div>
-
-      <div class="form-group $input_class(form.role)">
-        <label for="role">Role</label><br/>
-        <select name="role" id="role">
-            $:render_option("volunteer", "Volunteer", form.role.value)
-            $:render_option("coordinator", "Coordinator", form.role.value)
-        </select>
-        $if form.role.note:        
-            <span class="help-inline">$form.role.note</span>
-      </div>
+      $:render_field(form.name, placeholder="Enter name")
+      $:render_field(form.phone, placeholder="Phone Number")
+      $:render_field(form.email, placeholder="Email Address")
+      $:render_field(form.voterid)
+      $:render_field(form.role)
 
       <button type="submit" name="action" value="save" class="btn btn-primary">Save</button>
       <button type="submit" name="action" value="delete" class="btn btn-danger pull-right">Delete</button>

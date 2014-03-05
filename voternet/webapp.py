@@ -377,8 +377,7 @@ class edit_person:
         person = Person.find(place_id=place.id, id=id)
         if not person:
             raise web.notfound()
-        form = AddPeopleForm()
-        form.fill(person)
+        form = forms.AddPeopleForm(person)
         return render.person(person, form)
 
     @placify(roles=['admin', 'coordinator'])
