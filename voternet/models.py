@@ -381,11 +381,6 @@ class Place(web.storage):
             " WHERE lower(email)=lower($user.email)" +
             "   AND place_id in $place_ids" +
             "   AND role IN $roles", vars=locals())
-
-        result = get_db().query("SELECT * FROM people" + 
-            " JOIN roles ON people.id=roles.person_id OR people.dup_of=roles.person_id" + 
-            " WHERE roles.place_id IN $place_ids AND roles.role in $roles", 
-            vars=locals())
         return bool(result)
 
     def add_coverage(self, date, coverage, user):
