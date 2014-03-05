@@ -10,13 +10,17 @@ from cStringIO import StringIO
 import pytz
 
 from models import Place, Person, get_all_coordinators_as_dataset
-from forms import AddPeopleForm
+import forms
 import googlelogin
 import account
 import search
+import flash
+import utils
 
 urls = (
     "/", "index",
+    "/reset-password", "reset_password",
+    "/change-password", "change_password",
     "/login", "login",
     "/logout", "logout",
     "/login/oauth2callback", "oauth2callback",
@@ -41,9 +45,11 @@ urls = (
 )
 
 app = web.application(urls, globals())
+app.add_processor(flash.flash_processor)
 
 def login_requrired(handler):
-    if not web.ctx.path.startswith("/login") and web.ctx.path != "/logout":
+    paths = ["/logout", "/reset-password", '/change-password']
+    if not web.ctx.path.startswith("/login") and web.ctx.path not in paths:
         user = account.get_current_user()
         if not user:
             raise web.seeother("/login")
@@ -130,6 +136,8 @@ tglobals = {
     "get_site_title": lambda: web.config.get("site_title", "Your Favorite Party"),
     "get_today": get_today,
     "get_yesterday": get_yesterday,
+    "get_flashed_messages": flash.get_flashed_messages,
+    "get_site_url": lambda : web.ctx.home,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
@@ -144,8 +152,8 @@ def get_state():
 
 class index:
     def GET(self):
-        place = Place.find(key=get_state())
-        raise web.seeother(place.url)
+        user = account.get_current_user()
+        return render.dashboard(user)
 
 class place:
     @placify
@@ -306,14 +314,14 @@ class regions:
 class add_people:
     @placify(roles=['admin', 'coordinator'])
     def GET(self, place):
-        form = AddPeopleForm()
+        form = forms.AddPeopleForm()
         return render.add_people(place, form)
 
     @placify(roles=['admin', 'coordinator'])
     def POST(self, place):
         i = web.input()
-        form = AddPeopleForm()
-        if form.validates(i):
+        form = forms.AddPeopleForm(i)
+        if form.validate():
             place.add_volunteer(i.name.strip(), i.email.strip(), i.phone.strip(), i.voterid.strip(), i.role.strip())
             raise web.seeother(place.url)
         else:
@@ -325,8 +333,8 @@ class users:
         self.check_write_access(place)
 
         i = web.input(action="")
-        form = AddPeopleForm()
         if i.action == "add":
+            form = self.make_form()
             return render.add_people(place, form, add_users=True)
         else:
             roles = ['admin', 'user']
@@ -338,6 +346,11 @@ class users:
         if not place.writable_by(user):
             raise web.ok(render.access_restricted())
 
+    def make_form(self, *args):
+        form = forms.AddPeopleForm(*args)
+        form.role.choices = [('admin', 'Admin'), ('user', 'User')]
+        return form
+
     def POST(self, key):
         place = Place.find(key=key)
         self.check_write_access(place)
@@ -348,8 +361,8 @@ class users:
             raise web.seeother(place.url + "/users")
 
         i = web.input()
-        form = AddPeopleForm()
-        if form.validates(i):
+        form = self.make_form(i)
+        if form.validate():
             place.add_volunteer(i.name.strip(), i.email.strip(), i.phone.strip(), i.voterid.strip(), i.role.strip())
             raise web.redirect(place.url + "/users")
         else:
@@ -509,13 +522,77 @@ class activity:
 class login:
     def GET(self):
         google = googlelogin.GoogleLogin()
-        return render.login(google.get_redirect_url(), error=False)
+        form = forms.LoginForm()        
+        return render.login(google.get_redirect_url(), error=False, form=form)
+
+    def POST(self):
+        i = web.input()
+        form = forms.LoginForm(i)
+        if form.validate():
+
+            account.set_login_cookie(i.email)
+            flash.add_flash_message("success", "Login successful!")
+            raise web.redirect("/")
+        else:
+            google = googlelogin.GoogleLogin()            
+            return render.login(google.get_redirect_url(), error=False, form=form)
 
 class logout:
     def POST(self):
         account.logout()
         raise web.seeother("/")
 
+class reset_password:
+    def GET(self):
+        return render.reset_password()
+
+    def POST(self):
+        i = web.input(email="")
+        person = Person.find(email=i.email)
+        if person:
+            token = person.generate_reset_token()
+            msg = render_template("email_password_reset", token=token)
+            utils.send_email(to_addr=person.email, message=msg)
+            #TODO: send email
+            return render.reset_password(email=i.email, success=True)
+        else:
+            return render.reset_password(email=i.email, error=True)
+
+class change_password:
+    def GET(self):
+        user = self.get_user()
+        form = forms.ChangePasswordForm()
+        print user
+        return render.change_password(user, form)
+
+    def get_user(self):
+        i = web.input(token=None)
+        if i.token:
+            user = Person.find_from_reset_token(i.token)
+            if not user:
+                form = forms.ChangePasswordForm()
+                raise web.ok(render.change_password(user, form))
+            else:
+                return user
+        else:
+            user = account.get_current_user()
+            if not user:
+                raise web.redirect("/login")
+            else:
+                return user
+
+
+    def POST(self):
+        user = self.get_user()
+
+        i = web.input()
+        form = forms.ChangePasswordForm(i)
+        if form.validate():
+            account.set_password(user, i.password)
+            flash.add_flash_message("success", "Your password has been updated successfully. Please login to continue.")
+            raise web.redirect("/login")
+        else:
+            return render.change_password(user, form)
 
 class oauth2callback:
     def GET(self):

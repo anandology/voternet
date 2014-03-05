@@ -9,7 +9,8 @@ dependencies = [
     'tablib',
     'xappy',
     'flup',
-    'pytz'
+    'pytz',
+    'WTForms'
 ]
 
 setup(

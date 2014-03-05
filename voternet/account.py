@@ -14,8 +14,11 @@ def generate_salted_hash(text, salt=None):
     return '%s$%s' % (salt, hash)
 
 def check_salted_hash(text, salted_hash):
-    salt, hash = salted_hash.split('$', 1)
-    return generate_salted_hash(text, salt) == salted_hash
+    if salted_hash and '$' in salted_hash:
+        salt, hash = salted_hash.split('$', 1)
+        return generate_salted_hash(text, salt) == salted_hash
+    else:
+        return False
 
 def set_login_cookie(email):
     t = datetime.datetime(*time.gmtime()[:6]).isoformat()
@@ -39,3 +42,11 @@ def _get_current_user():
         return
     if check_salted_hash(email + "," + login_time, digest):
         return models.Person.find(email=email) or models.DummyPerson(email)
+
+def login(user, password):
+    if check_salted_hash(password, user.get_encrypted_password()):
+        set_login_cookie(user.email)
+        return True
+
+def set_password(user, password):
+    user.set_encrypted_password(generate_salted_hash(password))

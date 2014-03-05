@@ -1,0 +1,13 @@
+$def with (user)
+
+$var title: Dashboard
+
+<h1>Dashboard</h1>
+
+<div>Welcome</small> <strong>$user.name</strong>!</div>
+
+<h2>Your Roles</h2>
+<div>
+ <strong>$user.role</strong> for
+ <a href="$user.place.get_url()"><strong>$user.place.name</strong> <small>$user.place.type_label</small></a>
+</div>

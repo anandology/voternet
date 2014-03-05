@@ -4,6 +4,7 @@ import json
 import cache
 import time, datetime
 import tablib
+import uuid
 
 @web.memoize
 def get_db():
@@ -234,7 +235,8 @@ class Place(web.storage):
         return "\n".join(str(p) for p in self.get_places())
 
     def __str__(self):
-        return "%s {{ %s }}" % (self.name, self.code)
+        name = self.name.split("-", 1)[-1].strip()
+        return "{} - {}".format(self.code, name)
 
     def _add_place(self, key, code, name, type):
         row = web.storage(
@@ -379,6 +381,11 @@ class Place(web.storage):
             " WHERE lower(email)=lower($user.email)" +
             "   AND place_id in $place_ids" +
             "   AND role IN $roles", vars=locals())
+
+        result = get_db().query("SELECT * FROM people" + 
+            " JOIN roles ON people.id=roles.person_id OR people.dup_of=roles.person_id" + 
+            " WHERE roles.place_id IN $place_ids AND roles.role in $roles", 
+            vars=locals())
         return bool(result)
 
     def add_coverage(self, date, coverage, user):
@@ -560,6 +567,33 @@ class Person(web.storage):
             result = get_db().select("people", where="id!=$id AND lower(email)=lower($email)", vars=self)
             return [Person(row) for row in result]
 
+    def set_encrypted_password(self, password):
+        self._update_auth(password=password)
+
+    def get_encrypted_password(self):
+        rows = get_db().query("SELECT * FROM auth WHERE email=$self.email", vars=locals())
+        if rows:
+            return rows[0].password
+
+    def generate_reset_token(self):
+        token = str(uuid.uuid4()).replace("-", "")
+        self._update_auth(reset_token=token)
+        return token
+
+    def _update_auth(self, **kwargs):
+        result = get_db().select("auth", where="email=$email", vars=self)
+        if result:
+            get_db().update("auth", where="email=$email", vars=self, **kwargs) 
+        else:
+            get_db().insert("auth", email=self.email, **kwargs)
+
+    @staticmethod
+    def find_from_reset_token(token):
+        result = get_db().select("auth", where="reset_token=$token",vars=locals())
+        if result:
+            email = result[0].email
+            return Person.find(email=email)
+
     @staticmethod
     def find(**kwargs):
         if 'email' in kwargs:
@@ -578,10 +612,12 @@ class Person(web.storage):
     def is_authorized(self):
         return True
 
-    def update(self, values):
-        web.storage.update(self, values)
-        # update cache before and after as the place can change.
+    def update(self, values=None, **kwargs):
+        if values:
+            web.storage.update(self, values)
+        web.storage.update(self, kwargs)
 
+        # invalidate cache before and after as the place can change.
         self.place._invalidate_object_cache()
         get_db().update("people", where="id=$self.id", vars=locals(),
             place_id=self.place_id,

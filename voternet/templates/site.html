@@ -13,6 +13,7 @@ $def with (page)
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
     <link rel="stylesheet" href="/static/jquery-handsontable/jquery.handsontable.full.css">
     <link rel="stylesheet" href="/static/datepicker/css/datepicker.css">
 
@@ -138,7 +139,7 @@ $def with (page)
         <p class="navbar-text navbar-right">
           $ user = get_current_user()
           $if user:
-            Welcome $user.email! | 
+            Welcome $user.email! | <a href="/">Dashboard</a> |
             <a href="#" onclick="document.forms['logout'].submit();">Log out</a>
             <div class="hidden">
                 <form name='logout' action="/logout" method="post"></form>
@@ -154,6 +155,11 @@ $def with (page)
         $if user and user.id:
             <div class="alert alert-info">
                 <strong>Welcome $user.name</strong>! You are $user.role for <a class="alert-link" href="$user.place.get_url()">$user.place.name <small>$user.place.type_label</small></a>.
+            </div>
+        $ flashes = get_flashed_messages()
+        $for flash in flashes:
+            <div class="alert alert-$flash.type">
+                $flash.message
             </div>
         $:page
     </div>
