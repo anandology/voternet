@@ -142,10 +142,10 @@ $def with (page)
             Welcome $user.email! | <a href="/">Dashboard</a> |
             <a href="#" onclick="document.forms['logout'].submit();">Log out</a>
             <div class="hidden">
-                <form name='logout' action="/logout" method="post"></form>
+                <form name='logout' action="/account/logout" method="post"></form>
             </div> 
           $else:
-            <a href="/login">Log In</a>
+            <a href="/account/login">Log In</a>
         </p>          
 
       </div>

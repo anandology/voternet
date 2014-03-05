@@ -19,11 +19,15 @@ import utils
 
 urls = (
     "/", "index",
-    "/reset-password", "reset_password",
-    "/change-password", "change_password",
-    "/login", "login",
-    "/logout", "logout",
+
+    "/account/login", "login",
+    "/account/logout", "logout",
+    "/account/forgot-password", "forgot_password",
+    "/account/reset-password", "change_password",
+    "/account/change-password", "change_password",
+    "/account/oauth2callback", "oauth2callback",
     "/login/oauth2callback", "oauth2callback",
+
     "/sudo", "sudo",
     "/debug", "debug",
     "/search", "do_search",    
@@ -48,11 +52,10 @@ app = web.application(urls, globals())
 app.add_processor(flash.flash_processor)
 
 def login_requrired(handler):
-    paths = ["/logout", "/reset-password", '/change-password']
-    if not web.ctx.path.startswith("/login") and web.ctx.path not in paths:
+    if not web.ctx.path.startswith("/account") and not web.ctx.path.startswith("/login"):
         user = account.get_current_user()
         if not user:
-            raise web.seeother("/login")
+            raise web.seeother("/account/login")
         elif not user.is_authorized():
             return render.permission_denied()
     return handler()
@@ -542,7 +545,7 @@ class logout:
         account.logout()
         raise web.seeother("/")
 
-class reset_password:
+class forgot_password:
     def GET(self):
         return render.reset_password()
 
@@ -577,10 +580,9 @@ class change_password:
         else:
             user = account.get_current_user()
             if not user:
-                raise web.redirect("/login")
+                raise web.seeother("/account/login")
             else:
                 return user
-
 
     def POST(self):
         user = self.get_user()
@@ -590,7 +592,7 @@ class change_password:
         if form.validate():
             account.set_password(user, i.password)
             flash.add_flash_message("success", "Your password has been updated successfully. Please login to continue.")
-            raise web.redirect("/login")
+            raise web.seeother("/account/login")
         else:
             return render.change_password(user, form)
 
@@ -608,7 +610,7 @@ class oauth2callback:
                     raise web.seeother("/")
             except IOError:
                 return render.login(google.get_redirect_url(), error=True)
-        raise web.seeother("/login")
+        raise web.seeother("/account/login")
 
 def load_config(configfile):
     web.config.update(yaml.load(open(configfile)))
