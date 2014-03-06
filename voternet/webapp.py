@@ -27,6 +27,7 @@ urls = (
     "/account/change-password", "change_password",
     "/account/oauth2callback", "oauth2callback",
     "/login/oauth2callback", "oauth2callback",
+    "/report-issue", "report_issue",
 
     "/sudo", "sudo",
     "/debug", "debug",
@@ -52,7 +53,8 @@ app = web.application(urls, globals())
 app.add_processor(flash.flash_processor)
 
 def login_requrired(handler):
-    if not web.ctx.path.startswith("/account") and not web.ctx.path.startswith("/login"):
+    whitelist = ["/report-issue"]
+    if not web.ctx.path.startswith("/account") and not web.ctx.path.startswith("/login") and web.ctx.path not in whitelist:
         user = account.get_current_user()
         if not user:
             raise web.seeother("/account/login")
@@ -141,6 +143,7 @@ tglobals = {
     "get_yesterday": get_yesterday,
     "get_flashed_messages": flash.get_flashed_messages,
     "get_site_url": lambda : web.ctx.home,
+    "get_url": lambda: web.ctx.home + web.ctx.fullpath,
 
     # iter to count from 1
     "counter": lambda: iter(range(1, 100000)),
@@ -610,6 +613,18 @@ class oauth2callback:
             except IOError:
                 return render.login(google.get_redirect_url(), error=True)
         raise web.seeother("/account/login")
+
+class report_issue:
+    def GET(self):
+        i = web.input(url=None)
+        return render.report_issue(i.url)
+
+    def POST(self):
+        i = web.input(url=None, email=None, description=None)
+        msg = render_template("email_issue", i, web.cookies(), web.ctx.env)
+        utils.send_email(to_addr=web.config.super_admins, message=msg)
+        flash.add_flash_message("info", "Thanks for reporting the issue. We'll get back to you shortly.")
+        raise web.seeother("/")
 
 def load_config(configfile):
     web.config.update(yaml.load(open(configfile)))

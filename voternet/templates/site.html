@@ -136,6 +136,11 @@ $def with (page)
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
 
+          <div class="nav navbar-form navbar-left">
+            <a href="/report-issue?url=$get_url()" class="btn btn-warning">Report An Issue</a>
+          </div>
+
+
         <p class="navbar-text navbar-right">
           $ user = get_current_user()
           $if user:

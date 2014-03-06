@@ -1,0 +1,26 @@
+$def with (url)
+
+$var title: Report an issue
+
+<h1>Report An Issue</h1>
+
+<form role="form" method="POST">
+    $ user = get_current_user()
+    <div class="form-group">
+        <label for="email">Your E-mail address</label>
+        <input type="text" class="form-control" id="email" name="email" value="${user and user.email}"/>
+    </div>    
+
+    <div class="form-group">
+        <label for="url">Web Page URL</label>
+        <input type="text" class="form-control" id="url" name="url" value="$url"/>   
+        <p class="help-block">URL of the web page on which you've encountered the issue.</p>        
+    </div>    
+
+    <div class="form-group">
+        <label for="description">Issue Description</label>
+        <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+        <p class="help-block">Please provide as many details about the issue as possible.</p>        
+    </div>
+    <button type="submit" class="btn btn-primary">Report the Issue</button>
+</form>

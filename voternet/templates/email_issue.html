@@ -1,0 +1,24 @@
+$def with (input, cookies, env)
+
+$var subject: $:config.get('subject_prefix') Issue reported on $input.url
+
+E-mail: $input.email
+
+URL: $:input.url
+
+ISSUE DESCRIPTION
+
+$:input.description
+
+---------------------------------
+COOKIES
+
+$for name, value in cookies.items(): $name : $value
+
+---------------------------------
+ENV
+
+$for name, value in env.items(): $name : $value
+
+
+
