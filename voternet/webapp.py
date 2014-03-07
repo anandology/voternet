@@ -37,6 +37,8 @@ urls = (
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
+    "/([\w/]+)/localities", "place_localities",
+    "/([\w/]+)/export-localities", "export_localities",
     "/([\w/]+)/booths", "pb_list",
     "/([\w/]+)/groups", "pb_groups",
     "/([\w/]+)/regions", "regions",
@@ -225,6 +227,33 @@ class place_info:
         i = web.input(info="")
         place.update_info(i.info)
         raise web.seeother(place.url + "/info")
+
+class place_localities:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        if place.type != "WARD":
+            raise web.notfound()
+        return render.localities(place)
+
+    @placify(roles=['admin', 'coordinator'])
+    def POST(self, place):
+        if place.type != "WARD":
+            raise web.notfound()
+
+        i = web.input(localities="", pincodes="")
+        print i
+        localities = [line.strip() for line in i.localities.splitlines() if line.strip()]
+        pincodes = [line.strip() for line in i.pincodes.splitlines() if line.strip()]
+        place.set_localities(localities, pincodes)
+        flash.add_flash_message("info", "Thanks for updating localities info.")
+        raise web.seeother(place.url)
+
+class export_localities:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        d = place.get_all_localities()
+        web.header("Content-Type", "application/json")
+        return json.dumps(d)
 
 class pb_list:
     @placify(roles=['admin', 'coordinator'])

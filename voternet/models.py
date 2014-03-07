@@ -496,9 +496,9 @@ class Place(web.storage):
 
     def get_data(self, suffix=""):
         if suffix:
-            key = self.code + "/" + suffix
+            key = self.key + "/" + suffix
         else:
-            key = self.code
+            key = self.key
         row = self._get_data_row(key)
         data = row and json.loads(row.data) or {}
         return web.storage(data)
@@ -509,9 +509,9 @@ class Place(web.storage):
 
     def put_data(self, data, suffix="", type="place"):
         if suffix:
-            key = self.code + "/" + suffix
+            key = self.key + "/" + suffix
         else:
-            key = self.code
+            key = self.key
 
         row = self._get_data_row(key)
         if row:
@@ -526,6 +526,41 @@ class Place(web.storage):
         data = self.get_data()
         data['links'] = links
         self.put_data(data)
+
+    def get_localities(self):
+        """Returns all the localities in this place.
+        """
+        data = self.get_data(suffix="localities")
+        d = {
+            "localities": data.get("localities", []),
+            "pincodes": data.get("pincodes", [])
+        }
+        return web.storage(d)
+
+    def set_localities(self, localities, pincodes):
+        data = self.get_data(suffix="localities")
+        data['localities'] = localities
+        data['pincodes'] = pincodes
+        self.put_data(data, suffix="localities")
+
+    def get_all_localities(self):
+        """Returna all localities in this subtree.
+        """
+        def process_row(row):
+            key = row.key.replace("/localities", "")
+            place = Place.find(key)
+            data = json.loads(row.data)
+            return {
+                "code": place.code,
+                "name": place.name,
+                "ac": place.get_parent("AC").name,
+                "pc": place.get_parent("AC").name,
+                "localities": data.get("localities", []),
+                "pincodes": data.get("pincodes", [])
+            }
+        key = self.key + '%/localities'
+        rows = get_db().query("SELECT * FROM things WHERE key like $key", vars=locals()).list()
+        return [process_row(row) for row in rows]
 
     def get_all_coordinators_as_dataset(self, types=['STATE', 'PC', 'AC', 'WARD']):
         result = get_db().query(
