@@ -1,0 +1,32 @@
+$def with (place)
+
+$var title: Localities in $place.name
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+    <li><a href="$place.get_url()">$place.name</a></li>
+</ul>
+
+<h1><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Localities</h1>
+
+<p>Please specify names of all localities in this ward, one per line. If there are any known varations in the name of the localities, please specify each such variation as well.
+</p>
+
+<p>This information is used to provide a search interface to map address to wards.</p>
+
+$ d = place.get_localities()
+
+<form role="form" method="POST">
+  <div class="row">
+    <div class="form-group col-md-6">
+      <label for="localities">Localities</label>
+      <textarea class="form-control" id="localities" name="localities" rows="5">$"\n".join(d.localities)</textarea>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="pincodes">Pin Codes</label>
+      <textarea class="form-control" id="pincodes" name="pincodes" rows="5">$"\n".join(d.pincodes)</textarea>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-default">Save</button>
+</form>
