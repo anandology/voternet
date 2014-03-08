@@ -5,6 +5,8 @@ $var title: $place.name
 $ user = get_current_user()
 $ place_writable = place.writable_by(user)
 $ place_readable = place.writable_by(user, roles=['admin', 'coordinator', 'volunteer'])
+$ place_admin = place.writable_by(user, roles=['admin'])
+
 $ subtypes = place.get_all_subtypes()
 
 $def render_people(people):
@@ -87,6 +89,11 @@ $code:
                 <p><em>None found.</em></p>
             $else:
                 $:render_people(volunteers)
+
+          $if place_admin and place.type == "STATE":
+              <a href="$place.get_url()/users" class="btn btn-default hidden-print" role="button">See Admin Users</a>
+              <br/><br/>
+
             $if place_writable:
                 <div>
                   <a href="$place.get_url()/add-people" class="btn btn-primary active hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
