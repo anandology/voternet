@@ -8,6 +8,7 @@ import functools
 import datetime
 from cStringIO import StringIO
 import pytz
+import tablib
 
 from models import Place, Person, get_all_coordinators_as_dataset
 import forms
@@ -38,6 +39,7 @@ urls = (
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
     "/([\w/]+)/signups", "vol_signups",
+    "/([\w/]+)/signups.xls", "vol_signups_xls",
     "/([\w/]+)/localities", "place_localities",
     "/([\w/]+)/export-localities", "export_localities",
     "/([\w/]+)/booths", "pb_list",
@@ -290,6 +292,20 @@ class vol_signups:
     @placify(roles=['admin', 'coordinator'])
     def GET(self, place):
         return render.volunteer_signups(place)
+
+class vol_signups_xls:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        web.header("Content-disposition", "attachment; filename=%s-signups.xls" % place.code)
+        web.header("Content-Type", "application/vnd.ms-excel")
+        return self.get_dataset(place).xls
+
+    def get_dataset(self, place):
+        headers = ['Name', "Phone", 'Email', 'Locality', 'Ward', 'Timestamp']
+        dataset = tablib.Dataset(headers=headers)
+        for p in place.get_signups():
+            dataset.append([p.name, p.phone, p.email, p.address, p.get_place().name, p.added.isoformat()])
+        return dataset
 
 class pb_groups:
     @placify(roles=['admin', 'coordinator'])

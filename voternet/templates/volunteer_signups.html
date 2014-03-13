@@ -8,6 +8,10 @@ $var title: $place.name / Sign Ups
 </ul>
 <h1 class="place-h1">Volunteer Signups</h1>
 
+<div class="pull-right" style="margin-top: -40px; margin-bottom: 20px;">
+<a href="$place.get_url()/signups.xls" class="btn btn-default">Download as XLS</a>
+</div>
+
 <table class="table table-bordered">
     <tr class="person">
         <th>#</th>
@@ -16,6 +20,7 @@ $var title: $place.name / Sign Ups
         <th>E-Mail</th>
         <th>Address</th>
         <th>Ward</th>
+        <th>Signup Date</th> 
     </tr>
     $for person in place.get_signups():
         <tr class="person">
@@ -26,5 +31,6 @@ $var title: $place.name / Sign Ups
             <td>$person.address</td>
             $ p = person.get_place()
             <td><a href="$p.get_url()">$p.name<a></td>
+            <td>$datestr(person.added)</td>
         </tr>
 </table>
