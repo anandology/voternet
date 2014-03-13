@@ -289,8 +289,6 @@ class pb_list:
 class vol_signups:
     @placify(roles=['admin', 'coordinator'])
     def GET(self, place):
-        if place.type != "AC":
-            raise web.notfound()
         return render.volunteer_signups(place)
 
 class pb_groups:
