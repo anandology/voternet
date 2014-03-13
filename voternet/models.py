@@ -543,6 +543,14 @@ class Place(web.storage):
         data['links'] = links
         self.put_data(data)
 
+    def get_signups(self):
+        result = get_db().query(
+            "SELECT volunteer_signups.* FROM volunteer_signups, places" +
+            " WHERE places.id=volunteer_signups.place_id" +
+            "   AND $self.id IN (places.id, places.ac_id, places.pc_id, places.region_id, places.state_id)"
+            " ORDER BY added DESC", vars=locals())
+        return [VolunteerSignup(row) for row in result]
+
     def get_localities(self):
         """Returns all the localities in this place.
         """
@@ -742,3 +750,7 @@ def get_all_coordinators_as_dataset(types=['STATE', 'PC', 'AC', 'WARD']):
     for row in result:
         dataset.append([row.type, row.place, row.coordinator, row.email, row.phone])
     return dataset
+
+class VolunteerSignup(web.storage):
+    def get_place(self):
+        return Place.from_id(self.place_id)

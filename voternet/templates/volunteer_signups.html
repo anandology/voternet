@@ -1,0 +1,30 @@
+$def with (place)
+
+$var title: $place.name / Sign Ups
+
+<ul class="breadcrumb breadcrumb-collapse hidden-print">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+<h1 class="place-h1">Volunteer Signups</h1>
+
+<table class="table table-bordered">
+    <tr class="person">
+        <th>#</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>E-Mail</th>
+        <th>Address</th>
+        <th>Ward</th>
+    </tr>
+    $for person in place.get_signups():
+        <tr class="person">
+            <td style="width: 20px;">$loop.index</td>
+            <td>$person.name</td>
+            <td>$person.phone</td>
+            <td>$person.email</td>
+            <td>$person.address</td>
+            $ p = person.get_place()
+            <td><a href="$p.get_url()">$p.name<a></td>
+        </tr>
+</table>

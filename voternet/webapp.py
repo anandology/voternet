@@ -37,6 +37,7 @@ urls = (
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
     "/([\w/]+)/info", "place_info",
+    "/([\w/]+)/signups", "vol_signups",
     "/([\w/]+)/localities", "place_localities",
     "/([\w/]+)/export-localities", "export_localities",
     "/([\w/]+)/booths", "pb_list",
@@ -78,7 +79,7 @@ def placify(f=None, roles=None):
         place = Place.find(key=code)
         if not place:
             raise web.notfound()
-
+        
         user = account.get_current_user()
 
         if not user or not place.viewable_by(user):
@@ -284,6 +285,13 @@ class pb_list:
                 pb.set_ward(None)
         web.header("content-type", "application/json")
         return '{"result": "ok"}'
+
+class vol_signups:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        if place.type != "AC":
+            raise web.notfound()
+        return render.volunteer_signups(place)
 
 class pb_groups:
     @placify(roles=['admin', 'coordinator'])
