@@ -21,6 +21,7 @@ $var title: $place.name / Sign Ups
         <th>Address</th>
         <th>Ward</th>
         <th>Signup Date</th> 
+        <th>Actions</th>
     </tr>
     $for person in place.get_signups():
         <tr class="person">
@@ -32,5 +33,6 @@ $var title: $place.name / Sign Ups
             $ p = person.get_place()
             <td><a href="$p.get_url()">$p.name<a></td>
             <td>$datestr(person.added)</td>
+            <td><a href="$p.get_url()/add-people?name=$person.name&email=$person.email&phone=$person.phone">Add as volunteer</a></td>
         </tr>
 </table>

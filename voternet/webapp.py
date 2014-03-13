@@ -375,7 +375,7 @@ class regions:
 class add_people:
     @placify(roles=['admin', 'coordinator'])
     def GET(self, place):
-        form = forms.AddPeopleForm()
+        form = forms.AddPeopleForm(web.input())
         return render.add_people(place, form)
 
     @placify(roles=['admin', 'coordinator'])
