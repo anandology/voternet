@@ -79,8 +79,12 @@ def placify(f=None, roles=None):
         if not place:
             raise web.notfound()
 
+        user = account.get_current_user()
+
+        if not user or not place.viewable_by(user):
+            raise web.ok(render.access_restricted())
+
         if roles:
-            user = account.get_current_user()
             if not user or not place.writable_by(user, roles=roles):
                 return render.permission_denied(user=user)
         return f(self, place, *args)

@@ -383,6 +383,22 @@ class Place(web.storage):
             "   AND role IN $roles", vars=locals())
         return bool(result)
 
+    def viewable_by(self, user):
+        # super admins can view any page.
+        if user.email in web.config.get('super_admins', []):
+            return True
+
+        # If they can write, then can view as well.
+        if self.writable_by(user):
+            return True
+
+        result = get_db().query("SELECT people.* FROM people, places" +
+            " WHERE places.id=people.place_id" +
+            "   AND lower(people.email)=lower($user.email)" +
+            "   AND $self.id IN (places.id, places.ward_id, places.ac_id, places.pc_id, places.region_id, places.state_id)",
+            vars=locals())
+        return bool(result)
+
     def add_coverage(self, date, coverage, user):
         db = get_db()
         coverage_json = json.dumps(coverage)
