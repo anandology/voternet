@@ -52,31 +52,6 @@ $code:
     </div>
 
     $ d = place.get_localities()
-    $if place.type == 'WARD':
-        <div class="hidden-print" style="background: #eee; padding: 10px; margin: 10px 0px;">
-            <div class="row">
-                <div class="col-md-6">
-                    <h4>Localities in this ward</h4>
-                    $if d.localities:
-                        $for x in d.localities:
-                            $x<br/>
-                    $else:
-                        <em>Not added yet.</em>
-                </div>
-                <div class="col-md-6">
-                    <h4>Pin Codes</h4>
-                    $if d.pincodes:
-                        $for x in d.pincodes:
-                            $x<br/>
-                    $else:
-                        <em>Not added yet.</em>
-                </div>
-            </div>
-            <br/>
-            $if place_writable:
-                <a href="$place.url/localities" class="btn btn-primary">Edit Localities in the ward</a>
-        </div>
-
 
     <div class="row">
         <div class="col-md-6">
@@ -100,6 +75,15 @@ $code:
                   <br/>
                   <br/>                  
                 </div>
+                $if place.type == 'WARD':
+                    <h4>Volunteer Signups</h4>
+                    <div class="hidden-print" style="margin: 10px 0px;">
+                        $len(place.get_signups()) people have signed up as volunteers at this ward.
+                        <br/>
+                        <br/>
+                        <a href="$place.get_url()/signups" class="btn btn-primary">Review Signups</a>
+                    </div>
+
         </div>
         <div class="col-md-6">
             <h4>Total Volunteers Per Day</h4>
