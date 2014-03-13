@@ -376,7 +376,7 @@ class Place(web.storage):
         if user.email in web.config.get('super_admins', []):
             return True
 
-        place_ids = [self.id, self.state_id, self.pc_id, self.ac_id, self.ward_id]
+        place_ids = [self.id, self.state_id, self.region_id, self.pc_id, self.ac_id, self.ward_id]
         result = get_db().query("SELECT * FROM people" +
             " WHERE lower(email)=lower($user.email)" +
             "   AND place_id in $place_ids" +
