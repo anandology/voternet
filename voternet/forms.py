@@ -12,7 +12,7 @@ class MultiDict(web.storage):
 
 class BaseForm(Form):
     def __init__(self, formdata=None, **kwargs):
-        formdata = formdata and MultiDict(formdata)
+        formdata = formdata and MultiDict(formdata) or None
         Form.__init__(self, formdata, **kwargs)
 
 class AddPeopleForm(BaseForm):
