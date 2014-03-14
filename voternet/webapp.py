@@ -666,7 +666,7 @@ class oauth2callback:
                     account.set_login_cookie(userinfo.email)
                     raise web.seeother("/")
             except IOError:
-                return render.login(google.get_redirect_url(), error=True)
+                return render.login(google.get_redirect_url(), error=True, form=forms.LoginForm())
         raise web.seeother("/account/login")
 
 class report_issue:
