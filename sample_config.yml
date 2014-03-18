@@ -12,10 +12,10 @@ db_parameters:
     #host: "db-server"
 
 # Specify your state here
-state = "KA"
+state: "KA"
 
 # Title of the website
-site_title = "Your Favorite Party"
+site_title: "Clean Sweep"
 
 ## Optionally you can specify a vounteer signup URL to display on the permission denied page.
 # volunteer_signup_url 
