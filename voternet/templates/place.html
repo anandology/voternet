@@ -72,6 +72,9 @@ $code:
             $if place_writable:
                 <div>
                   <a href="$place.get_url()/add-people" class="btn btn-primary active hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
+                  $if place.type == "AC":
+                    <a href="$place.get_url()/import-people" class="btn btn-primary active pull-right hidden-print" role="button">Bulk Import Volunteers</a>
+
                   <br/>
                   <br/>                  
                 </div>
