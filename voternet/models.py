@@ -68,10 +68,10 @@ class Place(web.storage):
             return w.name
 
     def get_parents(self):
-        parent = self.parent
-        if self.type == 'STATE' or not parent:
-            return []
-        return self.parent.get_parents() + [self.parent]
+        i = self.TYPES.index(self.type)
+        parent_types = self.TYPES[:i]
+        parents = [self.get_parent(t) for t in parent_types]
+        return [p for p in parents if p]
 
     def get_subplaces(self):
         """Returns list of all sub places"""
