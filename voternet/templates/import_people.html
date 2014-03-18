@@ -1,0 +1,88 @@
+$def with (place)
+
+$var title: $place.name / Bulk Add Volunteers
+
+<h4><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span></h4>
+<h1 style="margin-top: 0px;">Bulk Add Volunteers</h1>
+
+<div id="example">
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation" style="background: #eee; min-height: 0px; padding: 10px 0px; border-top: 1px solid #ddd;">
+  <div class="container">
+    <a href="javascript;" id="save" class="btn btn-primary">Save</a>
+    <a href="$place.get_url()" id="cancel" class="btn btn-danger pull-right">Cancel</a>
+  </div>
+</nav>
+
+<style type="text/css">
+    body { padding-bottom: 70px; }
+    .handsontable th, .handsontable td {
+        padding: 5px;
+    }
+</style>
+
+<script type="text/javascript">
+
+\$(function() {
+    $ data = [{"name": "", "phone": "", "email": "", "place": ""}] * 20
+    var data = $:json_encode(data);
+
+    $ places = ["", place.name] + [p.name for p in place.get_subplaces()]
+    var places = $:json_encode(places);
+
+    function place_renderer(instance, td, row, col, prop, value, cellProperties) {
+      Handsontable.renderers.TextRenderer.apply(this, arguments);
+      \$(td).css({
+        background: 'yellow'
+      });
+    }
+
+    \$('#example').handsontable({
+      data: data,
+      colHeaders: ["Name", "Phone", "Email", "Place"], 
+      rowHeaders: true,
+      minSpareRows: 5,
+      columns: [{
+        data: "name",
+      }, {
+        data: "phone",
+      }, {
+        data: "email",
+      }, {
+        data: "place",
+        type: 'autocomplete',
+        source: places,
+        renderer: place_renderer
+      }],
+      contextMenu: false,
+      colWidths: [200, 200, 200, 400]      
+    });
+});
+
+\$(function() {
+    \$("a#save").click(function(e) {
+        e.preventDefault();
+
+        handsontable = \$("#example").data("handsontable");
+        console.log(handsontable.getData());
+        \$.ajax({
+            url: window.location.href,
+            data: JSON.stringify({"data": handsontable.getData()}),
+            dataType: "json",
+            type: 'POST',
+            success: function (res) {
+              if (res.result === 'ok') {
+                alert('Data saved');
+              }
+              else {
+                alert('Save error');
+              }
+            },
+            error: function () {
+                alert('Save error');
+            }
+        });
+    });
+});
+</script>

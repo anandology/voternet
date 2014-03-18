@@ -46,6 +46,7 @@ urls = (
     "/([\w/]+)/groups", "pb_groups",
     "/([\w/]+)/regions", "regions",
     "/([\w/]+)/add-people", "add_people",
+    "/([\w/]+)/import-people", "import_people",
     "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
     "/([\w/]+)/coordinators.xls", "download_coordinators",
@@ -69,19 +70,23 @@ def login_requrired(handler):
 
 app.add_processor(login_requrired)
 
-def placify(f=None, roles=None):
+def placify(f=None, roles=None, types=None):
     """Decorator that converts the first argument from place code to place.
     Also makes sure if the current user has the specified permission.
     """
     if not f:
-        return lambda f: placify(f=f, roles=roles)
+        return lambda f: placify(f=f, roles=roles, types=types)
+
 
     @functools.wraps(f)
     def g(self, code, *args):
         place = Place.find(key=code)
         if not place:
             raise web.notfound()
-        
+
+        if types is not None and place.type not in types:
+            raise web.notfound()
+
         user = account.get_current_user()
 
         if not user or not place.viewable_by(user):
@@ -387,6 +392,42 @@ class add_people:
             raise web.seeother(place.url)
         else:
             return render.add_people(place, form)
+
+class import_people:
+    @placify(roles=['admin', 'coordinator'], types=["AC"])
+    def GET(self, place):
+        return render.import_people(place)
+
+    @placify(roles=['admin', 'coordinator'], types=['AC'])
+    def POST(self, place):
+        data = json.loads(web.data())['data']
+
+        # skip empty rows
+        data = [row for row in data if any(row)]
+        count = 0
+        for row in data:
+            if self.add_volunteer(row, place):
+                count += 1
+        #flash.add_flash_message("success", "Added {0} volunteers.".format(count))
+        #raise web.seeother(place.url)
+        web.header("content-type", "application/json")
+        return '{"result": "ok"}'
+
+    def add_volunteer(self, row, ac):
+        # strip values
+        row = web.storage((k, v and v.strip()) for k, v in row.items())
+        if not row.name or not row.email:
+            return
+
+        if row.place:
+            key = ac.key + "/" + row.place.split("-")[0].strip()
+            place = Place.find(key)
+            if not place:
+                return
+        else:
+            place = ac
+        place.add_volunteer(row.name, row.phone, row.email, role='volunteer')
+        return True
 
 class users:
     def GET(self, key):

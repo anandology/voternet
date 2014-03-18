@@ -73,6 +73,11 @@ class Place(web.storage):
             return []
         return self.parent.get_parents() + [self.parent]
 
+    def get_subplaces(self):
+        """Returns list of all sub places"""
+        rows = get_db().query("SELECT * FROM places WHERE {0} = $id ORDER BY key".format(self.type_column), vars=self)
+        return [Place(row) for row in rows]
+
     @property
     def volunteers(self):
         return self.get_people(['coordinator', 'volunteer'])
