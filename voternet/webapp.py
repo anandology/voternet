@@ -408,7 +408,7 @@ class import_people:
         for row in data:
             if self.add_volunteer(row, place):
                 count += 1
-        #flash.add_flash_message("success", "Added {0} volunteers.".format(count))
+        flash.add_flash_message("success", "Added {0} volunteers.".format(count))
         #raise web.seeother(place.url)
         web.header("content-type", "application/json")
         return '{"result": "ok"}'

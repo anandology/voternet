@@ -73,7 +73,7 @@ $var title: $place.name / Bulk Add Volunteers
             type: 'POST',
             success: function (res) {
               if (res.result === 'ok') {
-                alert('Data saved');
+                window.location.href = "$place.get_url()";
               }
               else {
                 alert('Save error');
