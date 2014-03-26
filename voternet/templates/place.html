@@ -76,7 +76,10 @@ $code:
                     <a href="$place.get_url()/import-people" class="btn btn-primary active pull-right hidden-print" role="button">Bulk Import Volunteers</a>
 
                   <br/>
-                  <br/>                  
+                  <br/>
+                  $if place.type in ["PC", "AC", "WARD"]:
+                      <h4>Download <small>as XLS</small></h4>
+                      <a href="$place.get_url()/volunteers.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a><br/><br/>
                 </div>
                 $if place.type == 'WARD':
                     <h4>Volunteer Signups</h4>

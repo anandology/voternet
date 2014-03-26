@@ -50,6 +50,7 @@ urls = (
     "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
     "/([\w/]+)/coordinators.xls", "download_coordinators",
+    "/([\w/]+)/volunteers.xls", "download_volunteers",
     "/([\w/]+)/activity", "activity",
     "/([\w/]+)", "place",
     "/(.*/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
@@ -615,6 +616,14 @@ class download_coordinators:
             raise web.seeother(place.url)
         dataset = place.get_all_coordinators_as_dataset()
         web.header("Content-disposition", "attachment; filename=%s-coordinators.xls" % place.code)
+        web.header("Content-Type", "application/vnd.ms-excel")
+        return dataset.xls
+
+class download_volunteers:
+    @placify(roles=['coordinator', 'admin'])
+    def GET(self, place):
+        dataset = place.get_all_volunteers_as_dataset()
+        web.header("Content-disposition", "attachment; filename=%s-volunteers.xls" % place.code)
         web.header("Content-Type", "application/vnd.ms-excel")
         return dataset.xls
 

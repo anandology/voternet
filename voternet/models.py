@@ -591,24 +591,29 @@ class Place(web.storage):
         rows = get_db().query("SELECT * FROM things WHERE key like $key", vars=locals()).list()
         return [process_row(row) for row in rows]
 
-    def get_all_coordinators_as_dataset(self, types=['STATE', 'PC', 'AC', 'WARD']):
+    def get_all_coordinators_as_dataset(self, types=['STATE', 'REGION', 'PC', 'AC', 'WARD']):
+        return self.get_all_volunteers_as_dataset(roles=['coordinator'], types=types)
+
+    def get_all_volunteers_as_dataset(self, roles=['volunteer', 'pb_agent', 'coordinator'], types=['STATE', 'REGION', 'PC', 'AC', 'WARD', 'PB']):
         result = get_db().query(
             "SELECT places.type, places.pc_id, places.ac_id, places.ward_id, places.name as place," +
-            " people.name as coordinator, people.email, people.phone" +
+            " people.name as name, people.email, people.phone, people.voterid, people.role" +
             " FROM people, places" +
-            " WHERE people.place_id=places.id AND role='coordinator' AND places.type IN $types" +
-            " AND places.%s=$self.id" % self.type_column +
+            " WHERE people.place_id=places.id AND role IN $roles AND places.type IN $types" +
+            " AND (places.%s=$self.id or places.id=$self.id)" % self.type_column +
             " ORDER by place_id", vars=locals())
         rows = sorted(result, key=lambda row: (row.pc_id, row.ac_id, row.ward_id))
         for row in rows:
             row.pc = row.pc_id and Place.from_id(row.pc_id).name or "-"
             row.ac = row.ac_id and Place.from_id(row.ac_id).name or "-"
             row.ward = row.ward_id and Place.from_id(row.ward_id).name or "-"
+            row.ward = row.ward_id and Place.from_id(row.ward_id).name or "-"
+            row.pb = "-"
             row[row.type.lower()] = row.place
 
-        dataset = tablib.Dataset(headers=['Parliamentary Constituency', 'Assembly Constituency', 'Ward', 'Coordinator', 'email', 'phone'])
+        dataset = tablib.Dataset(headers=['Name', 'E-Mail', 'Phone', 'Voter ID', 'Role', 'Polling Booth', 'Ward', 'Assembly Constituency', 'Parliamentary Constituency'])
         for row in rows:
-            dataset.append([row.pc, row.ac, row.ward, row.coordinator, row.email, row.phone])
+            dataset.append([row.name, row.email, row.phone, row.voterid, row.role, row.pb, row.ward, row.ac, row.pc])
         return dataset
 
 class Person(web.storage):
