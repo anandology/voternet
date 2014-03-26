@@ -39,7 +39,7 @@ create table things (
 create index things_type_idx on things(type);
 
 CREATE TYPE role_type AS ENUM (
-    'coordinator', 'volunteer', 'admin', 'user');
+    'coordinator', 'volunteer', 'pb_agent', 'admin', 'user');
 
 create table people (
     id serial primary key,

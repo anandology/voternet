@@ -22,7 +22,7 @@ class AddPeopleForm(BaseForm):
         validators.Regexp(r'[0-9 +-]{10,}', message="That doesn't like a valid phone number.")])
     email = StringField('Email Address', [validators.Email()])
     voterid = StringField('Voter ID')
-    role = SelectField('Role', choices=[('volunteer', 'Volunteer'), ('coordinator', 'Coordinator')])
+    role = SelectField('Role', choices=[('volunteer', 'Volunteer'), ('pb_agent', 'Polling Booth Agent'), ('coordinator', 'Coordinator')])
 
 class ChangePasswordForm(BaseForm):
     password = PasswordField('New Password', [

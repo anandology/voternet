@@ -401,9 +401,10 @@ class import_people:
     @placify(roles=['admin', 'coordinator'], types=['AC'])
     def POST(self, place):
         data = json.loads(web.data())['data']
+        data = [self.process_row(row) for row in data]
 
         # skip empty rows
-        data = [row for row in data if any(row)]
+        data = [row for row in data if any(row) and row.name]
         count = 0
         for row in data:
             if self.add_volunteer(row, place):
@@ -413,10 +414,13 @@ class import_people:
         web.header("content-type", "application/json")
         return '{"result": "ok"}'
 
+    def process_row(self, row):
+        """Strips all values.
+        """
+        return web.storage((k, v and v.strip()) for k, v in row.items())
+
     def add_volunteer(self, row, ac):
-        # strip values
-        row = web.storage((k, v and v.strip()) for k, v in row.items())
-        if not row.name or not row.email:
+        if not row.name:
             return
 
         if row.place:
@@ -426,7 +430,7 @@ class import_people:
                 return
         else:
             place = ac
-        place.add_volunteer(row.name, row.phone, row.email, role='volunteer')
+        place.add_volunteer(name=row.name, phone=row.phone, email=row.email, voterid=row.voterid, role=row.role)
         return True
 
 class users:

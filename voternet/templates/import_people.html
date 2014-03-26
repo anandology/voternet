@@ -20,47 +20,98 @@ $var title: $place.name / Bulk Add Volunteers
     .handsontable th, .handsontable td {
         padding: 5px;
     }
+    .handsontable td.htInvalid {
+      color: #fee;
+      /*background: #fee;*/
+    }
 </style>
 
 <script type="text/javascript">
 
 \$(function() {
-    $ data = [{"name": "", "phone": "", "email": "", "place": ""}] * 20
+    $ data = [{"name": None, "phone": None, "email": None, "voterid": None, "role": None, "place": ""}] * 20
     var data = $:json_encode(data);
 
     $ places = ["", place.name] + [p.name for p in place.get_subplaces()]
     var places = $:json_encode(places);
+
+    function regexp_validator(pattern) {
+      return function(value, callback) {
+        if (value && !value.match(pattern))
+          callback(false);
+        else
+          callback(true);
+      }
+    }
 
     function place_renderer(instance, td, row, col, prop, value, cellProperties) {
       // TODO: Show unrecogzined places in red
       Handsontable.renderers.TextRenderer.apply(this, arguments);
     }
 
+    function role_renderer(instance, td, row, col, prop, value, cellProperties) {
+      var roles = {
+        volunteer: "Volunteer",
+        pb_agent: "Polling Booth Agent",
+        coordinator: "Coordinator"
+      }
+
+      if (roles[value])
+        value = roles[value];
+      Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+    }
+
+    function regexp_renderer(instance, td, row, col, prop, value, cellProperties) {
+      if (cellProperties.pattern && value && !value.match(cellProperties.pattern))
+        td.className = 'invalid';
+      Handsontable.renderers.TextRenderer.apply(this, arguments);
+    }
+
     \$('#example').handsontable({
       data: data,
-      colHeaders: ["Name", "Phone", "Email", "Place"], 
+      colHeaders: ["Name", "Phone", "Email", "Voter ID", "Role", "Place"],
       rowHeaders: true,
       minSpareRows: 5,
       columns: [{
         data: "name",
       }, {
         data: "phone",
+        //renderer: regexp_renderer,
+        //pattern: /^[0-9 +-]+\$/
+        validator: regexp_validator(/^[0-9 +-]+\$/)
       }, {
         data: "email",
-      }, {
+        //renderer: regexp_renderer,
+        //pattern: /^\S+@\S+\.\S+\$/
+        validator: regexp_validator(/^\S+@\S+\.\S+\$/)        
+      },{
+        data: "voterid",
+        renderer: regexp_renderer,
+        pattern: /^[A-Z0-9]+\$/
+      },{
+        data: "role",
+        type: "dropdown",
+        source: ["volunteer", "pb_agent", "coordinator"],
+        //renderer: role_renderer
+      },{
         data: "place",
         type: 'autocomplete',
         source: places,
         renderer: place_renderer
       }],
       contextMenu: false,
-      colWidths: [200, 200, 200, 400]      
+      colWidths: [175, 175, 175, 100, 100, 300]      
     });
 });
 
 \$(function() {
     \$("a#save").click(function(e) {
         e.preventDefault();
+
+        if(\$("#example td.htInvalid").length > 0) {
+          alert("Please fix the invalid values marked in red before saving.");
+          return;
+        }
 
         handsontable = \$("#example").data("handsontable");
         console.log(handsontable.getData());
