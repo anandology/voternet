@@ -10,9 +10,11 @@ $var title: Dashboard
 <div>
  <strong>$user.role</strong> for
  <a href="$user.place.get_url()"><strong>$user.place.name</strong> <small>$user.place.type_label</small></a>
+ -- <a href="$user.get_url()">edit</a>
 </div>
 $for p in user.find_dups():
     <div>
      <strong>$p.role</strong> for
      <a href="$p.place.get_url()"><strong>$p.place.name</strong> <small>$p.place.type_label</small></a>
+    -- <a href="$p.get_url()">edit</a>
     </div>

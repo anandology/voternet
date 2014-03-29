@@ -484,25 +484,53 @@ class users:
             return render.add_people(place, form, add_users=True)
 
 class edit_person:
-    @placify(roles=['admin', 'coordinator'])
+    @placify()
     def GET(self, place, id):
         person = Person.find(place_id=place.id, id=id)
         if not person:
             raise web.notfound()
-        form = forms.AddPeopleForm(person)
-        return render.person(person, form)
 
-    @placify(roles=['admin', 'coordinator'])
+        user = account.get_current_user()
+        if user.role not in ['admin', 'coordinator'] and person.id != int(id):
+            return render.access_restricted()
+        form = forms.AddPeopleForm(person)
+        return render.person(person, form, show_role=self.can_change_role(person))
+
+    def can_change_role(self, person):
+        return person.role in ['admin', 'coordinator']
+
+    @placify()
     def POST(self, place, id):
         person = Person.find(place_id=place.id, id=id)
         if not person:
             raise web.notfound()
 
+        user = account.get_current_user()
+        if user.role not in ['admin', 'coordinator'] and person.id != int(id):
+            return render.access_restricted()
+
         i = web.input()
         if i.action == "save":
-            person.update(dict(name=i.name, email=i.email, phone=i.phone, voterid=i.voterid, role=i.role))
-        elif i.action == "delete":
+            d = dict(name=i.name, email=i.email, phone=i.phone, voterid=i.voterid)
+            if self.can_change_role(person):
+                d['role'] = i.role
+            person.update(d)
+            flash.add_flash_message("success", "Thanks for updating!")            
+        elif i.action == "delete" and self.can_change_role(person): # don't allow self deletes
             person.delete()
+            flash.add_flash_message("success", "Delete the volunteer successfully.")            
+        elif i.action == "update-place":
+            next = i.get("next")
+            new_place = Place.find(i.place)
+            if not new_place:
+                flash.add_flash_message("warning", "Unable to update the location of the volunteer.")
+                raise web.seeother(next or place.url)
+            elif not new_place.writable_by(user):
+                return render.access_restricted()
+            else:
+                person.update(place_id=new_place.id)
+                flash.add_flash_message("success", "Assigned {0} to {1}".format(person.name, new_place.name))
+                raise web.seeother(next or new_place.url)
         raise web.seeother(place.url)
 
 class coverage:

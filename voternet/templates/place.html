@@ -16,7 +16,7 @@ $def render_people(people):
             <tr class="person person-$person.role">
                 <td style="width: 20px;">$loop.index</td>
                 <td>
-                    $if place_writable:
+                    $if place_writable or person.id == user.id:
                         <a href="$person.get_url()"><strong>$person.name</strong></a>
                     $else:
                         <strong>$person.name</strong>

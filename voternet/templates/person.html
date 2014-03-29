@@ -1,4 +1,4 @@
-$def with (person, form)
+$def with (person, form, show_role=True)
 
 $var title: Edit $person.name
 
@@ -28,10 +28,12 @@ $def render_field(field, **kwargs):
       $:render_field(form.phone, placeholder="Phone Number")
       $:render_field(form.email, placeholder="Email Address")
       $:render_field(form.voterid)
-      $:render_field(form.role)
+      $if show_role:
+        $:render_field(form.role)
 
       <button type="submit" name="action" value="save" class="btn btn-primary">Save</button>
-      <button type="submit" name="action" value="delete" class="btn btn-danger pull-right">Delete</button>
+      $if show_role:
+        <button type="submit" name="action" value="delete" class="btn btn-danger pull-right">Delete</button>
     </form>
     <div class="col-md-6">
         $ dups = person.find_dups()

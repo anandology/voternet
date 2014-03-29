@@ -38,12 +38,22 @@ $def render_agents(agents, status):
                 <td>
                     $ pb = person.get_pb()
                     $if pb:
-                        <a href="$pb.get_url()">$pb.name
+                        <a href="$pb.get_url()">$pb.name</a>
+                        $if pb.ac_id not in (place.ac_id, place.id):
+                            $ ac = pb.get_parent("AC")
+                            <br/>in <a href="$ac.get_url()">$ac.name <small>Assembly Cosntituency</small></a>
                     $else:
                         <em>VoterID not provided or invalid.</em>
 
-                    $if status == "mismatch":
-                        <div><a href="#" class="btn btn-default">Assign to this PB</a></div>
+                    $if status == "mismatch" and pb:
+                        <div>
+                            <form method="POST" action="$person.get_url()">
+                                <input type="hidden" name="action" value="update-place"/>
+                                <input type="hidden" name="place" value="$pb.get_url()[1:]"/>
+                                <input type="hidden" name="next" value="$place.get_url()/pb-agents"/>
+                                <button type="submit" class="btn btn-primary">Assign to this PB</button>
+                            </form>
+                        </div>
                 </td>
             </tr>
     </table>

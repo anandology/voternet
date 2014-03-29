@@ -729,6 +729,7 @@ class Person(web.storage):
         return True
 
     def update(self, values=None, **kwargs):
+        place = self.place
         if values:
             web.storage.update(self, values)
         web.storage.update(self, kwargs)
@@ -743,6 +744,8 @@ class Person(web.storage):
             voterid=self.voterid,
             role=self.role)
         self.place._invalidate_object_cache()
+        if place.id != self.place.id:
+            place._invalidate_object_cache()
         self.populate_voterid_info()
 
     def delete(self):
