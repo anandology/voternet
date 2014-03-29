@@ -11,6 +11,7 @@ $ subtypes = place.get_all_subtypes()
 
 $def render_people(people):
     <table class="table table-bordered">
+        $ roles = {"pb_agent": "Polling Booth Agent"}
         $for person in people:
             <tr class="person person-$person.role">
                 <td style="width: 20px;">$loop.index</td>
@@ -19,7 +20,7 @@ $def render_people(people):
                         <a href="$person.get_url()"><strong>$person.name</strong></a>
                     $else:
                         <strong>$person.name</strong>
-                    <small>$person.role.title()</small><br/>
+                    <small>$roles.get(person.role, person.role.title())</small><br/>
                     $if person.email:
                         <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$person.email">$person.email</a></div>
                     $if person.phone:
