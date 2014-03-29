@@ -9,6 +9,7 @@ import datetime
 from cStringIO import StringIO
 import pytz
 import tablib
+import urllib
 
 from models import Place, Person, get_all_coordinators_as_dataset
 import forms
@@ -65,7 +66,8 @@ def login_requrired(handler):
     if not web.ctx.path.startswith("/account") and not web.ctx.path.startswith("/login") and web.ctx.path not in whitelist:
         user = account.get_current_user()
         if not user:
-            raise web.seeother("/account/login")
+            params = {"next": web.ctx.fullpath}
+            raise web.seeother("/account/login?" + urllib.urlencode(params))
         elif not user.is_authorized():
             return render.permission_denied()
     return handler()
@@ -641,18 +643,20 @@ class activity:
 
 class login:
     def GET(self):
+        i = web.input(next=None)
+        next = i.next or "/"
         google = googlelogin.GoogleLogin()
         form = forms.LoginForm()        
-        return render.login(google.get_redirect_url(), error=False, form=form)
+        return render.login(google.get_redirect_url(state=next), error=False, form=form)
 
     def POST(self):
-        i = web.input()
+        i = web.input(next=None)
+        next = i.next or "/"
         form = forms.LoginForm(i)
         if form.validate():
-
             account.set_login_cookie(i.email)
             flash.add_flash_message("success", "Login successful!")
-            raise web.redirect("/")
+            raise web.redirect(next)
         else:
             google = googlelogin.GoogleLogin()            
             return render.login(google.get_redirect_url(), error=False, form=form)
@@ -682,7 +686,6 @@ class change_password:
     def GET(self):
         user = self.get_user()
         form = forms.ChangePasswordForm()
-        print user
         return render.change_password(user, form)
 
     def get_user(self):
@@ -713,10 +716,11 @@ class change_password:
         else:
             return render.change_password(user, form)
 
+
 class oauth2callback:
     def GET(self):
         i = web.input(code=None, error=None, state=None)
-
+        next = i.state or "/"
         if i.code:
             google = googlelogin.GoogleLogin()
             try:
@@ -724,7 +728,7 @@ class oauth2callback:
                 userinfo = google.get_userinfo(token.access_token)
                 if userinfo:
                     account.set_login_cookie(userinfo.email)
-                    raise web.seeother("/")
+                    raise web.seeother(next)
             except IOError:
                 return render.login(google.get_redirect_url(), error=True, form=forms.LoginForm())
         raise web.seeother("/account/login")

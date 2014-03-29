@@ -21,12 +21,13 @@ class GoogleLogin:
     def redirect(self):
         raise web.seeother(self.get_redirect_url())
 
-    def get_redirect_url(self):
+    def get_redirect_url(self, state=""):
         params = {
             "response_type": "code",
             "client_id": self.client_id,
             "redirect_uri": self.redirect_uri,
-            "scope": self.scope
+            "scope": self.scope,
+            "state": state
         }
         return GOOGLE_OAUTH2_AUTH_URL + "?" + urllib.urlencode(params)
 
