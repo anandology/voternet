@@ -656,6 +656,22 @@ class Person(web.storage):
                 d.pb_id = Place.find(key).id
                 get_db().insert("voterid_info", **d)
 
+    def get_agent_status(self):
+        """Return one of [None, "pending", "verified", mismatch"].
+        """
+        if self.role == "pb_agent":
+            d = self.get_voterid_info()
+            if not d:
+                return "pending"
+            elif d.pb_id == self.place_id:
+                return "verified"
+            else:
+                return "mismatch"
+
+    def get_pb(self):
+        d = self.get_voterid_info()
+        return d and Place.from_id(d.pb_id)
+
     def set_encrypted_password(self, password):
         self._update_auth(password=password)
 
