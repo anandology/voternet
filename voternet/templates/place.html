@@ -4,7 +4,7 @@ $var title: $place.name
 
 $ user = get_current_user()
 $ place_writable = place.writable_by(user)
-$ place_readable = place.writable_by(user, roles=['admin', 'coordinator', 'volunteer'])
+$ place_readable = place.writable_by(user, roles=['admin', 'coordinator', 'volunteer', 'pb_agent'])
 $ place_admin = place.writable_by(user, roles=['admin'])
 
 $ subtypes = place.get_all_subtypes()
@@ -57,7 +57,7 @@ $code:
         <div class="col-md-6">
             <h2>Volunteers</h2>
             $if place_readable:
-                $ volunteers = place.get_people(roles=["coordinator", "volunteer"])
+                $ volunteers = place.get_people(roles=["coordinator", "volunteer", "pb_agent"])
             $else:
                 $ volunteers = place.get_coordinators()
             $if not volunteers:
@@ -76,7 +76,7 @@ $code:
                     <a href="$place.get_url()/import-people" class="btn btn-primary active pull-right hidden-print" role="button">Bulk Import Volunteers</a>
 
                   <br/>
-                  <br/>
+                  <br/>   
                   $if place.type in ["PC", "AC", "WARD"]:
                       <h4>Download <small>as XLS</small></h4>
                       <a href="$place.get_url()/volunteers.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a><br/><br/>

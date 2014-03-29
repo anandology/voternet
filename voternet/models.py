@@ -80,7 +80,7 @@ class Place(web.storage):
 
     @property
     def volunteers(self):
-        return self.get_people(['coordinator', 'volunteer'])
+        return self.get_people(['coordinator', 'volunteer', 'pb_agent'])
 
     def get_people(self, roles):
         result = get_db().select("people",
