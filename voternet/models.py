@@ -5,7 +5,7 @@ import cache
 import time, datetime
 import tablib
 import uuid
-from . import voterlib
+import voterlib
 
 @web.memoize
 def get_db():
@@ -392,6 +392,7 @@ class Place(web.storage):
         return bool(result)
 
     def viewable_by(self, user):
+        print "viewable_by", user.email, web.config.get('super_admins', [])
         # super admins can view any page.
         if user.email in web.config.get('super_admins', []):
             return True
@@ -401,8 +402,8 @@ class Place(web.storage):
             return True
 
         result = get_db().query("SELECT people.* FROM people, places" +
-            " WHERE places.id=people.place_id" +
-            "   AND lower(people.email)=lower($user.email)" +
+            " WHERE places.id=people.place_id" + 
+            "   AND lower(people.email)=lower($user.email)" + 
             "   AND $self.id IN (places.id, places.ward_id, places.ac_id, places.pc_id, places.region_id, places.state_id)",
             vars=locals())
         return bool(result)
@@ -444,6 +445,7 @@ class Place(web.storage):
             return json.loads(result[0].data)
         else:
             return []
+
 
     @cache.object_memoize(key="coverage_count")
     def get_coverage_count(self):
@@ -531,6 +533,14 @@ class Place(web.storage):
         result = get_db().select("things", where="key=$key", vars=locals())
         return result and result[0] or None
 
+    def get_thing(self, _key):
+        key = self.key + "/" + _key
+        return Thing.find(key)
+
+    def new_thing(self, _key, type='thing', **kw):
+        key = self.key + "/" + _key
+        return Thing(key=key, type=type, **kw)
+
     def put_data(self, data, suffix="", type="place"):
         if suffix:
             key = self.key + "/" + suffix
@@ -554,7 +564,7 @@ class Place(web.storage):
     def get_signups(self):
         result = get_db().query(
             "SELECT volunteer_signups.* FROM volunteer_signups, places" +
-            " WHERE places.id=volunteer_signups.place_id" +
+            " WHERE places.id=volunteer_signups.place_id" + 
             "   AND $self.id IN (places.id, places.ac_id, places.pc_id, places.region_id, places.state_id)"
             " ORDER BY added DESC", vars=locals())
         return [VolunteerSignup(row) for row in result]
@@ -578,21 +588,18 @@ class Place(web.storage):
     def get_all_localities(self):
         """Returna all localities in this subtree.
         """
-        def process_row(row):
-            key = row.key.replace("/localities", "")
-            place = Place.find(key)
-            data = json.loads(row.data)
+        def process_ward(w):
+            d = w.get_localities()
             return {
-                "code": place.code,
-                "name": place.name,
-                "ac": place.get_parent("AC").name,
-                "pc": place.get_parent("AC").name,
-                "localities": data.get("localities", []),
-                "pincodes": data.get("pincodes", [])
+                "key": w.key,
+                "name": w.name,
+                "ac": w.get_parent("AC").name,
+                "pc": w.get_parent("PC").name,
+                "localities": d.get('localities') or [w.name.split("-")[-1].strip()],
+                "pincodes": d.get('pincodes', [])
             }
-        key = self.key + '%/localities'
-        rows = get_db().query("SELECT * FROM things WHERE key like $key", vars=locals()).list()
-        return [process_row(row) for row in rows]
+        wards = self.get_places(type="WARD")            
+        return [process_ward(w) for w in wards]
 
     def get_all_coordinators_as_dataset(self, types=['STATE', 'REGION', 'PC', 'AC', 'WARD']):
         return self.get_all_volunteers_as_dataset(roles=['coordinator'], types=types)
@@ -618,6 +625,7 @@ class Place(web.storage):
         for row in rows:
             dataset.append([row.name, row.email, row.phone, row.voterid, row.role, row.pb, row.ward, row.ac, row.pc])
         return dataset
+
 
 class Person(web.storage):
     @property
@@ -782,3 +790,29 @@ def get_all_coordinators_as_dataset(types=['STATE', 'PC', 'AC', 'WARD']):
 class VolunteerSignup(web.storage):
     def get_place(self):
         return Place.from_id(self.place_id)
+
+class Thing(web.storage):
+    @staticmethod
+    def find(key):
+        result = get_db().select("things", where="key=$key", vars=locals())
+        if result:
+            row = result[0]
+            d = json.loads(row['data'])
+            d['key'] = key
+            d['id'] = row.id
+            return Thing(d)
+
+    @property
+    def jsondata(self):
+        d = dict(self)
+        d.pop('id', None)
+        return json.dumps(d)
+
+    def exists(self):
+        return self.get("id") is not None
+
+    def save(self):
+        if self.exists():
+            get_db().update("things", where="id=$id", data=self.jsondata, vars=self)
+        else:
+            get_db().insert("things", key=self.key, type=self.type, data=self.jsondata)
