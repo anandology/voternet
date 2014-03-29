@@ -5,6 +5,7 @@ import cache
 import time, datetime
 import tablib
 import uuid
+from . import voterlib
 
 @web.memoize
 def get_db():
@@ -103,6 +104,8 @@ class Place(web.storage):
             role=role)
         self._invalidate_object_cache()
         self.record_activity("volunteer-added", volunteer_id=person_id, name=name, role=role)
+        if voterid:
+            Person.find_by_id(person_id).populate_voterid_info
 
     def _invalidate_object_cache(self):
         cache.invalidate_object_cache(objects=[self] + self.get_parents())
@@ -631,6 +634,20 @@ class Person(web.storage):
             result = get_db().select("people", where="id!=$id AND lower(email)=lower($email)", vars=self)
             return [Person(row) for row in result]
 
+    def get_voterid_info(self):
+        if self.voterid:
+            d = get_db().query("SELECT * FROM voterid_info where voterid=$voterid", vars=self)
+            if d:
+                return d[0]
+
+    def populate_voterid_info(self):
+        if self.voterid and not self.get_voterid_info():
+            d = voterlib.get_voter_details(self.voterid)
+            if d:
+                key = "KA/AC{0:03d}/PB{1:04d}".format(int(d.ac_num), int(d.part_no))
+                d.pb_id = Place.find(key).id
+                get_db().insert("voterid_info", **d)
+
     def set_encrypted_password(self, password):
         self._update_auth(password=password)
 
@@ -691,6 +708,7 @@ class Person(web.storage):
             voterid=self.voterid,
             role=self.role)
         self.place._invalidate_object_cache()
+        self.populate_voterid_info()
 
     def delete(self):
         db = get_db()
