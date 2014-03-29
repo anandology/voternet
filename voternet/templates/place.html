@@ -88,8 +88,11 @@ $code:
                   $if place.type == "AC":
                     <a href="$place.get_url()/import-people" class="btn btn-primary active pull-right hidden-print" role="button">Bulk Import Volunteers</a>
 
-                  <br/>
-                  <br/>   
+                  $if place.type in ["AC", "WARD"]:
+                      <h4>Manage Polling Booth Agents</h4>
+                      <div>
+                        <a href="$place.get_url()/pb-agents" class="btn btn-primary active hidden-print" role="button">Manage PB Agents</a>
+                      </div>
                   $if place.type in ["PC", "AC", "WARD"]:
                       <h4>Download <small>as XLS</small></h4>
                       <a href="$place.get_url()/volunteers.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a><br/><br/>

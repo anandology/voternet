@@ -90,6 +90,15 @@ class Place(web.storage):
             vars={"place_id": self.id, "roles": roles})
         return [Person(row) for row in result]
 
+    def get_pb_agents(self):
+        result = get_db().query(
+            "SELECT people.* FROM people, places" + 
+            " WHERE people.place_id=places.id" + 
+            "   AND people.role='pb_agent'" +
+            "   AND (places.id=$id OR places.{0} = $id)".format(self.type_column),
+            vars=self)
+        return [Person(row) for row in result]
+
     @cache.object_memoize(key="coordinators")
     def get_coordinators(self):
         return self.get_people(["coordinator"])
@@ -121,6 +130,8 @@ class Place(web.storage):
 
     @property
     def type_column(self):
+        if self.type == "PB":
+            return "id"
         return self.type.lower() + "_id"
 
     @property

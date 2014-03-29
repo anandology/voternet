@@ -46,6 +46,7 @@ urls = (
     "/([\w/]+)/groups", "pb_groups",
     "/([\w/]+)/regions", "regions",
     "/([\w/]+)/add-people", "add_people",
+    "/([\w/]+)/pb-agents", "pb_agents",
     "/([\w/]+)/import-people", "import_people",
     "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
@@ -433,6 +434,11 @@ class import_people:
             place = ac
         place.add_volunteer(name=row.name, phone=row.phone, email=row.email, voterid=row.voterid, role=row.role)
         return True
+
+class pb_agents:
+    @placify(roles=['coordinator', 'admin'], types=['AC', 'WARD', 'PB'])
+    def GET(self, place):
+        return render.pb_agents(place)
 
 class users:
     def GET(self, key):

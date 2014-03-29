@@ -1,0 +1,66 @@
+$def with (place)
+
+$var title: $place.name -- PB Agents
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+<h1><a href="$place.get_url()">$place.name</a> / Polling Booth Agents</h1>
+
+$def render_agents(agents, status):
+    $ agents = [a for a in agents if a.get_agent_status() == status]
+    <p><strong>$len(agents) agents</strong></p>
+    <table class="table table-bordered">
+        <tr>
+            <th style="width: 5%;">#</td>        
+            <th style="width: 15%;">Agent</td>        
+            <th style="width: 40%;">Assigned to</td>        
+            <th style="width: 40%;">Voter ID belongs to</td>        
+        $for person in agents:
+            <tr class="person person-$person.role">
+                <td style="width: 20px;">$loop.index</td>
+                <td>
+                    <a href="$person.get_url()"><strong>$person.name</strong></a><br/>
+                    $if person.email:
+                        <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$person.email">$person.email</a></div>
+                    $if person.phone:
+                        <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$person.phone">$person.phone</a></div>
+                    $if person.voterid:
+                        <div><span class="glyphicon glyphicon-list-alt"></span> $person.voterid</a></div>
+                </td>
+                <td>
+                    $if person.place.type == 'PB':
+                        <a href="$person.place.get_url()">$person.place.name</a>
+                    $else:
+                        <em>Not assigned to any PB</em>
+                </td>
+                <td>
+                    $ pb = person.get_pb()
+                    $if pb:
+                        <a href="$pb.get_url()">$pb.name
+                    $else:
+                        <em>VoterID not provided or invalid.</em>
+
+                    $if status == "mismatch":
+                        <div><a href="#" class="btn btn-default">Assign to this PB</a></div>
+                </td>
+            </tr>
+    </table>
+    
+
+$ agents = place.get_pb_agents()
+<div class="row2">
+    <div class="xcol-md-4" style2="background: #efe; border: 1px solid #cdc;">
+        <h3 class="text-success">Verified Agents</h3>
+        $:render_agents(agents, "verified")
+    </div>
+    <div class="xcol-md-4" style2="background: #fee; border: 1px solid #dcc;">
+        <h3 class="text-danger">Wronly Assigned Agents</h3>
+        $:render_agents(agents, "mismatch")        
+    </div>
+    <div class="xcol-md-4" style2="background: #ffe; border: 1px solid #cdc;">
+        <h3 class="text-warning">Pending Agents</h3>
+        $:render_agents(agents, "pending")                
+    </div>
+</div>
