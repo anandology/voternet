@@ -30,13 +30,12 @@ $def render_agents(agents, status):
                         <div><span class="glyphicon glyphicon-list-alt"></span> $person.voterid</a></div>
                 </td>
                 <td>
-                    $if person.place.type == 'PB':
-                        <a href="$person.place.get_url()">$person.place.name</a>
-                        $if place.type == 'PC':
-                            $ ac = person.place.get_parent("AC")
-                            <br/>in <a href="$ac.get_url()">$ac.name <small>Assembly Constituency</small></a>
-                    $else:
-                        <em>Not assigned to any PB</em>
+                    <a href="$person.place.get_url()">$person.place.name</a>
+                    $if place.type == 'PC':
+                        $ ac = person.place.get_parent("AC")
+                        <br/>in <a href="$ac.get_url()">$ac.name <small>Assembly Constituency</small></a>
+                    $if person.place.type != 'PB':
+                        <em><small>This is not a PB.</small></em>
                 </td>
                 <td>
                     $ pb = person.get_pb()
