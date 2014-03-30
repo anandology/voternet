@@ -31,7 +31,7 @@ $def render_agents(agents, status):
                 </td>
                 <td>
                     <a href="$person.place.get_url()">$person.place.name</a>
-                    $if place.type == 'PC':
+                    $if place.type == 'xPC':
                         $ ac = person.place.get_parent("AC")
                         <br/>in <a href="$ac.get_url()">$ac.name <small>Assembly Constituency</small></a>
                     $if person.place.type != 'PB':
@@ -41,7 +41,7 @@ $def render_agents(agents, status):
                     $ pb = person.get_pb()
                     $if pb:
                         <a href="$pb.get_url()">$pb.name</a>
-                        $if pb.ac_id not in (place.ac_id, place.id) or place.type == 'PC':
+                        $if pb.ac_id not in (place.ac_id, place.id) or place.type == 'xPC':
                             $ ac = pb.get_parent("AC")
                             <br/>in <a href="$ac.get_url()">$ac.name <small>Assembly Cosntituency</small></a>
                     $else:
