@@ -2,6 +2,7 @@ from webapp import xrender, check_config
 from models import Place
 import utils
 import sys
+import web
 
 def email_fill_voterid(place_key):
     """Reminds all PB volunteers who have not filled their voter ID
@@ -17,13 +18,34 @@ def email_fill_voterid(place_key):
     for a in agents:
         utils.send_email(a.email, xrender.email_fill_voterid(a))
 
+def autoadd_pb_agents(place_key):
+    """Finds all volunteers in the place and adds a new role as polling booth agent.
+    """
+    place = Place.find(place_key)
+    if not place:
+        raise ValueError("Invalid place {0}".format(place_key))
+
+    pb_agents = set((a.email, a.phone) for a in place.get_all_volunteers("pb_agent"))
+
+    for v in place.get_all_volunteers():
+        if (v.email, v.phone) not in pb_agents:
+            v.place.add_volunteer(name=v.name, email=v.email, phone=v.phone, role='pb_agent', voterid=v.voterid)
+            pb_agents.add((v.email, v.phone))
+
 def main():  
+    # hack to work-around web.cookies() failure deepinside
+    web.ctx.env = {}
+
     check_config()
     cmd = sys.argv[1]
-    if cmd == 'fill-voterid':
+    if cmd == 'email_fill_voterid':
         places = sys.argv[2:]
         for p in places:
             email_fill_voterid(p)
+    elif cmd == "autoadd_pb_agents":
+        places = sys.argv[2:]
+        for p in places:
+            autoadd_pb_agents(p)
 
 if __name__ == "__main__":
     main()            

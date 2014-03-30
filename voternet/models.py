@@ -92,12 +92,17 @@ class Place(web.storage):
         return [Person(row) for row in result]
 
     def get_pb_agents(self):
+        return self.get_all_volunteers("pb_agent")
+
+    def get_all_volunteers(self, role="volunteer"):
+        """Returns all volunteers in the sub tree.
+        """
         result = get_db().query(
             "SELECT people.* FROM people, places" + 
             " WHERE people.place_id=places.id" + 
-            "   AND people.role='pb_agent'" +
-            "   AND (places.id=$id OR places.{0} = $id)".format(self.type_column),
-            vars=self)
+            "   AND people.role=$role" +
+            "   AND (places.id=$self.id OR places.{0} = $self.id)".format(self.type_column),
+            vars=locals())
         return [Person(row) for row in result]
 
     @cache.object_memoize(key="coordinators")
