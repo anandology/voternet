@@ -1,0 +1,19 @@
+$def with (agent)
+$var subject: Please provide your voter ID
+Hi $agent.name,
+
+Thanks for volunteering for $get_site_full_title().
+
+You've been assigned as polling booth agent for:
+  ${agent.place.name}
+  $if agent.place.type in ["PB", "WARD"]: in $agent.place.get_parent("AC").name Assembly Constituency
+
+We need to know your voter ID to confirm that you are assigned to the right polling booth.
+Please click the link below to provide your voter ID.
+
+http://cms.aapvol.in/account/edit/$agent.get_edit_token()
+
+Please do this right now. We have very little time left.
+
+Regards,
+$get_site_full_title()

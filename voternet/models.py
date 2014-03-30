@@ -6,6 +6,7 @@ import time, datetime
 import tablib
 import uuid
 import voterlib
+import hmac
 
 @web.memoize
 def get_db():
@@ -695,6 +696,21 @@ class Person(web.storage):
         token = str(uuid.uuid4()).replace("-", "")
         self._update_auth(reset_token=token)
         return token
+
+    def get_edit_token(self):
+        msg = "{} {} {}".format(self.id, self.email, self.phone)
+        h = hmac.HMAC(web.config.secret_key, msg).hexdigest()
+        return "{}-{}".format(self.id, h)
+
+    @staticmethod
+    def find_by_edit_token(token):
+        try:
+            person_id = int(token.split("-")[0])
+        except ValueError:
+            return
+        person = Person.find_by_id(person_id)
+        if person and person.get_edit_token() == token:
+            return person
 
     def _update_auth(self, **kwargs):
         result = get_db().select("auth", where="email=$email", vars=self)

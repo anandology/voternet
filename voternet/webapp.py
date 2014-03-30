@@ -27,6 +27,7 @@ urls = (
     "/account/forgot-password", "forgot_password",
     "/account/reset-password", "change_password",
     "/account/change-password", "change_password",
+    "/account/edit/(\d+-.*)", "edit_account",
     "/account/oauth2callback", "oauth2callback",
     "/login/oauth2callback", "oauth2callback",
     "/report-issue", "report_issue",
@@ -157,6 +158,7 @@ tglobals = {
     "commify": web.commify,
     "config": web.config,
     "get_site_title": lambda: web.config.get("site_title", "Your Favorite Party"),
+    "get_site_full_title": lambda: web.config.get("site_full_title", tglobals['get_site_title']()),
     "get_today": get_today,
     "get_yesterday": get_yesterday,
     "get_flashed_messages": flash.get_flashed_messages,
@@ -532,6 +534,30 @@ class edit_person:
                 flash.add_flash_message("success", "Assigned {0} to {1}".format(person.name, new_place.name))
                 raise web.seeother(next or new_place.url)
         raise web.seeother(place.url)
+
+class edit_account:
+    """TODO: merge this with edit_people.
+    """
+    def GET(self, token):
+        person = Person.find_by_edit_token(token)
+        if not person:
+            raise render.invalid_token()
+
+        form = forms.AddPeopleForm(person)
+        return render.person(person, form, show_role=False)
+
+    def POST(self, token):
+        person = Person.find_by_edit_token(token)
+        if not person:
+            raise render.invalid_token()
+
+        i = web.input()
+        if i.action == "save":
+            d = dict(name=i.name, email=i.email, phone=i.phone, voterid=i.voterid)
+            person.update(d)
+            return render.message("Thanks!", "Thank you for updaing your account details.")
+        else:
+            return self.GET(token)
 
 class coverage:
     def GET(self, code, date):

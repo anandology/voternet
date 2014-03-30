@@ -1,7 +1,6 @@
 import web
 
 def send_email(to_addr, message):
-    print message
     subject = message.subject.strip()
     message = web.safestr(message)
     if web.config.debug:
