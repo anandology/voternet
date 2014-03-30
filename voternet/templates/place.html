@@ -30,9 +30,9 @@ $def render_people(people):
                     $if person.role == "pb_agent":
                         $ status = person.get_agent_status()
                         <div class="agent-$status">                        
-                        $if status == "pending":
+                        $if status == "verified":
                             <span class="glyphicon glyphicon-thumbsup"></span>VoterID verified!
-                        $elif status == "verified":
+                        $elif status == "pending":
                             <span class="glyphicon glyphicon-exclamation-sign"></span>VoterID not provided yet or invalid.
                         $elif status == "mismatch":
                             <span class="glyphicon glyphicon-warning-sign"></span>VoterID doesn't belong to this PB.
@@ -88,7 +88,7 @@ $code:
                   $if place.type == "AC":
                     <a href="$place.get_url()/import-people" class="btn btn-primary active pull-right hidden-print" role="button">Bulk Import Volunteers</a>
 
-                  $if place.type in ["AC", "WARD"]:
+                  $if place.type in ["PC", "AC", "WARD"]:
                       <h4>Manage Polling Booth Agents</h4>
                       <div>
                         <a href="$place.get_url()/pb-agents" class="btn btn-primary active hidden-print" role="button">Manage PB Agents</a>

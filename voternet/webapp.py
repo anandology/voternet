@@ -440,7 +440,7 @@ class import_people:
         return True
 
 class pb_agents:
-    @placify(roles=['coordinator', 'admin'], types=['AC', 'WARD', 'PB'])
+    @placify(roles=['coordinator', 'admin'], types=['PC', 'AC', 'WARD', 'PB'])
     def GET(self, place):
         return render.pb_agents(place)
 
