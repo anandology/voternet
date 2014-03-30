@@ -1,6 +1,6 @@
 import web
 
-def send_email(to_addr, message):
+def send_email(to_addr, message, bcc=None):
     subject = message.subject.strip()
     message = web.safestr(message)
     if web.config.debug:
@@ -9,4 +9,4 @@ def send_email(to_addr, message):
         print
         print message
     else:
-        web.sendmail(web.config.from_address, to_addr, subject, message)
+        web.sendmail(web.config.from_address, to_addr, subject, message, bcc=bcc)

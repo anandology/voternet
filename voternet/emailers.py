@@ -14,9 +14,11 @@ def email_fill_voterid(place_key):
     if not place:
         raise ValueError("Invalid place {0}".format(place_key))
 
+    bcc = web.config.get("email_bcc_address")
+
     agents = [a for a in place.get_pb_agents() if not a.voterid if a.email]    
     for a in agents:
-        utils.send_email(a.email, xrender.email_fill_voterid(a))
+        utils.send_email(a.email, xrender.email_fill_voterid(a), bcc=bcc)
 
 def autoadd_pb_agents(place_key):
     """Finds all volunteers in the place and adds a new role as polling booth agent.
