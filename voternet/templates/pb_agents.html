@@ -35,7 +35,7 @@ $def render_agents(agents, status):
                         $ ac = person.place.get_parent("AC")
                         <br/>in <a href="$ac.get_url()">$ac.name <small>Assembly Constituency</small></a>
                     $if person.place.type != 'PB':
-                        <em><small>This is not a PB.</small></em>
+                        <div><em><small>This is not a PB.</small></em></div>
                 </td>
                 <td>
                     $ pb = person.get_pb()
