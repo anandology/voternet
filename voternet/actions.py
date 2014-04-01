@@ -3,6 +3,9 @@ from models import Place
 import utils
 import sys
 import web
+import logging
+
+logger = logging.getLogger(__name__)
 
 def email_fill_voterid(place_key):
     """Reminds all PB volunteers who have not filled their voter ID
@@ -34,7 +37,13 @@ def autoadd_pb_agents(place_key):
             v.place.add_volunteer(name=v.name, email=v.email, phone=v.phone, role='pb_agent', voterid=v.voterid)
             pb_agents.add((v.email, v.phone))
 
+def setup_logger():
+    FORMAT = "%(asctime)s [%(name)s] [%(levelname)s] %(message)s"
+    logging.basicConfig(format=FORMAT, level=logging.INFO)
+
 def main():  
+    setup_logger()
+    
     # hack to work-around web.cookies() failure deepinside
     web.ctx.env = {}
 
