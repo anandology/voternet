@@ -9,6 +9,10 @@ logger = logging.getLogger(__name__)
 URL = "http://ceokarnataka.kar.nic.in/SearchWithEpicNo_New.aspx"
 
 def get_voter_details(voterid):
+    # ignore voterids like "yes" etc.
+    if len(voterid) <= 4:
+        return
+
     logger.info("get_voter_details %s", voterid)    
     b = web.Browser()
     b.open(URL)
