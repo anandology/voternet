@@ -45,7 +45,7 @@ def update_voterinfo(place_key):
         raise ValueError("Invalid place {0}".format(place_key))    
     for a in place.get_all_volunteers("pb_agent"):
         info = a.populate_voterid_info()
-        if info.pb_id != a.place_id:
+        if info and info.pb_id != a.place_id:
             a.update(place_id=info.pb_id)
 
 def setup_logger():
