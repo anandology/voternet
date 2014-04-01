@@ -2,10 +2,14 @@
 """
 import web
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 URL = "http://ceokarnataka.kar.nic.in/SearchWithEpicNo_New.aspx"
 
 def get_voter_details(voterid):
+    logger.info("get_voter_details %s", voterid)    
     b = web.Browser()
     b.open(URL)
     b.select_form(index=0)
@@ -24,6 +28,7 @@ def get_voter_details(voterid):
     cols = "ac_num ac_name part_no sl_no first_name last_name rel_firstname rel_lastname sex age".split()
     d = dict(zip(cols, data))
     d['voterid'] = voterid
+    logger.info("voter info %s %s", voterid, d)   
     return web.storage(d)
 
 if __name__ == '__main__':

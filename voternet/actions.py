@@ -37,26 +37,39 @@ def autoadd_pb_agents(place_key):
             v.place.add_volunteer(name=v.name, email=v.email, phone=v.phone, role='pb_agent', voterid=v.voterid)
             pb_agents.add((v.email, v.phone))
 
+def update_voterinfo(place_key):
+    """Updtes voter info of all volunteers with voterids whos voter info is not updated yet.
+    """
+    place = Place.find(place_key)
+    if not place:
+        raise ValueError("Invalid place {0}".format(place_key))    
+    for a in place.get_all_volunteers("pb_agent"):
+        a.populate_voterid_info()
+
 def setup_logger():
     FORMAT = "%(asctime)s [%(name)s] [%(levelname)s] %(message)s"
     logging.basicConfig(format=FORMAT, level=logging.INFO)
 
 def main():  
     setup_logger()
-    
+
     # hack to work-around web.cookies() failure deepinside
     web.ctx.env = {}
 
     check_config()
-    cmd = sys.argv[1]
-    if cmd == 'email_fill_voterid':
+    CMDS = {
+        'email_fill_voterid': email_fill_voterid,
+        'autoadd_pb_agents': autoadd_pb_agents,
+        'update_voterinfo': update_voterinfo
+    }
+    cmdname = sys.argv[1]
+    cmd = CMDS.get(cmdname)
+    if cmd:
         places = sys.argv[2:]
         for p in places:
-            email_fill_voterid(p)
-    elif cmd == "autoadd_pb_agents":
-        places = sys.argv[2:]
-        for p in places:
-            autoadd_pb_agents(p)
+            cmd(p)
+    else:
+        print >> sys.stderr, "Unknown command {}".format(cmdname)
 
 if __name__ == "__main__":
     main()            
