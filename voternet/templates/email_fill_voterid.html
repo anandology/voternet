@@ -1,19 +1,15 @@
 $def with (agent)
-$var subject: Please provide your voter ID
-Hi $agent.name,
+$var subject: Lets win booth by booth for AAP
+Dear $agent.name,
 
-Thanks for volunteering for $get_site_full_title().
+Over the last 1 year or more, 1000s of selfless volunteers have been working very hard to create awareness for clean politics and for AAM AADMI PARTY. We now have one last thing that needs to be done.
 
-You've been assigned as polling booth agent for:
-  ${agent.place.name}
-  $if agent.place.type in ["PB", "WARD"]: in $agent.place.get_parent("AC").name Assembly Constituency
+You need to devote just 1 day of your time to win your booth for AAP.
 
-We need to know your voter ID to confirm that you are assigned to the right polling booth.
-Please click the link below to provide your voter ID.
+Please sign up to become a Polling Booth Agent for the election day. You will be the representative of AAP for your neighbors that belong to the same booth. Your presence at the Booth will directly help AAP cross the finish line.
+
+Please click the link below to fill in your voter ID details and be part of the change that you wish to see in the country. You will receive more details once you register. 
 
 http://cms.aapvol.in/account/edit/$agent.get_edit_token()
 
-Please do this right now. We have very little time left.
-
-Regards,
-$get_site_full_title()
+Jai Hind! Jai Karnataka!!
