@@ -11,7 +11,7 @@ import pytz
 import tablib
 import urllib
 
-from models import Place, Person, get_all_coordinators_as_dataset
+from models import Place, Person, get_all_coordinators_as_dataset, get_voterid_details
 import forms
 import googlelogin
 import account
@@ -57,6 +57,7 @@ urls = (
     "/([\w/]+)/activity", "activity",
     "/([\w/]+)", "place",
     "/(.*/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
+    "/voter-info/(.*)", "voter_info"
 )
 
 app = web.application(urls, globals())
@@ -64,7 +65,10 @@ app.add_processor(flash.flash_processor)
 
 def login_requrired(handler):
     whitelist = ["/report-issue"]
-    if not web.ctx.path.startswith("/account") and not web.ctx.path.startswith("/login") and web.ctx.path not in whitelist:
+    if (not web.ctx.path.startswith("/account") 
+        and not web.ctx.path.startswith("/login") 
+        and not web.ctx.path.startswith("/voter-info/") 
+        and web.ctx.path not in whitelist):
         user = account.get_current_user()
         if not user:
             params = {"next": web.ctx.fullpath}
@@ -484,6 +488,12 @@ class users:
             raise web.redirect(place.url + "/users")
         else:
             return render.add_people(place, form, add_users=True)
+
+class voter_info:
+    def GET(self, voterid):
+        d = get_voterid_details(voterid, fetch=True)
+        web.header("content-type", "application/json")
+        return json.dumps(d)
 
 class edit_person:
     @placify()

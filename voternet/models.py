@@ -643,6 +643,18 @@ class Place(web.storage):
             dataset.append([row.name, row.email, row.phone, row.voterid, row.role, row.pb, row.ward, row.ac, row.pc])
         return dataset
 
+def get_voterid_details(voterid, fetch=False):
+    if voterid:
+        rows = get_db().query("SELECT * FROM voterid_info where voterid=$voterid", vars=locals())
+        if rows:
+            return rows[0]
+        if fetch:
+            d = voterlib.get_voter_details(voterid)
+            if d:
+                key = "KA/AC{0:03d}/PB{1:04d}".format(int(d.ac_num), int(d.part_no))
+                d.pb_id = Place.find(key).id
+                get_db().insert("voterid_info", **d)
+                return d
 
 class Person(web.storage):
     @property
@@ -660,10 +672,7 @@ class Person(web.storage):
             return [Person(row) for row in result]
 
     def get_voterid_info(self):
-        if self.voterid:
-            d = get_db().query("SELECT * FROM voterid_info where voterid=$voterid", vars=self)
-            if d:
-                return d[0]
+        return get_voterid_details(self.voterid)
 
     def populate_voterid_info(self):
         if self.voterid and not self.get_voterid_info():
