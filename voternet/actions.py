@@ -44,7 +44,8 @@ def update_voterinfo(place_key):
     if not place:
         raise ValueError("Invalid place {0}".format(place_key))    
     for a in place.get_all_volunteers("pb_agent"):
-        info = a.populate_voterid_info()
+        a.populate_voterid_info()
+        info = a.get_voterid_info()
         if info and info.pb_id != a.place_id:
             a.update(place_id=info.pb_id)
 
