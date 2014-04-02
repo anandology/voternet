@@ -23,6 +23,31 @@ def email_fill_voterid(place_key):
     for a in agents:
         utils.send_email(a.email, xrender.email_fill_voterid(a), bcc=bcc)
 
+def add_pb_agents(place_key, tsv_file):
+    """Takes a tsv file containing name, phone, email fields and adds them as PB agents.
+    """
+    place = Place.find(place_key)
+    if not place:
+        raise ValueError("Invalid place {0}".format(place_key))
+
+    def parse_line(line):
+        name, phone, email = line.strip("\n").split("\t")
+        return web.storage(name=name, phone=phone, email=email, voterid=None)
+
+    agents = [parse_line(line) for line in open(tsv_file) if line.strip()]
+    _add_pb_agents(place, agents)
+
+def _add_pb_agents(place, agents):
+    """Expect that each agent is a storage object with name, phone, email and voterid fields.
+    """
+    pb_agents = set((a.email, a.phone) for a in place.get_all_volunteers("pb_agent"))
+    for a in agents:
+        if (a.email, a.phone) not in pb_agents:
+            p = a.get("place") or place
+            p.add_volunteer(name=a.name, email=a.email, phone=a.phone, role='pb_agent', voterid=a.voterid)
+            pb_agents.add((a.email, a.phone))
+            logger.info("adding {} <{}> as volunteer".format(a.name, a.email))
+
 def autoadd_pb_agents(place_key):
     """Finds all volunteers in the place and adds a new role as polling booth agent.
     """
@@ -30,12 +55,7 @@ def autoadd_pb_agents(place_key):
     if not place:
         raise ValueError("Invalid place {0}".format(place_key))
 
-    pb_agents = set((a.email, a.phone) for a in place.get_all_volunteers("pb_agent"))
-
-    for v in place.get_all_volunteers():
-        if (v.email, v.phone) not in pb_agents:
-            v.place.add_volunteer(name=v.name, email=v.email, phone=v.phone, role='pb_agent', voterid=v.voterid)
-            pb_agents.add((v.email, v.phone))
+    _add_pb_agents(place, place.get_all_volunteers())
 
 def update_voterinfo(place_key):
     """Updtes voter info of all volunteers with voterids whos voter info is not updated yet.
@@ -63,11 +83,15 @@ def main():
     CMDS = {
         'email_fill_voterid': email_fill_voterid,
         'autoadd_pb_agents': autoadd_pb_agents,
-        'update_voterinfo': update_voterinfo
+        'update_voterinfo': update_voterinfo,
+        'add_pb_agents': add_pb_agents,        
     }
     cmdname = sys.argv[1]
+    print cmdname
     cmd = CMDS.get(cmdname)
-    if cmd:
+    if cmdname == 'add_pb_agents':
+        add_pb_agents(sys.argv[2], sys.argv[3])
+    elif cmd:
         places = sys.argv[2:]
         for p in places:
             cmd(p)
