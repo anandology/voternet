@@ -20,7 +20,8 @@ $def render_field(field, **kwargs):
 
 <div class="content">
     <h1>Edit $person.name</h1>
-    <h2 style="margin-top: -15px;"><small>$person.role.title() for <a href="$person.place.get_url()">$person.place.name $person.place.type_label</a></small></h2>
+    $ roles = {"pb_agent": "Polling Booth Agent"}
+    <h2 style="margin-top: -15px;"><small>$roles.get(person.role, person.role.title()) for <a href="$person.place.get_url()">$person.place.name $person.place.type_label</a></small></h2>
 
 <div class="row">
     <form role="form" method="POST" class="col-md-6">
