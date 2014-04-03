@@ -535,7 +535,7 @@ class edit_person:
                 else:
                     utils.sendmail_voterid_pending(person)
             flash.add_flash_message("success", "Thanks for updating!")            
-        elif i.action == "delete" and self.can_change_role(person): # don't allow self deletes
+        elif i.action == "delete" and self.can_change_role(user): # don't allow self deletes
             person.delete()
             flash.add_flash_message("success", "Delete the volunteer successfully.")            
         elif i.action == "update-place":
