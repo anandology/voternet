@@ -7,7 +7,11 @@ from models import Thing
 
 logger = logging.getLogger(__name__)
 
+email_count = 0
+
 def send_email(to_addr, message, cc=None, bcc=None):
+    global email_count
+    email_count += 1
     subject = message.subject.strip()
     message = web.safestr(message)
     cc = cc or []
@@ -23,7 +27,7 @@ def send_email(to_addr, message, cc=None, bcc=None):
         print
         print message
     else:
-        logger.info("sending email to {} with subject {!r}".format(to_addr, subject))
+        logger.info("{}: sending email to {} with subject {!r}".format(email_count, to_addr, subject))
         web.sendmail(web.config.from_address, to_addr, subject, message, cc=cc, bcc=bcc)
 
 def parse_datetime(value):
