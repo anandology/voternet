@@ -1,15 +1,17 @@
-import sys
 import web
-import yaml
+import os
 from wtforms import Form, StringField, HiddenField, validators, ValidationError
+from webapp import check_config
+import utils
 
 urls = (
     "/", "signup",
     "/wards.js", "wards_js"
 )
 app = web.application(urls, globals())
-render = web.template.render("templates/", base="site")
-xrender = web.template.render("templates/")
+path = os.path.join(os.path.dirname(__file__), "templates/signup")
+render = web.template.render(path, base="site")
+xrender = web.template.render(path)
 
 db = None
 
@@ -61,7 +63,7 @@ class signup:
             msg = xrender.email_thankyou(place, i)
             cc = [c.email for c in place.get_coordinators()]
             bcc = web.config.get("admins", [])
-            send_email(i.email, msg, cc=cc, bcc=bcc)
+            utils.send_email(i.email, msg, cc=cc, bcc=bcc)
 
             return render.thankyou(place, i)
         else:
@@ -125,42 +127,9 @@ class wards_js:
         web.header("Cache-Control", "Public, max-age=%d" % oneyear)
         return open("static/wards.js.gz")
 
-def check_config():
-    if "--config" in sys.argv:
-        index = sys.argv.index("--config")
-        configfile = sys.argv[index+1]
-        sys.argv = sys.argv[:index] + sys.argv[index+2:]
-        load_config(configfile)
-
-def load_config(configfile):
-    web.config.update(yaml.load(open(configfile)))
-
-def send_email(to_addr, message, cc=None, bcc=None):
-    subject = message.subject.strip()
-    message = web.safestr(message)
-    if web.config.debug:
-        print "To: ", to_addr
-        print "Subject: ", subject
-        if cc:
-            print "Cc: ", cc
-        if bcc:
-            print "Bcc: ", bcc
-        print
-        print message
-    else:
-        web.sendmail(web.config.from_address, to_addr, subject, message, cc=cc, bcc=bcc)
-
 def main():
     check_config()
-
-    if web.config.get('error_email_recipients'):
-        app.internalerror = web.emailerrors(
-            web.config.error_email_recipients, 
-            app.internalerror, 
-            web.config.get('from_address'))
-
     app.run()
-
 
 if __name__ == '__main__':
     main()
