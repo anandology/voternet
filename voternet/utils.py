@@ -4,12 +4,21 @@ import re
 import datetime
 import functools
 from models import Thing
+import envelopes 
 
 logger = logging.getLogger(__name__)
 
 email_count = 0
 
-def send_email(to_addr, message, cc=None, bcc=None):
+def get_smtp_conn():
+    return envelopes.conn.SMTP(
+        host=web.config.smtp_server, 
+        port=web.config.smtp_port,
+        tls=web.config.smtp_starttls,
+        login=web.config.smtp_username,
+        password=web.config.smtp_password)
+
+def send_email(to_addr, message, cc=None, bcc=None, conn=None):
     global email_count
     email_count += 1
     subject = message.subject.strip()
@@ -28,7 +37,16 @@ def send_email(to_addr, message, cc=None, bcc=None):
         print message
     else:
         logger.info("{}: sending email to {} with subject {!r}".format(email_count, to_addr, subject))
-        web.sendmail(web.config.from_address, to_addr, subject, message, cc=cc, bcc=bcc)
+        envelope = envelopes.Envelope(    
+            from_addr=web.config.from_address,
+            to_addr=to_addr,
+            subject=subject,
+            text_body=message,
+            cc_addr=cc,
+            bcc_addr=bcc)
+        conn = conn or get_smtp_conn()
+        conn.send(envelope)
+        #web.sendmail(web.config.from_address, to_addr, subject, message, cc=cc, bcc=bcc)
 
 def parse_datetime(value):
     """Creates datetime object from isoformat.
@@ -74,7 +92,7 @@ def limit_once_per_day(f):
     return g
 
 @limit_once
-def sendmail_voterid_added(agent):
+def sendmail_voterid_added(agent, conn=None):
     from webapp import xrender
     if agent.role == "pb_agent":
         msg = xrender.email_agent_voterid_added(agent)
@@ -83,11 +101,11 @@ def sendmail_voterid_added(agent):
         ac = place.get_parent("AC")
         coordinators = (ward and ward.get_coordinators()) or ac.get_coordinators()
         cc = [c.email for c in coordinators]
-        send_email(agent.email, msg, cc=cc)
+        send_email(agent.email, msg, cc=cc, conn=conn)
 
 @limit_once_per_day
-def sendmail_voterid_pending(agent):
+def sendmail_voterid_pending(agent, conn=None):
     from webapp import xrender
     if agent.role == "pb_agent":
         msg = xrender.email_agent_voterid_pending(agent)
-        send_email(agent.email, msg)
+        send_email(agent.email, msg, conn=conn)

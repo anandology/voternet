@@ -18,8 +18,9 @@ def email_fill_voterid(place_key):
         raise ValueError("Invalid place {0}".format(place_key))
 
     agents = [a for a in place.get_pb_agents() if a.email and not a.voterid]
+    conn = utils.get_smtp_conn()
     for a in agents:
-        utils.sendmail_voterid_pending(a)
+        utils.sendmail_voterid_pending(a, conn=conn)
 
 def email_voterid_added(place_key):
     """Email all volunteers that their voter ID registration is complete.
@@ -29,8 +30,9 @@ def email_voterid_added(place_key):
         raise ValueError("Invalid place {0}".format(place_key))
 
     agents = [a for a in place.get_pb_agents() if a.email and a.get_voterid_info()]    
+    conn = utils.get_smtp_conn()    
     for a in agents:
-        utils.sendmail_voterid_added(a)
+        utils.sendmail_voterid_added(a, conn=conn)
 
 def add_pb_agents(place_key, tsv_file):
     """Takes a tsv file containing name, phone, email fields and adds them as PB agents.

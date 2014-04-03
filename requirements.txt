@@ -7,3 +7,4 @@ xappy
 flup
 pytz
 WTForms
+envelopes
