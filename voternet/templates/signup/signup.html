@@ -45,7 +45,7 @@ $def render_field(field, help=None, **kwargs):
                   <div class="address-error alert alert-danger" style="display: none;">
                     <strong>Oops!</strong> The selected locality doesn't seem to fall in any of the wards in Bangalore. Are you sure that is in Bangalore?
                   </div>                  
-                  <button type="submit" class="btn btn-primary">Sign Up</button>
+                  <button type="submit" id="signup-button" class="btn btn-primary">Sign Up</button>
                 </form>
             </div>
         </div>
@@ -128,6 +128,7 @@ function initialize() {
 
         // If it had any error shown earlier, remove it.
         \$("#address").parent().removeClass("has-error").find("ul.help-block").remove();
+        \$("html,body").scrollTop(\$("button#signup-button").offset().top);
     }
     else {
         \$(".address-error").show();      
