@@ -2,6 +2,7 @@ import web
 import os
 from wtforms import Form, StringField, HiddenField, validators, ValidationError
 from webapp import check_config
+from models import Place
 import utils
 
 urls = (
@@ -55,66 +56,22 @@ class signup:
 
     def POST(self):
         i = web.input()
-        print "signup.POST", i
         form = SignupForm(i)
         if form.validate():
             place = Place.find(i.ward)
-            place.save_volunteer(i)
+            place.add_volunteer(
+                name=i.name, 
+                phone=i.phone,
+                email=i.email,
+                voterid=i.voterid,
+                role='pb_agent')
             msg = xrender.email_thankyou(place, i)
             cc = [c.email for c in place.get_coordinators()]
             bcc = web.config.get("admins", [])
             utils.send_email(i.email, msg, cc=cc, bcc=bcc)
-
             return render.thankyou(place, i)
         else:
             return render.signup(form)
-
-class Place(web.storage):
-    @staticmethod
-    def find(key):        
-        result = get_db().select("places", where="key=$key", vars=locals()) 
-        if result:
-            return Place(result[0])
-
-    @staticmethod
-    def find_by_id(id):        
-        result = get_db().select("places", where="id=$id", vars=locals()) 
-        if result:
-            return Place(result[0])
-
-    def get_coordinators(self):
-        result = get_db().select("people", where="place_id=$self.id AND role='coordinator'", vars=locals())
-        if not result:
-            result = get_db().select("people", where="place_id=$self.ac_id AND role='coordinator'", vars=locals())
-        if result:       
-            return result.list()
-        else:
-            return []
-
-    def get_ac(self):
-        return self.ac_id and Place.find_by_id(self.ac_id)
-
-    def get_ac_name(self):
-        return Place.find_by_id(self.ac_id).name
-
-    def get_pc_name(self):
-        return Place.find_by_id(self.pc_id).name
-
-    def save_volunteer(self, i):
-        get_db().insert("volunteer_signups", 
-            name=i.name, 
-            phone=i.phone, 
-            email=i.email, 
-            voterid=i.voterid,
-            address=i.address,
-            place_id=self.id)
-        get_db().insert("people", 
-            name=i.name, 
-            phone=i.phone, 
-            email=i.email, 
-            place_id=self.id,
-            voterid=i.voterid,
-            role="pb_agent")
 
 class wards_js:
     def GET(self):
