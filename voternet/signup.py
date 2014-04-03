@@ -97,6 +97,7 @@ def main():
             app.internalerror,
             web.config.get('from_address'))
 
+    logger.info("starting the signup app")
     app.run()
 
 if __name__ == '__main__':

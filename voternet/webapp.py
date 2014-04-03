@@ -847,6 +847,7 @@ def main():
     if "--shell" in sys.argv:
         return open_shell()
 
+    logger.info("starting the webapp")
     app.run()
 
 if __name__ == "__main__":
