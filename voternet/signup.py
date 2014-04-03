@@ -60,16 +60,16 @@ class signup:
         form = SignupForm(i)
         if form.validate():
             place = Place.find(i.ward)
-            place.add_volunteer(
+            agent = place.add_volunteer(
                 name=i.name, 
                 phone=i.phone,
                 email=i.email,
                 voterid=i.voterid,
                 role='pb_agent')
-            msg = xrender.email_thankyou(place, i)
-            cc = [c.email for c in place.get_coordinators()]
-            bcc = web.config.get("admins", [])
-            utils.send_email(i.email, msg, cc=cc, bcc=bcc)
+            if i.voterid:
+                utils.sendmail_voterid_added(agent)
+            else:
+                utils.sendmail_voterid_pending(agent)
             return render.thankyou(place, i)
         else:
             return render.signup(form)

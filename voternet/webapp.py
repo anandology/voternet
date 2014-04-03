@@ -528,6 +528,12 @@ class edit_person:
             if self.can_change_role(person):
                 d['role'] = i.role
             person.update(d)
+            if person.role == 'pb_agent':
+                person.populate_voterid_info()
+                if person.get_voterid_info():
+                    utils.sendmail_voterid_added(person)
+                else:
+                    utils.sendmail_voterid_pending(person)
             flash.add_flash_message("success", "Thanks for updating!")            
         elif i.action == "delete" and self.can_change_role(person): # don't allow self deletes
             person.delete()

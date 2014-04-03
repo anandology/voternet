@@ -119,8 +119,10 @@ class Place(web.storage):
             role=role)
         self._invalidate_object_cache()
         self.record_activity("volunteer-added", volunteer_id=person_id, name=name, role=role)
+        person = Person.find_by_id(person_id)
         if voterid:
-            Person.find_by_id(person_id).populate_voterid_info
+            person.populate_voterid_info()
+        return person
 
     def _invalidate_object_cache(self):
         cache.invalidate_object_cache(objects=[self] + self.get_parents())

@@ -19,7 +19,7 @@ def email_fill_voterid(place_key):
 
     agents = [a for a in place.get_pb_agents() if not a.voterid if a.email]    
     for a in agents:
-        utils.send_email(a.email, xrender.email_voterid_pending(a))
+        utils.sendmail_voterid_pending(a)
 
 def add_pb_agents(place_key, tsv_file):
     """Takes a tsv file containing name, phone, email fields and adds them as PB agents.
@@ -67,6 +67,15 @@ def update_voterinfo(place_key):
         if info and info.pb_id != a.place_id:
             a.update(place_id=info.pb_id)
 
+def debug(place_key):
+    place = Place.find(place_key)
+    if not place:
+        raise ValueError("Invalid place {0}".format(place_key))    
+
+    agents = [a for a in place.get_pb_agents() if a.voterid if a.email]
+    a = agents[0]
+    utils.sendmail_voterid_added(a)
+
 def setup_logger():
     FORMAT = "%(asctime)s [%(name)s] [%(levelname)s] %(message)s"
     logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -82,7 +91,8 @@ def main():
         'email_fill_voterid': email_fill_voterid,
         'autoadd_pb_agents': autoadd_pb_agents,
         'update_voterinfo': update_voterinfo,
-        'add_pb_agents': add_pb_agents,        
+        'add_pb_agents': add_pb_agents,       
+        'debug': debug, 
     }
     cmdname = sys.argv[1]
     print cmdname
