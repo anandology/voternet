@@ -1,8 +1,8 @@
 import web
 import os
 from wtforms import Form, StringField, HiddenField, validators, ValidationError
-from webapp import check_config
 from models import Place
+import webapp
 import utils
 
 urls = (
@@ -85,7 +85,13 @@ class wards_js:
         return open("static/wards.js.gz")
 
 def main():
-    check_config()
+    webapp.check_config()
+    if web.config.get('error_email_recipients'):
+        app.internalerror = web.emailerrors(
+            web.config.error_email_recipients,
+            app.internalerror,
+            web.config.get('from_address'))
+
     app.run()
 
 if __name__ == '__main__':
