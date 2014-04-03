@@ -507,7 +507,7 @@ class edit_person:
         if user.role not in ['admin', 'coordinator'] and person.id != int(id):
             return render.access_restricted()
         form = forms.AddPeopleForm(person)
-        return render.person(person, form, show_role=self.can_change_role(person))
+        return render.person(person, form, show_role=self.can_change_role(user))
 
     def can_change_role(self, person):
         return person.role in ['admin', 'coordinator']
