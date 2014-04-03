@@ -1,0 +1,34 @@
+$def with (agent)
+$var subject: Successfully Voter ID registration for AAP booth agent
+Dear $agent.name,
+
+Your voter ID has been successfully registered as a valid booth agent for AAM AADMI PARTY. Here are the details of your booth:
+$ booth = agent.place
+$ ward = booth.get_parent("WARD")
+$ ac = booth.get_parent("AC")
+$ pc = booth.get_parent("PC")
+
+Booth Name: $booth.name
+$if ward: Ward Name: $ward.name
+AC Name: $ac.name
+PC Name: $pc.name
+
+You will receive more details about the responsibilities of the booth agent shortly. In the meanwhile, you can go through this handbook - http://eci.nic.in/eci_main/ElectoralLaws/HandBooks/Handbook_for_Polling_Agents.pdf .
+
+Please also keep the following numbers handy in case you need to get in touch with the local AAP team.
+
+$ coordinators = (ward and ward.get_coordinators()) or ac.get_coordinators()
+  $for p in coordinators:
+      $p.name, co-ordinator of $p.place.name
+      Email: $p.email
+      Phone: $p.phone
+
+Thank you for stepping up and volunteering to be a booth agent. Together, we can easily overthrow the corrupt politicians and bring in the change that we wish to see in the country.
+
+Jai Hind! Jai Karnataka!!
+
+---
+Aam Aadmi Party, Karnataka
+Facebook : https://www.facebook.com/AAPKarnataka
+Helpline : 080-23012227
+Twitter : @aapkarnataka
