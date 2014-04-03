@@ -14,8 +14,8 @@ Locality: $i.address
 Your locality is part of:
 
 $place.name Ward
-$place.get_ac_name() Assembly Constituency
-$place.get_pc_name() Parliamentary Constituency
+$place.get_parent("AC").name Assembly Constituency
+$place.get_parent("PC").name Parliamentary Constituency
 $ coordinators = place.get_coordinators()
 
 $if coordinators:
