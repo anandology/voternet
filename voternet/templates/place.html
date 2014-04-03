@@ -69,7 +69,8 @@ $code:
     <div class="row">
         <div class="col-md-6">
             <h2>Volunteers</h2>
-            $if place_readable:
+            $# Don't show volunteers/pb-agents at STATE, REGION and PC
+            $if place_readable or place.type in ['STATE', 'REGION', 'PC]:
                 $ volunteers = place.get_people(roles=["coordinator", "volunteer", "pb_agent"])
             $else:
                 $ volunteers = place.get_coordinators()
