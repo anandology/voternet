@@ -18,8 +18,8 @@ Locality: $i.address<br/>
 <strong>Your locality is part of:</strong><br/>
 <p>
 $place.name <small class="gray">Ward</small><br/>
-$place.get_ac_name() <small class="gray">Assembly Constituency</small><br/>
-$place.get_pc_name() <small class="gray">Parliamentary Constituency</small>
+$place.get_parent("AC").name <small class="gray">Assembly Constituency</small><br/>
+$place.get_parent("PC").name <small class="gray">Parliamentary Constituency</small>
 </p>
 </div>
 
