@@ -10,6 +10,7 @@ from cStringIO import StringIO
 import pytz
 import tablib
 import urllib
+import logging
 
 from models import Place, Person, get_all_coordinators_as_dataset, get_voterid_details
 import forms
@@ -833,6 +834,9 @@ def open_shell():
     console.interact()
 
 def main():
+    FORMAT = "%(asctime)s [%(name)s] [%(levelname)s] %(message)s"
+    logging.basicConfig(format=FORMAT, level=logging.INFO)
+
     check_config()
     if "--shell" in sys.argv:
         return open_shell()

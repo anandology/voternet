@@ -4,6 +4,7 @@ from wtforms import Form, StringField, HiddenField, validators, ValidationError
 from models import Place
 import webapp
 import utils
+import logging
 
 urls = (
     "/", "signup",
@@ -85,6 +86,9 @@ class wards_js:
         return open("static/wards.js.gz")
 
 def main():
+    FORMAT = "%(asctime)s [%(name)s] [%(levelname)s] %(message)s"
+    logging.basicConfig(format=FORMAT, level=logging.INFO)
+
     webapp.check_config()
     if web.config.get('error_email_recipients'):
         app.internalerror = web.emailerrors(
