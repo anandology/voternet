@@ -30,7 +30,12 @@ $else:
             $ data = a.get_data()
             <tr>
                 <td>$datestr(a.tstamp)</td>
-                <td><strong>$a.get_person().name</strong></td>
+                <td>
+                    $if a.person_id:
+                        <strong>$a.get_person().name</strong>
+                    $else:
+                        <em>-</em>
+                </td>
                 $if a.type == "volunteer-added":
                     <td>Added <strong>$data['name']</strong> as $data['role']</td>
                 $elif a.type == "coverage-added":

@@ -815,11 +815,13 @@ class Activity(web.storage):
     def record(event_type, place_id, **kwargs):
         import account
         who = account.get_current_user()
-        db = get_db()
+        who_id = who and who.id
 
-        # don't worry about recording activity when run in batch mode
-        if who:
-            db.insert("activity", type=event_type, place_id=place_id, person_id=who.id, data=json.dumps(kwargs))
+        get_db().insert("activity", 
+            type=event_type, 
+            place_id=place_id, 
+            person_id=who_id, 
+            data=json.dumps(kwargs))
 
     def __repr__(self):           
         return "<Activity: %s>" % dict(self)
