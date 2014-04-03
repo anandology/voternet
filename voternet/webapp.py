@@ -405,11 +405,11 @@ class add_people:
             return render.add_people(place, form)
 
 class import_people:
-    @placify(roles=['admin', 'coordinator'], types=["AC"])
+    @placify(roles=['admin', 'coordinator'], types=["REGION", "PC", "AC"])
     def GET(self, place):
         return render.import_people(place)
 
-    @placify(roles=['admin', 'coordinator'], types=['AC'])
+    @placify(roles=['admin', 'coordinator'], types=["REGION", "PC", "AC"])
     def POST(self, place):
         data = json.loads(web.data())['data']
         data = [self.process_row(row) for row in data]
