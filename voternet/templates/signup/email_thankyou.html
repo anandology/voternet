@@ -1,0 +1,41 @@
+$def with (place, i)
+$var subject: Thanks for signing up as volunteer
+Dear $i.name,
+
+Thank for signing up as volunteer for Aam Aadmi Party, Karnataka.
+
+You have signup with the following details:
+
+Name: $i.name
+Phone: $i.phone
+Email: $i.email
+Locality: $i.address
+
+Your locality is part of:
+
+$place.name Ward
+$place.get_ac_name() Assembly Constituency
+$place.get_pc_name() Parliamentary Constituency
+$ coordinators = place.get_coordinators()
+
+$if coordinators:
+    $if len(coordinators) == 1:
+        The co-ordinator of this ward is:
+    $else:
+        The co-ordinators of this ward are:
+
+    $for c in coordinators:
+        $c.name
+        $c.phone
+        $c.email
+
+    Please get in touch with your ward co-ordinator immediately and take up the responsibility of fighting corruption and bringing clean politics to our country. We have very little time left.
+
+    If you have any trouble contacting the ward co-ordinator, please call the call center number 080-23012227.
+$else:
+    Please call the call center number 080-23012227 immediately and take up the responsibility of fighting corruption and bringing clean politics to our country. We have very little time left.
+
+
+Thank you,
+Aam Aadmi Party, Karnataka
+
