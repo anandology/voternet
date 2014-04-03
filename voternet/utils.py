@@ -6,7 +6,8 @@ logger = logging.getLogger(__name__)
 def send_email(to_addr, message, cc=None, bcc=None):
     subject = message.subject.strip()
     message = web.safestr(message)
-    bcc = bcc or web.config.get("email_bcc_address")
+    cc = cc or []
+    bcc = bcc or web.config.get("email_bcc_address") or []
 
     if web.config.debug:
         print "To: ", to_addr
