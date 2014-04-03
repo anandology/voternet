@@ -19,7 +19,7 @@ def email_fill_voterid(place_key):
 
     agents = [a for a in place.get_pb_agents() if not a.voterid if a.email]    
     for a in agents:
-        utils.send_email(a.email, xrender.email_fill_voterid(a))
+        utils.send_email(a.email, xrender.email_voterid_pending(a))
 
 def add_pb_agents(place_key, tsv_file):
     """Takes a tsv file containing name, phone, email fields and adds them as PB agents.
