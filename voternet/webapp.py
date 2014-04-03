@@ -847,6 +847,7 @@ def main():
     if "--shell" in sys.argv:
         return open_shell()
 
+    logger = logging.getLogger(__name__)
     logger.info("starting the webapp")
     app.run()
 

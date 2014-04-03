@@ -96,7 +96,7 @@ def main():
             web.config.error_email_recipients,
             app.internalerror,
             web.config.get('from_address'))
-
+    logger = logging.getLogger(__name__)
     logger.info("starting the signup app")
     app.run()
 
