@@ -830,7 +830,7 @@ def check_config():
             app.internalerror = web.emailerrors(
                 web.config.error_email_recipients, 
                 app.internalerror, 
-                web.config.get('from_address'))
+                web.config.get('error_from_address'))
 
 def open_shell():
     from code import InteractiveConsole

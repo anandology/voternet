@@ -29,6 +29,8 @@ error_email_recipients:
 from_address: 
     - noreply@example.com
 
+error_from_address: noreply@example.com
+
 search_db: xappy
 google_analytics_id: "XXXX"
 
