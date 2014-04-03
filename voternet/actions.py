@@ -17,9 +17,20 @@ def email_fill_voterid(place_key):
     if not place:
         raise ValueError("Invalid place {0}".format(place_key))
 
-    agents = [a for a in place.get_pb_agents() if not a.voterid if a.email]    
+    agents = [a for a in place.get_pb_agents() if a.email and not a.voterid]
     for a in agents:
         utils.sendmail_voterid_pending(a)
+
+def email_voterid_added(place_key):
+    """Email all volunteers that their voter ID registration is complete.
+    """
+    place = Place.find(place_key)
+    if not place:
+        raise ValueError("Invalid place {0}".format(place_key))
+
+    agents = [a for a in place.get_pb_agents() if a.email and a.get_voterid_info()]    
+    for a in agents:
+        utils.sendmail_voterid_added(a)
 
 def add_pb_agents(place_key, tsv_file):
     """Takes a tsv file containing name, phone, email fields and adds them as PB agents.
@@ -89,6 +100,7 @@ def main():
     check_config()
     CMDS = {
         'email_fill_voterid': email_fill_voterid,
+        'email_voterid_added': email_voterid_added,
         'autoadd_pb_agents': autoadd_pb_agents,
         'update_voterinfo': update_voterinfo,
         'add_pb_agents': add_pb_agents,       
