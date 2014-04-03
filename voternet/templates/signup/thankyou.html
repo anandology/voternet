@@ -1,56 +1,15 @@
-$def with (place, i)
+$def with (place, agent)
 <div class="container-fluid">
     <div style="padding: 0px 20px;">
         <h1>Thank You!</h1>
         <div>
-<p>Thank for signing up as volunteer for Aam Aadmi Party, Karnataka.</p>
+<p>Thank you for stepping up and volunteering to be a booth agent.</p> 
+<p>Together, we can easily overthrow the corrupt politicians and bring in the change that we wish to see in the country.</p>
 
-<div class="section">
-<strong>You have signup with the following details:</strong><br/><br/>
-<p>
-Name: $i.name<br/>
-Phone: $i.phone<br/>
-Email: $i.email<br/>
-Locality: $i.address<br/>
-</p>
+$if not agent.get_voterid_info():
+    <p>Please don't forget to provide your voter ID to complete this registration. We've sent you an email with a link to submit your voter ID.</p>
 
-<div class="section">
-<strong>Your locality is part of:</strong><br/>
-<p>
-$place.name <small class="gray">Ward</small><br/>
-$place.get_parent("AC").name <small class="gray">Assembly Constituency</small><br/>
-$place.get_parent("PC").name <small class="gray">Parliamentary Constituency</small>
-</p>
-</div>
-
-$ coordinators = place.get_coordinators()
-$if coordinators:
-    <div class="section">
-        $if len(coordinators) == 1:
-            <strong>The co-ordinator of this ward is:</strong><br/>
-        $else:
-            <strong>The co-ordinators of this ward are:</strong><br/>
-        
-        $for c in coordinators:
-            <div class="coordinator">
-                <strong>$c.name</strong><br/>
-                $if c.email:
-                    <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$c.email">$c.email</a></div>
-                $if c.phone:
-                    <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$c.phone">$c.phone</a></div>
-            </div>
-        </p>
-    </div>
-    <div class="section">
-        <p>Please get in touch with your ward co-ordinator immediately and take up the responsibility of fighting corruption and bringing clean politics to our country. We have only 30days left.</p>
-        <p>If you have any trouble contacting the ward co-ordinator, please call the call center number 080-23012227.</p>
-    </div>
-$else:
-    <div class="section">
-    Please call the call center number 080-23012227 immediately and take up the responsibility of fighting corruption and bringing clean politics to our country. We have only 30days left.</div>
-
-<div class="small" style="border-top: 1px solid #bbb; padding-top: 10px;">We've sent you an email with all these details for your later reference.</div>
-
+<p>Jai Hind! Jai Karnataka!!</p>
         </div>
     </div>
 </div>

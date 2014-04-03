@@ -66,11 +66,12 @@ class signup:
                 email=i.email,
                 voterid=i.voterid,
                 role='pb_agent')
-            if i.voterid:
+            agent.populate_voterid_info()
+            if agent.get_voterid_info():
                 utils.sendmail_voterid_added(agent)
             else:
                 utils.sendmail_voterid_pending(agent)
-            return render.thankyou(place, i)
+            return render.thankyou(place, agent)
         else:
             return render.signup(form)
 
