@@ -7,7 +7,7 @@ import utils
 import logging
 
 urls = (
-    "/", "signup",
+    "/(.?)", "signup",
     "/wards.js", "wards_js"
 )
 app = web.application(urls, globals())
@@ -51,17 +51,17 @@ class SignupForm(BaseForm):
             raise ValidationError("Please select a place from the dropdown.")
 
 class signup:
-    def GET(self):
+    def GET(self, source):
         form = SignupForm()
         return render.signup(form)
 
-    def POST(self):
-        i = web.input(t="")
+    def POST(self, source):
+        i = web.input()
         form = SignupForm(i)
         if form.validate():
-            source = "signup"
-            if i.t:
-                source = source + " " + i.t
+            notes = "signup"
+            if source:
+                notes = notes + " " + source
             place = Place.find(i.ward)
             agent = place.add_volunteer(
                 name=i.name, 
