@@ -68,7 +68,7 @@ def login_requrired(handler):
     whitelist = ["/report-issue"]
     if (not web.ctx.path.startswith("/account") 
         and not web.ctx.path.startswith("/login") 
-        and not web.ctx.path.startswith("/voter-info/") 
+        and not web.ctx.path.startswith("/voterid/") 
         and web.ctx.path not in whitelist):
         user = account.get_current_user()
         if not user:
@@ -495,11 +495,12 @@ class voter_info:
         d = get_voterid_details(voterid, fetch=True)
         if d:
             d.booth = Place.from_id(d.pb_id)
+            d.ward = d.booth.get_parent("WARD")
             d.ac = d.booth.get_parent("AC")
             d.pc = d.booth.get_parent("PC")
         #web.header("content-type", "application/json")
         #return json.dumps(d)
-        return render.voter_info(voterid, d)
+        return render.voterid(voterid, d)
 
 class edit_person:
     @placify()

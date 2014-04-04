@@ -19,6 +19,8 @@ $else:
         <tr><td class="key">Relation Last Name</td><td>$voter.rel_lastname</td></tr>
         <tr><td class="key">Sex</td><td>$voter.sex</td></tr>
         <tr><td class="key">Polling Booth</td><td><a href="$voter.booth.get_url()">$voter.booth.name</a></td></tr>
+        $if voter.ward:
+            <tr><td class="key">Ward</td><td><a href="$voter.ward.get_url()">$voter.ward.name</a></td></tr>        
         <tr><td class="key">Assembly Constituency</td><td><a href="$voter.ac.get_url()">$voter.ac.name</a></td></tr>
         <tr><td class="key">Parliamentary Constituency</td><td><a href="$voter.pc.get_url()">$voter.pc.name</a></td></tr>
     </table>
