@@ -532,7 +532,7 @@ class edit_person:
         i = web.input()
         if i.action == "save":
             d = dict(name=i.name, email=i.email, phone=i.phone, voterid=i.voterid)
-            if self.can_change_role(person):
+            if self.can_change_role(user):
                 d['role'] = i.role
             person.update(d)
             if person.role == 'pb_agent':
