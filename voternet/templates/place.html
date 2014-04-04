@@ -94,9 +94,10 @@ $code:
                       <div>
                         <a href="$place.get_url()/pb-agents" class="btn btn-primary active hidden-print" role="button">Manage PB Agents</a>
                       </div>
-                  $if place.type in ["PC", "AC", "WARD"]:
+                  $if place.type in ["STATE", "REGION", "PC", "AC", "WARD"]:
                       <h4>Download <small>as XLS</small></h4>
                       <a href="$place.get_url()/volunteers.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a><br/><br/>
+                      <a href="$place.get_url()/pb-agents.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All PB Agents</a><br/><br/>
                 </div>
                 $if place.type == 'WARD':
                     <h4>Volunteer Signups</h4>
