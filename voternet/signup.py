@@ -56,9 +56,12 @@ class signup:
         return render.signup(form)
 
     def POST(self):
-        i = web.input()
+        i = web.input(t="")
         form = SignupForm(i)
         if form.validate():
+            source = "signup"
+            if i.t:
+                source = source + " " + i.t
             place = Place.find(i.ward)
             agent = place.add_volunteer(
                 name=i.name, 
@@ -66,7 +69,7 @@ class signup:
                 email=i.email,
                 voterid=i.voterid,
                 role='pb_agent',
-                notes='signup')
+                notes=source)
             agent.populate_voterid_info()
             if agent.get_voterid_info():
                 utils.sendmail_voterid_added(agent)
