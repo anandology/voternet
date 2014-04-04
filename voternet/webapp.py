@@ -558,7 +558,7 @@ class edit_account:
     def GET(self, token):
         person = Person.find_by_edit_token(token)
         if not person:
-            raise render.invalid_token()
+            return render.invalid_token()
 
         form = forms.AddPeopleForm(person)
         return render.person(person, form, show_role=False)
