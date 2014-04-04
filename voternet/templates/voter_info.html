@@ -1,0 +1,24 @@
+$def with (voterid, voter)
+$var title: Voter ID - $voterid
+
+<h1>Voter ID / $voterid</h1>
+
+<style type="text/css">
+td.key {
+    width: 200px;
+}
+</style>
+
+$if not voter:
+    <em>Invalid Voter ID.</em>
+$else:
+    <table class="table table-bordered">
+        <tr><td class="key">First Name</td><td>$voter.first_name</td></tr>
+        <tr><td class="key">Last Name</td><td>$voter.last_name</td></tr>
+        <tr><td class="key">Relation First Name</td><td>$voter.rel_firstname</td></tr>
+        <tr><td class="key">Relation Last Name</td><td>$voter.rel_lastname</td></tr>
+        <tr><td class="key">Sex</td><td>$voter.sex</td></tr>
+        <tr><td class="key">Polling Booth</td><td><a href="$voter.booth.get_url()">$voter.booth.name</a></td></tr>
+        <tr><td class="key">Assembly Constituency</td><td><a href="$voter.ac.get_url()">$voter.ac.name</a></td></tr>
+        <tr><td class="key">Parliamentary Constituency</td><td><a href="$voter.pc.get_url()">$voter.pc.name</a></td></tr>
+    </table>
