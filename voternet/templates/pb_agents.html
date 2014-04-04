@@ -27,7 +27,7 @@ $def render_agents(agents, status):
                     $if person.phone:
                         <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$person.phone">$person.phone</a></div>
                     $if person.voterid:
-                        <div><span class="glyphicon glyphicon-list-alt"></span> $person.voterid</a></div>
+                        <div><span class="glyphicon glyphicon-list-alt"></span> <a href="/voterid/$person.voterid">$person.voterid</a></div>
                 </td>
                 <td>
                     <a href="$person.place.get_url()">$person.place.name</a>
