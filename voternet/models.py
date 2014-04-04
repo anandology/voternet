@@ -109,14 +109,15 @@ class Place(web.storage):
     def get_coordinators(self):
         return self.get_people(["coordinator"])
 
-    def add_volunteer(self, name, email, phone, voterid=None, role=None):
+    def add_volunteer(self, name, email, phone, voterid=None, role=None, notes=None):
         person_id = get_db().insert("people", 
             place_id=self.id, 
             name=name,
             email=email,
             phone=phone,
             voterid=voterid,
-            role=role)
+            role=role, 
+            notes=notes)
         self._invalidate_object_cache()
         self.record_activity("volunteer-added", volunteer_id=person_id, name=name, role=role)
         person = Person.find_by_id(person_id)

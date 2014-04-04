@@ -50,7 +50,8 @@ create table people (
     role role_type default 'volunteer',
     active boolean default 't',
     added timestamp default(current_timestamp at time zone 'utc'),
-    place_id integer references places
+    place_id integer references places,
+    notes text
 );
 
 create index people_place_id_idx on people(place_id);

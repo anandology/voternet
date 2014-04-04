@@ -65,7 +65,8 @@ class signup:
                 phone=i.phone,
                 email=i.email,
                 voterid=i.voterid,
-                role='pb_agent')
+                role='pb_agent',
+                notes='signup')
             agent.populate_voterid_info()
             if agent.get_voterid_info():
                 utils.sendmail_voterid_added(agent)
