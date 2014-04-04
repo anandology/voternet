@@ -339,6 +339,34 @@ class Place(web.storage):
             " GROUP BY type", vars=locals())
         return dict((row.type, row.count) for row in result)
 
+    @cache.object_memoize(key="agent_counts")
+    def get_agent_counts(self):
+        if self.type == "PB":
+            where = "places.id=$self.id"
+        else:
+            where = "(places.%s=$self.id OR places.id=$self.id)" % self.type_column
+
+        # find total agents
+        result = get_db().query(
+            "SELECT count(*) as count FROM people, places" +
+            " WHERE people.role='pb_agent'" + 
+            "   AND people.place_id=places.id" +
+            "   AND " + where, 
+            vars=locals())
+        total = result[0].count
+
+        # find confirmed agents
+        result = get_db().query(
+            "SELECT count(*) as count FROM people" +
+            " JOIN voterid_info ON voterid_info.voterid=people.voterid" +
+            " JOIN places ON places.id=people.place_id" +
+            " WHERE people.role='pb_agent'" + 
+            "   AND " + where, 
+            vars=locals())
+        confirmed = result[0].count
+        pending = total-confirmed
+        return web.storage(total=total, confirmed=confirmed, pending=pending)
+
     @cache.object_memoize(key="volunteer_counts_by_date")
     def get_volunteer_counts_by_date(self):
         if self.type == "PB":

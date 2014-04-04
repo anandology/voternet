@@ -115,7 +115,8 @@ $code:
             <h4>Summary</h4>
             <div class="row">
                 <div class="col-md-6">
-                    <ul class="list-unstyled" style="border-left: 5px solid #ddd; padding-left: 10px">
+                    <div style="border-left: 5px solid #ddd; padding-left: 10px">                    
+                    <ul class="list-unstyled">
                         $ counts = place.get_counts()
                         $ vcounts = place.get_volunteer_counts()
 
@@ -124,15 +125,23 @@ $code:
                             $ vcount = vcounts.get(t.code, 0)
                             <li class="$get_color_class(vcount, count)"><strong>$commify(vcount)</strong> vols in <strong>$commify(count)</strong> $plural(t.code)</li>
                     </ul>            
+                    <ul class="list-unstyled" style="border-top: 1px dotted #ddd">
+                        $ a = place.get_agent_counts()
+                        <li><strong>$a.confirmed</strong> confirmed booth agents</li>
+                        <li><strong>$a.pending</strong> pending booth agents</li>
+                    </ul>                    
+                    </div>
                 </div>
                 <div class="col-md-6">
+                    <div style="border-left: 5px solid #ddd; padding-left: 10px">
                     $ summary = place.get_volunteer_summary()
-                    <ul class="list-unstyled" style="border-left: 5px solid #ddd; padding-left: 10px">
+                    <ul class="list-unstyled" style="">
                         <li>$commify(summary['today']) vols joined today</li>
                         <li>$commify(summary['yesterday']) vols joined yesterday</li>
                         <li>$commify(summary['thisweek']) vols joined this week</li>
                         <li><strong>$commify(summary['total']) vols joined so far</strong></li>
                     </ul>
+                    </div>
                 </div>
             </div>                
         </div>        
@@ -202,6 +211,12 @@ $code:
                         $ count = counts.get(t.code, 0)
                         $ vcount = vcounts.get(t.code, 0)
                         <li class="$get_color_class(vcount, count)"><strong>$vcount</strong> vols in <strong>$count</strong> $plural(t.code)</li>
+                </ul>
+                <div style="border-top: 1px dotted #ddd;">
+                <ul class="list-unstyled">
+                    $ a = p.get_agent_counts()
+                    <li><strong>$a.confirmed</strong> confirmed booth agents</li>
+                    <li><strong>$a.pending</strong> pending booth agents</li>
                 </ul>
             </td>
             <td>
