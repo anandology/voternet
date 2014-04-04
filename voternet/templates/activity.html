@@ -2,6 +2,9 @@ $def with (place, activities=None, header=True)
 
 $var title: $place.name - Activity
 
+$ user = get_current_user()
+$ place_writable = place.writable_by(user)
+
 $if not activities:
     $ activities = place.get_activities()
 
@@ -37,7 +40,11 @@ $else:
                         <em>-</em>
                 </td>
                 $if a.type == "volunteer-added":
-                    <td>Added <strong>$data['name']</strong> as $data['role']</td>
+                    $ vol = a.get_volunteer()
+                    $if place_writable:
+                        <td>Added <a href="$vol.get_url()"><strong>$vol.name</strong></a> as $data['role']</td>
+                    $else:
+                        <td>Added <strong>$vol.name</strong> as $data['role']</td>
                 $elif a.type == "coverage-added":
                     <td>Visited $data['count'] houses</td>
                 $ p = a.get_place()
