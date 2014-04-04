@@ -7,6 +7,9 @@ import tablib
 import uuid
 import voterlib
 import hmac
+import logging
+
+logger = logging.getLogger(__name__)
 
 @web.memoize
 def get_db():
@@ -119,6 +122,7 @@ class Place(web.storage):
             role=role, 
             notes=notes)
         self._invalidate_object_cache()
+        logger.info("Added %s <%s> as %s to %s", name, email, role, self.key)
         self.record_activity("volunteer-added", volunteer_id=person_id, name=name, role=role)
         person = Person.find_by_id(person_id)
         if voterid:
@@ -714,6 +718,7 @@ class Person(web.storage):
                 get_db().insert("voterid_info", **d)
                 if self.role == "pb_agent" and self.place_id != d.pb_id:
                     self.update(place_id=d.pb_id)
+                    logger.info("Reassigned %s <%s> as %s to %s", self.name, self.email, self.role, self.place.key)
 
     def get_agent_status(self):
         """Return one of [None, "pending", "verified", mismatch"].
