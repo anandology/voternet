@@ -52,6 +52,7 @@ urls = (
     "/([\w/]+)/add-people", "add_people",
     "/([\w/]+)/pb-agents", "pb_agents",
     "/([\w/]+)/import-people", "import_people",
+    "/([\w/]+)/people", "list_people",
     "/([\w/]+)/people/(\d+)", "edit_person",
     "/([\w/]+)/links", "links",
     "/([\w/]+)/coordinators.xls", "download_coordinators",
@@ -502,6 +503,11 @@ class voter_info:
         #web.header("content-type", "application/json")
         #return json.dumps(d)
         return render.voterid(voterid, d)
+
+class list_people:
+    @placify(roles=['coordinator', 'admin'])
+    def GET(self, place):
+        return render.people(place)
 
 class edit_person:
     @placify()

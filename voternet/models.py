@@ -100,10 +100,14 @@ class Place(web.storage):
     def get_all_volunteers(self, role="volunteer"):
         """Returns all volunteers in the sub tree.
         """
+        if isinstance(role, list):
+            role_cond = " AND people.role IN $role"
+        else:
+            role_cond = " AND people.role = $role"
         result = get_db().query(
             "SELECT people.* FROM people, places" + 
             " WHERE people.place_id=places.id" + 
-            "   AND people.role=$role" +
+            role_cond +
             "   AND (places.id=$self.id OR places.{0} = $self.id)".format(self.type_column),
             vars=locals())
         return [Person(row) for row in result]

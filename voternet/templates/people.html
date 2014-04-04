@@ -1,0 +1,68 @@
+$def with (place)
+
+$var title: $place.name -- Volunteers
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+<h1><a href="$place.get_url()">$place.name</a> / Volunteers</h1>
+
+<table class="table table-bordered" id="people-table">
+    <thead>    
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Voter ID</th>
+        <th>Role</th>
+        <th>Location</th>
+    </tr>
+    </thead>
+    <tbody>    
+    $for p in place.get_all_volunteers(["coordinator", "volunteer", "pb_agent"]):
+        <tr>
+            <td>$loop.index</td>
+            <td><a href="$p.get_url()">$p.name</a></td>
+            <td>$p.email</td>
+            <td>$p.phone</td>
+            <td><a href="/voterid/$p.voterid">$p.voterid</a></td>
+            <td>$p.role</td>
+            <td><a href="$p.place.get_url()">$p.place.name</a></td>
+        </tr>
+    </tbody>    
+</table>
+
+<script type="text/javascript" src="/static/jquery.dataTables.js"></script>
+<script type="text/javascript">
+\$(function() {
+    \$("#people-table").dataTable({
+        iDisplayLength: 100,
+    });
+});
+</script>
+
+
+<style type="text/css">
+#people-table_length {
+    display: none;
+}
+.dataTables_filter input {
+    width: 300px;
+}
+.dataTables_info {
+    float: left;
+}
+.dataTables_paginate {
+    float: right;
+}
+.dataTables_wrapper {
+    padding-bottom: 50px;
+}
+.dataTables_paginate a {
+    padding: 5px;
+    margin: 0px 5px;
+    border: 1px solid #ddd;
+}
+</style>

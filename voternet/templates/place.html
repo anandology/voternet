@@ -68,7 +68,10 @@ $code:
 
     <div class="row">
         <div class="col-md-6">
-            <h2>Volunteers</h2>
+            $if place_writable:
+                <h2>Volunteers <a class="small" href="$place.get_url()/people">See all</a></h2>
+            $else:
+                <h2>Volunteers</h2>
             $# Don't show volunteers/pb-agents at STATE, REGION and PC
             $if place_readable and place.type not in ['STATE', 'REGION', 'PC']:
                 $ volunteers = place.get_people(roles=["coordinator", "volunteer", "pb_agent"])
