@@ -41,10 +41,11 @@ $else:
                 </td>
                 $if a.type == "volunteer-added":
                     $ vol = a.get_volunteer()
-                    $if place_writable:
+                    $if place_writable and vol:
                         <td>Added <a href="$vol.get_url()"><strong>$vol.name</strong></a> as $data['role']</td>
                     $else:
-                        <td>Added <strong>$vol.name</strong> as $data['role']</td>
+                        $# this'll work even when the volunteer is deleted
+                        <td>Added <strong>$data['name']</strong> as $data['role']</td>
                 $elif a.type == "coverage-added":
                     <td>Visited $data['count'] houses</td>
                 $ p = a.get_place()
