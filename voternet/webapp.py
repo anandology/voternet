@@ -37,6 +37,7 @@ urls = (
     "/debug", "debug",
     "/search", "do_search",    
     "/download/(.*)", "download",
+    "/voterid/(.*)", "voter_info",    
     "/([A-Z][A-Z])/users", "users",    
     "/([\w/]+)/delete", "delete_place",
     "/([\w/]+)/edit", "edit_place",
@@ -58,7 +59,6 @@ urls = (
     "/([\w/]+)/activity", "activity",
     "/([\w/]+)", "place",
     "/(.*/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
-    "/voter-info/(.*)", "voter_info"
 )
 
 app = web.application(urls, globals())
@@ -493,8 +493,13 @@ class users:
 class voter_info:
     def GET(self, voterid):
         d = get_voterid_details(voterid, fetch=True)
-        web.header("content-type", "application/json")
-        return json.dumps(d)
+        if d:
+            d.booth = Place.from_id(d.pb_id)
+            d.ac = d.booth.get_parent("AC")
+            d.pc = d.booth.get_parent("PC")
+        #web.header("content-type", "application/json")
+        #return json.dumps(d)
+        return render.voter_info(voterid, d)
 
 class edit_person:
     @placify()
