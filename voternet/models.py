@@ -853,7 +853,8 @@ class Activity(web.storage):
         return web.storage(json.loads(self['data']))
 
     def get_volunteer(self):
-        return Person.find_by_id(self.get_data()['volunteer_id'])
+        vid = self.get_data().get("volunteer_id")
+        return vid and Person.find_by_id(vid)
 
     def get_volunteer_name(self):
         return self.get_data()['volunteer_name']
