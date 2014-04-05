@@ -1,4 +1,4 @@
-$def with (place)
+$def with (place, notes=None)
 
 $var title: $place.name -- Volunteers
 
@@ -12,24 +12,29 @@ $var title: $place.name -- Volunteers
     <thead>    
     <tr>
         <th>#</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
+        <th>Volunteer</th>
         <th>Voter ID</th>
         <th>Role</th>
         <th>Location</th>
+        <th>Joined On</th>
+        <th>notes</th>
     </tr>
     </thead>
     <tbody>    
-    $for p in place.get_all_volunteers(["coordinator", "volunteer", "pb_agent"]):
-        <tr>
+    $for p in place.get_all_volunteers(["coordinator", "volunteer", "pb_agent"], notes=notes):
+        <tr class="vol-$p.role">
             <td>$loop.index</td>
-            <td><a href="$p.get_url()">$p.name</a></td>
-            <td>$p.email</td>
-            <td>$p.phone</td>
+            <td><a href="$p.get_url()">$p.name</a>
+                $if p.email:
+                    <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$p.email">$p.email</a></div>                
+                $if p.phone:
+                    <div><span class="glyphicon glyphicon-phone-alt"></span> <a href="tel:$p.phone">$p.phone</a></div>
+            </td>
             <td><a href="/voterid/$p.voterid">$p.voterid</a></td>
             <td>$p.role</td>
             <td><a href="$p.place.get_url()">$p.place.name</a></td>
+            <td>$datestr(p.added)</td>
+            <td>${p.notes or "-"}</td>
         </tr>
     </tbody>    
 </table>
@@ -64,5 +69,15 @@ $var title: $place.name -- Volunteers
     padding: 5px;
     margin: 0px 5px;
     border: 1px solid #ddd;
+}
+
+.vol-pb_agent {
+    background: #f6ffff;    
+}
+.vol-coordinator {
+    background: #fffff6;    
+}
+.vol-volunteer {
+    background: #fff6ff;    
 }
 </style>

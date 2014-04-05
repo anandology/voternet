@@ -507,7 +507,8 @@ class voter_info:
 class list_people:
     @placify(roles=['coordinator', 'admin'])
     def GET(self, place):
-        return render.people(place)
+        i = web.input(notes=[])
+        return render.people(place, i.notes)
 
 class edit_person:
     @placify()

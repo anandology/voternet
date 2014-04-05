@@ -97,17 +97,25 @@ class Place(web.storage):
     def get_pb_agents(self):
         return self.get_all_volunteers("pb_agent")
 
-    def get_all_volunteers(self, role="volunteer"):
+    def get_all_volunteers(self, role="volunteer", notes=None):
         """Returns all volunteers in the sub tree.
         """
+        where = ""
         if isinstance(role, list):
-            role_cond = " AND people.role IN $role"
+            where += " AND people.role IN $role"
         else:
-            role_cond = " AND people.role = $role"
+            where += " AND people.role = $role"
+
+        if notes:
+            if isinstance(notes, list):
+                where += " AND notes IN $notes"
+            else:
+                where += " AND notes=$notes"
+
         result = get_db().query(
             "SELECT people.* FROM people, places" + 
             " WHERE people.place_id=places.id" + 
-            role_cond +
+            where +
             "   AND (places.id=$self.id OR places.{0} = $self.id)".format(self.type_column),
             vars=locals())
         return [Person(row) for row in result]
@@ -801,7 +809,7 @@ class Person(web.storage):
         return True
 
     def update(self, values=None, **kwargs):
-        place = self.place
+        old_self = Person(self)
         if values:
             web.storage.update(self, values)
         web.storage.update(self, kwargs)
@@ -816,8 +824,10 @@ class Person(web.storage):
             voterid=self.voterid,
             role=self.role)
         self.place._invalidate_object_cache()
-        if place.id != self.place.id:
-            place._invalidate_object_cache()
+        if old_self.voterid != self.voterid:
+            self.place.add_coverage("voterid-added", person_id=self.id, place_id=self.place_id)
+        if old_self.place_id != self.place.id:
+            old_self.place._invalidate_object_cache()
         self.populate_voterid_info()
 
     def delete(self):
