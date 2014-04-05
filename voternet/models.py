@@ -824,8 +824,8 @@ class Person(web.storage):
             voterid=self.voterid,
             role=self.role)
         self.place._invalidate_object_cache()
-        if old_self.voterid != self.voterid:
-            self.place.record_activity("voterid-added", volunteer_id=self.id, place_id=self.place_id)
+        if self.voterid and old_self.voterid != self.voterid:
+            self.place.record_activity("voterid-added", volunteer_id=self.id, voterid=self.voterid)
         if old_self.place_id != self.place.id:
             old_self.place._invalidate_object_cache()
         self.populate_voterid_info()

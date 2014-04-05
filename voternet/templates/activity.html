@@ -29,7 +29,7 @@ $else:
             <th>Where</th>
         <tr>
     $for a in activities:
-        $if a.type in ["volunteer-added", "coverage-added"]:
+        $if a.type in ["volunteer-added", "coverage-added", "voterid-added"]:
             $ data = a.get_data()
             $ vol = a.get_volunteer()
             $ notes = vol and vol.notes or ""
@@ -56,6 +56,13 @@ $else:
                         <td>Added <strong>$data['name']</strong> as $data['role']</td>
                 $elif a.type == "coverage-added":
                     <td>Visited $data['count'] houses</td>
+                $elif a.type == "voterid-added":
+                    $if data.get("volunteer_id") == a.person_id:
+                        <td>Updated his Voter ID to <a href="/voterid/$data.get('voterid')">$data.get("voterid")</td>
+                    $elif vol:
+                        <td>Updated Voter ID of <a href="$vol.get_url()">$vol.name</a> to <a href="/voterid/$data.get('voterid')"></td>
+                    $else:
+                        <td>-</td>
                 $ p = a.get_place()
                 <td><a href="$p.get_url()" title="$p.name">$limitname(p.name, suffixlength=15) <small>$p.type_label</small></td>
             <tr>
