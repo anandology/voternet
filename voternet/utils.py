@@ -65,10 +65,10 @@ def limit_once(f):
     """Decorator to call the function only once.
     """
     @functools.wraps(f)    
-    def g(agent):
+    def g(agent, *a, **kw):
         key = f.__name__ + "/" + agent.email
         if not Thing.find(key):
-            f(agent)
+            f(agent, *a, **kw)
             Thing(key=key, type="email", sent_on=datetime.datetime.utcnow().isoformat()).save()
         else:
             logger.info("Already sent {} email to {}. Ignoring...".format(f.__name__, agent.email))
@@ -78,13 +78,13 @@ def limit_once_per_day(f):
     """Decorator to call the function at most once a day.
     """
     @functools.wraps(f)
-    def g(agent):
+    def g(agent, *a, **kw):
         if not agent.email:
             return
         key = f.__name__ + "/" + agent.email
         t = Thing.find(key) or Thing(key=key, type="email", sent_on="2000-01-02T03:04:05")
         if parse_datetime(t.sent_on) < datetime.datetime.utcnow()-datetime.timedelta(days=1):
-            f(agent)
+            f(agent, *a, **kw)
             t.sent_on = datetime.datetime.utcnow().isoformat()
             t.save()
         else:
