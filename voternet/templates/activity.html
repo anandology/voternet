@@ -57,10 +57,11 @@ $else:
                 $elif a.type == "coverage-added":
                     <td>Visited $data['count'] houses</td>
                 $elif a.type == "voterid-added":
+                    $ voterid = data.get("voterid")
                     $if data.get("volunteer_id") == a.person_id:
-                        <td>Updated his Voter ID to <a href="/voterid/$data.get('voterid')">$data.get("voterid")</td>
+                        <td>Updated his Voter ID to <a href="/voterid/$voterid">$voterid</a></td>
                     $elif vol:
-                        <td>Updated Voter ID of <a href="$vol.get_url()">$vol.name</a> to <a href="/voterid/$data.get('voterid')"></td>
+                        <td>Updated Voter ID of <a href="$vol.get_url()">$vol.name</a> to <a href="/voterid/$voterid">$voterid</a></td>
                     $else:
                         <td>-</td>
                 $ p = a.get_place()
