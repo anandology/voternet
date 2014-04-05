@@ -6,7 +6,7 @@ $ user = get_current_user()
 $ place_writable = place.writable_by(user)
 
 $if not activities:
-    $ activities = place.get_activities()
+    $ activities = place.get_activity()
 
 $if header:
     <ul class="breadcrumb breadcrumb-collapse hidden-print">

@@ -487,7 +487,7 @@ class Place(web.storage):
 
     def get_activity(self, types=None, offset=0, limit=100):
         if types is None:
-            types = ['volunteer-added', 'coverage-added']
+            types = ['volunteer-added', 'coverage-added', 'voterid-added']
         if self.type == 'PB':
             where = "places.id=$self.id"
         else:
