@@ -7,7 +7,7 @@ import utils
 import logging
 
 urls = (
-    "/(.?)", "signup",
+    "/(.?.?)", "signup",
     "/wards.js", "wards_js"
 )
 app = web.application(urls, globals())
