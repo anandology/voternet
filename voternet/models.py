@@ -825,7 +825,7 @@ class Person(web.storage):
             role=self.role)
         self.place._invalidate_object_cache()
         if old_self.voterid != self.voterid:
-            self.place.add_coverage("voterid-added", person_id=self.id, place_id=self.place_id)
+            self.place.record_activity("voterid-added", person_id=self.id, place_id=self.place_id)
         if old_self.place_id != self.place.id:
             old_self.place._invalidate_object_cache()
         self.populate_voterid_info()
