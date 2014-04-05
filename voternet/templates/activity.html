@@ -30,19 +30,20 @@ $else:
         <tr>
     $for a in activities:
         $if a.type in ["volunteer-added", "coverage-added"]:
+            $ data = a.get_data()
             $ vol = a.get_volunteer()
             $ notes = vol and vol.notes or ""
             $ signup = (a.type == 'volunteer-added') and a.person_id is None and notes.startswith("signup")
             $if signup:
-                $a.update(type='signup', person_id=a.volunteer_id)
-            $ data = a.get_data()
+                $a.update(type='signup', person_id=data.get('volunteer_id'))
             <tr>
                 <td>$datestr(a.tstamp)</td>
                 <td>
-                    $if a.person_id:
-                        <strong>$a.get_person().name</strong>
+                    $ person = a.person_id and a.get_person()
+                    $if person:
+                        <strong><a href="$person.get_url()">$person.name</a></strong>
                     $else:
-                        <em>-</em> $a.type
+                        <em>-</em>
                 </td>
                 $if a.type == "signup":
                     <td>Signed up as booth agent.</td>
