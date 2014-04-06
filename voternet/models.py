@@ -724,7 +724,9 @@ class Person(web.storage):
     def populate_voterid_info(self):
         if self.voterid and not self.get_voterid_info():
             d = voterlib.get_voter_details(self.voterid)
-            if d:
+            # The voter ID might have been added while we are fetching the voter details.
+            # Usually happens when user press save button twice.
+            if d and not self.get_voterid_info():
                 key = "KA/AC{0:03d}/PB{1:04d}".format(int(d.ac_num), int(d.part_no))
                 d.pb_id = Place.find(key).id
                 get_db().insert("voterid_info", **d)
