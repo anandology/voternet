@@ -85,7 +85,7 @@ class signup:
 
 class unsubscribe:
     def GET(self):
-        form = UnsubscribeForm()
+        form = UnsubscribeForm(web.input())
         return render.unsubscribe(form)
 
     def POST(self):
