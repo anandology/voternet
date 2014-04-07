@@ -91,7 +91,6 @@ class unsubscribe:
     def POST(self):
         i = web.input()
         form = UnsubscribeForm(i)
-        print i, form.validate()
         if form.validate():
             db = get_db()
             if not db.where("unsubscribe", email=i.email):
