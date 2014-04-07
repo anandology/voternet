@@ -103,7 +103,8 @@ $def with (page)
   <body>
 
   <nav class="navbar navbar-default" role="navigation">
-      <div class="container-fluid">
+      $ container_class = page.get("container_class", "container-fluid")
+      <div class="$container_class">
         <div class="navbar-header">
           <a class="navbar-brand" href="/">AAP Karnataka<br/><small>Volunteer Management System</small></a>
         </div>
