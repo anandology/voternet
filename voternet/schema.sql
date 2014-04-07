@@ -90,3 +90,9 @@ create index activity_type_idx on activity(type);
 create index activity_place_id_idx on activity(place_id);
 create index activity_person_id_idx on activity(type);
 create index activity_tstamp_idx on activity(tstamp);
+
+create table unsubscribe (
+    id serial primary key,
+    email text,
+    tstamp timestamp default (current_timestamp at time zone 'UTC')
+);

@@ -8,6 +8,7 @@ import logging
 
 urls = (
     "/(.?.?)", "signup",
+    "/unsubscribe", "unsubscribe",
     "/wards.js", "wards_js"
 )
 app = web.application(urls, globals())
@@ -50,6 +51,9 @@ class SignupForm(BaseForm):
         if not place:
             raise ValidationError("Please select a place from the dropdown.")
 
+class UnsubscribeForm(BaseForm):
+    email = StringField('E-mail Address', [validators.Email(), validators.Required()])
+
 class signup:
     def GET(self, source):
         form = SignupForm()
@@ -78,6 +82,23 @@ class signup:
             return render.thankyou(place, agent)
         else:
             return render.signup(form)
+
+class unsubscribe:
+    def GET(self):
+        form = UnsubscribeForm()
+        return render.unsubscribe(form)
+
+    def POST(self):
+        i = web.input()
+        form = UnsubscribeForm(i)
+        print i, form.validate()
+        if form.validate():
+            db = get_db()
+            if not db.where("unsubscribe", email=i.email):
+                db.insert("unsubscribe", email=i.email)
+            return render.unsubscribe(form, done=True)
+        else:
+            return render.unsubscribe(form)
 
 class wards_js:
     def GET(self):
