@@ -4,6 +4,7 @@ import utils
 import sys
 import web
 import logging
+from multiprocessing.pool import ThreadPool
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +20,11 @@ def email_fill_voterid(place_key):
 
     agents = [a for a in place.get_pb_agents() if a.email and not a.voterid]
     conn = utils.get_smtp_conn()
-    for a in agents:
-        utils.sendmail_voterid_pending(a, conn=conn)
+
+    pool = ThreadPool(10)
+    def sendmail(a):
+        utils.sendmail_voterid_pending(a)
+    pool.map(sendmail, agents)        
 
 def email_voterid_added(place_key):
     """Email all volunteers that their voter ID registration is complete.
