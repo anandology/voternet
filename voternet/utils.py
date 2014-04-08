@@ -47,7 +47,7 @@ def send_email(to_addr, message, cc=None, bcc=None, conn=None):
         conn = conn or get_smtp_conn()
         try:
             conn.send(envelope)
-        except:
+        except Exception:
             logger.error("failed to send email to {}".format(to_addr), exc_info=True)
         #web.sendmail(web.config.from_address, to_addr, subject, message, cc=cc, bcc=bcc)
 
