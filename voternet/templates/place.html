@@ -134,8 +134,8 @@ $code:
                     </ul>            
                     <ul class="list-unstyled" style="border-top: 1px dotted #ddd">
                         $ a = place.get_agent_counts()
-                        <li><strong>$a.confirmed</strong> confirmed booth agents</li>
-                        <li><strong>$a.pending</strong> pending booth agents</li>
+                        <li><strong>$a.confirmed</strong> confirmed agents in $a.confirmed_booths booths</li>
+                        <li><strong>$a.pending</strong> pending agents</li>
                     </ul>                    
                     </div>
                 </div>
@@ -222,8 +222,8 @@ $code:
                 <div style="border-top: 1px dotted #ddd;">
                 <ul class="list-unstyled">
                     $ a = p.get_agent_counts()
-                    <li><strong>$a.confirmed</strong> confirmed booth agents</li>
-                    <li><strong>$a.pending</strong> pending booth agents</li>
+                    <li><strong>$a.confirmed</strong> confirmed agents in <strong>$a.confirmed_booths</strong> booths</li>
+                    <li><strong>$a.pending</strong> pending agents</li>
                 </ul>
             </td>
             <td>

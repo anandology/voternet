@@ -374,15 +374,17 @@ class Place(web.storage):
 
         # find confirmed agents
         result = get_db().query(
-            "SELECT count(*) as count FROM people" +
+            "SELECT count(*) as agents, count(distinct places.id) as booths FROM people" +
             " JOIN voterid_info ON voterid_info.voterid=people.voterid" +
             " JOIN places ON places.id=people.place_id" +
-            " WHERE people.role='pb_agent'" + 
+            " WHERE people.role='pb_agent' and places.type='PB'" +
             "   AND " + where, 
             vars=locals())
-        confirmed = result[0].count
+        row = result[0]
+        confirmed = row.agents
+        confirmed_booths = row.booths
         pending = total-confirmed
-        return web.storage(total=total, confirmed=confirmed, pending=pending)
+        return web.storage(total=total, confirmed=confirmed, confirmed_booths=confirmed_booths, pending=pending)
 
     @cache.object_memoize(key="volunteer_counts_by_date")
     def get_volunteer_counts_by_date(self):
