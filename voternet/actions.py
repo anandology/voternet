@@ -1,8 +1,9 @@
-from webapp import xrender, check_config
-from models import Place, Invite
+from webapp import check_config
+from models import Place, Invite, get_db
 import utils
 import sys
 import web
+import re
 import logging
 from multiprocessing.pool import ThreadPool
 
@@ -28,10 +29,24 @@ def email_fill_voterid(place_key):
 def email_invites():
     def sendmail(a):
         utils.sendmail_voterid_pending(a)
-    pool = ThreadPool(10)
     agents = Invite.find_all()    
-    print agents
     map(sendmail, agents)
+
+def add_invites(place_key, filename, batch):
+    from webapp import import_people
+
+    place = Place.find(place_key)
+    if not place:
+        raise ValueError("Invalid place {0}".format(place_key))
+
+    rows = [line.strip("\n").split("\t") for line in open(filename) if line.strip()]
+    re_badchars = re.compile("[^A-Za-z0-9 \.-]+")
+    with get_db().transaction():
+        for row in rows:
+            name, phone, email = row
+            name = re_badchars.sub("", name)
+            d = web.storage(name=name, phone=phone, email=email, place=None, role=None)
+            import_people().add_volunteer(d, place, batch=batch, as_invite=True)
 
 def email_voterid_added(place_key):
     """Email all volunteers that their voter ID registration is complete.
@@ -127,6 +142,8 @@ def main():
         add_pb_agents(sys.argv[2], sys.argv[3])
     elif cmdname == 'email_invites':
         email_invites()
+    elif cmdname == 'add_invites':
+        add_invites(sys.argv[2], sys.argv[3], sys.argv[4])
     elif cmd:
         places = sys.argv[2:]
         for p in places:
