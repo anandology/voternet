@@ -3,7 +3,7 @@ import logging
 import re
 import datetime
 import functools
-from models import Thing
+from models import Thing, get_db
 import envelopes 
 import urllib
 
@@ -18,6 +18,9 @@ def get_smtp_conn():
         tls=web.config.smtp_starttls,
         login=web.config.smtp_username,
         password=web.config.smtp_password)
+
+def get_unsubscribes():
+    return set(row.email for row in get_db().select("unsubscribe"))
 
 def send_email(to_addr, message, cc=None, bcc=None, conn=None):
     global email_count
@@ -109,10 +112,15 @@ def sendmail_voterid_added(agent, conn=None):
 
 @limit_once_per_day
 def sendmail_voterid_pending(agent, conn=None):
+    unsubscribes = get_unsubscribes()
+
     from webapp import xrender
     if agent.role == "pb_agent":
         msg = xrender.email_agent_voterid_pending(agent)
-        send_email(agent.email, msg, conn=conn)
+        if agent.email in unsubscribes:
+            logger.ward("Ignoring %s as he unsubscribed", agent.email)
+        else:
+            send_email(agent.email, msg, conn=conn)
 
 def process_phone(number):
     if not number:
