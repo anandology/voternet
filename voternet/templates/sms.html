@@ -1,0 +1,16 @@
+$def with (place, form)
+
+$var title: Send SMS - $place.name
+
+<ul class="breadcrumb breadcrumb-collapse hidden-print">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+
+<h1 class="place-h1"><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Send SMS</h1>
+
+<form method="POST">
+    $:render_template("formfield", form.people)
+    $:render_template("formfield", form.message)
+    <button type="submit" class="btn btn-primary">Send SMS</button>    
+</form>

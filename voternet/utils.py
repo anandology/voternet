@@ -5,6 +5,7 @@ import datetime
 import functools
 from models import Thing
 import envelopes 
+import urllib
 
 logger = logging.getLogger(__name__)
 
@@ -112,3 +113,24 @@ def sendmail_voterid_pending(agent, conn=None):
     if agent.role == "pb_agent":
         msg = xrender.email_agent_voterid_pending(agent)
         send_email(agent.email, msg, conn=conn)
+
+def process_phone(number):
+    if not number:
+        return
+    number = web.re_compile("[^0-9]").sub("", number)
+    # remove +91
+    if len(number) == 12 and number.startswith("91"):
+        number = number[2:]
+    return number
+
+def send_sms(agents, message):
+    phones = [process_phone(a.phone) for a in agents]
+    phones = set(p for p in phones if p and len(p) == 10)
+    for chunk in web.group(phones, 300):
+        phone_numbers = ",".join(chunk)
+        url = web.config.sms_url.format(
+            phone_numbers=urllib.quote_plus(phone_numbers), 
+            message=urllib.quote_plus(message))
+        response = urllib.urlopen(url)
+        logger.info("sms response\n%s", response.read())
+    return len(phones)

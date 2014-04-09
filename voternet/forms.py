@@ -1,5 +1,6 @@
 import web
 from wtforms import Form, PasswordField, StringField, SelectField, validators, ValidationError
+from wtforms.widgets import TextArea
 import account
 from models import Person
 
@@ -48,3 +49,13 @@ class LoginForm(BaseForm):
         p = Person.find(email=self.email.data)
         if p and not account.check_salted_hash(field.data, p.get_encrypted_password()):
             raise ValidationError("That password seems incorrect. Please try again?")
+
+class SMSForm(BaseForm):
+    people = SelectField('Send SMS to',
+                choices=[
+                    ('self', 'Just Me (for testing)'),
+                    ('agents.confirmed', 'Confirmed Booth Agents'),
+                    ('agents.pending', 'Pending Booth Agents'),
+                    ('volunteers.all', 'All Volunteers (including agents and coordinators)'),
+                ])
+    message = StringField("Message", validators=[validators.Required()], widget=TextArea())

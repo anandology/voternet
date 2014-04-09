@@ -59,6 +59,7 @@ urls = (
     "/([\w/]+)/volunteers.xls", "download_volunteers",
     "/([\w/]+)/pb-agents.xls", "download_pb_agents",
     "/([\w/]+)/activity", "activity",
+    "/([\w/]+)/sms", "send_sms",
     "/([\w/]+)", "place",
     "/(.*/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
 )
@@ -733,6 +734,38 @@ class activity:
     def GET(self, place):
         activities = place.get_activity()
         return render.activity(place, activities)
+
+class send_sms:
+    @placify(roles=['admin', 'coordinator'], types=['PC', 'AC'])
+    def GET(self, place):
+        form = forms.SMSForm()
+        return render.sms(place, form)
+
+    @placify(roles=['admin', 'coordinator'], types=['PC', 'AC'])
+    def POST(self, place):
+        i = web.input()
+        form = forms.SMSForm(i)
+        if not form.validate():
+            return render.sms(place, form)
+        people = self.get_people(i.people)
+        count = utils.send_sms(people, i.message)
+        flash.add_flash_message("success", "Successfully sent SMS to {} people".format(count))
+        return render.sms(place, form)
+
+    def get_people(self, place, choice):
+        if choice == "self":
+            user = account.get_current_user()
+            return [user]
+        elif choice == "agents.confirmed":
+            agents = [p for p in place.get_pb_agents() if p.get_voterid_info()]
+            return agents
+        elif choice == "agents.pending":
+            agents = [p for p in place.get_pb_agents() if not p.get_voterid_info()]
+            return agents
+        elif choice == "volunteers":
+            return place.volunteers
+        else:
+            return []
 
 class login:
     def GET(self):

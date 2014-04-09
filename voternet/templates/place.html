@@ -101,6 +101,9 @@ $code:
                       <h4>Download <small>as XLS</small></h4>
                       <a href="$place.get_url()/volunteers.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a><br/><br/>
                       <a href="$place.get_url()/pb-agents.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All PB Agents</a><br/><br/>
+                    $if place.type in ['PC', 'AC']:
+                        <h4>Action</h4>
+                        <a href="$place.get_url()/sms" class="btn btn-primary">Send SMS</a>
                 </div>
                 $if place.type == 'WARD':
                     <h4>Volunteer Signups</h4>
