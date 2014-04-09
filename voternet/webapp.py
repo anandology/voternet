@@ -20,6 +20,8 @@ import search
 import flash
 import utils
 
+logger = logging.getLogger("webapp")
+
 urls = (
     "/", "index",
 
@@ -444,6 +446,13 @@ class import_people:
                 return
         else:
             place = ac
+        if row.email and place.find_volunteer(email=row.email, phone=None, role=row.role):
+            logger.warn("Already found a vol with same email and role. Ignoring this %s", row)
+            return
+        if row.phone and place.find_volunteer(email=None, phone=row.phone, role=row.role):
+            logger.warn("Already found a vol with same phone number and role. Ignoring this %s", row)
+            return
+
         place.add_volunteer(name=row.name, phone=row.phone, email=row.email, voterid=row.voterid, role=row.role)
         return True
 

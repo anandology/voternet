@@ -141,6 +141,16 @@ class Place(web.storage):
             person.populate_voterid_info()
         return person
 
+    def find_volunteer(self, email, phone, role):
+        where = {}
+        if email:
+            where['email'] = email
+        if phone:
+            where['phone'] = phone
+        rows = get_db().where("people", place_id=self.id, role=role, limit=1, **where)
+        if rows:
+            return Person.find_by_id(rows[0].id)
+
     def _invalidate_object_cache(self):
         cache.invalidate_object_cache(objects=[self] + self.get_parents())
         code = self.get_url()[1:] # remove / at the beginning
