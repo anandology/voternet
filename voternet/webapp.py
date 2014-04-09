@@ -460,6 +460,9 @@ class import_people:
             return
 
         if as_invite:
+            if not row.email:
+                logger.warn("Can't add invite as no email provided. Ignoring this %s", row)
+                return
             place.add_invite(       
                 name=row.name, 
                 phone=row.phone, 
