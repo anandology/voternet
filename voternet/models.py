@@ -141,6 +141,14 @@ class Place(web.storage):
             person.populate_voterid_info()
         return person
 
+    def add_invite(self, name, email, phone, batch=None):
+        get_db().insert("invite", 
+                    place_id=self.id, 
+                    name=name,
+                    email=email,
+                    phone=phone,
+                    batch=batch)
+        
     def find_volunteer(self, email, phone, role):
         where = {}
         if email:

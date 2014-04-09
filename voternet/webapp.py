@@ -416,14 +416,17 @@ class import_people:
 
     @placify(roles=['admin', 'coordinator'], types=["REGION", "PC", "AC"])
     def POST(self, place):
-        data = json.loads(web.data())['data']
+        i = json.loads(web.data())
+        batch = i.get('batch')
+        as_invite = i.get('as_invite', False)
+        data = i['data']
         data = [self.process_row(row) for row in data]
 
         # skip empty rows
         data = [row for row in data if any(row) and row.name]
         count = 0
         for row in data:
-            if self.add_volunteer(row, place):
+            if self.add_volunteer(row, place, batch, as_invite):
                 count += 1
         flash.add_flash_message("success", "Added {0} volunteers.".format(count))
         #raise web.seeother(place.url)
@@ -435,7 +438,7 @@ class import_people:
         """
         return web.storage((k, v and v.strip()) for k, v in row.items())
 
-    def add_volunteer(self, row, ac):
+    def add_volunteer(self, row, ac, batch, as_invite):
         if not row.name:
             return
 
@@ -456,7 +459,20 @@ class import_people:
             logger.warn("No email/phone number specified. Ignoring this %s", row)
             return
 
-        place.add_volunteer(name=row.name, phone=row.phone, email=row.email, voterid=row.voterid, role=row.role)
+        if as_invite:
+            place.add_invite(       
+                name=row.name, 
+                phone=row.phone, 
+                email=row.email, 
+                batch=batch)
+        else:
+            place.add_volunteer(
+                name=row.name, 
+                phone=row.phone, 
+                email=row.email, 
+                voterid=row.voterid, 
+                role=row.role,
+                notes=batch)
         return True
 
 class pb_agents:

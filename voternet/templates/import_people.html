@@ -5,6 +5,17 @@ $var title: $place.name / Bulk Add Volunteers
 <h4><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span></h4>
 <h1 style="margin-top: 0px;">Bulk Add Volunteers</h1>
 
+<div>
+      <label for="batch">Batch Name</label>
+      <input id="batch" name="batch" type="text" value="" style="width: 200px;">
+</div>
+<div>
+      <input id="as-invite" name="as-invite" type="checkbox" value="yes">
+      <label for="as-invite">Add as Invites</label>
+</div>
+<br/>
+<br/>
+
 <div id="example">
 </div>
 
@@ -114,10 +125,12 @@ $var title: $place.name / Bulk Add Volunteers
         }
 
         handsontable = \$("#example").data("handsontable");
+        var batch = \$("#batch").val();
+        var as_invite = \$("#as-invite").is(":checked");
         console.log(handsontable.getData());
         \$.ajax({
             url: window.location.href,
-            data: JSON.stringify({"data": handsontable.getData()}),
+            data: JSON.stringify({"data": handsontable.getData(), "batch": batch, "as_invite": as_invite}),
             dataType: "json",
             type: 'POST',
             success: function (res) {
