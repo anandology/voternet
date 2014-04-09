@@ -41,12 +41,15 @@ def add_invites(place_key, filename, batch):
 
     rows = [line.strip("\n").split("\t") for line in open(filename) if line.strip()]
     re_badchars = re.compile("[^A-Za-z0-9 \.-]+")
+    count = 0
     with get_db().transaction():
         for row in rows:
             name, phone, email = row
             name = re_badchars.sub("", name)
             d = web.storage(name=name, phone=phone, email=email, place=None, role=None)
-            import_people().add_volunteer(d, place, batch=batch, as_invite=True)
+            if import_people().add_volunteer(d, place, batch=batch, as_invite=True):
+                count += 1
+    logger.info("imported %s people", count)
 
 def email_voterid_added(place_key):
     """Email all volunteers that their voter ID registration is complete.

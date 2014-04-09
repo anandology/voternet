@@ -110,4 +110,5 @@ create table invite (
 );
 
 create index invite_batch_idx on invite(batch);
+create index invite_email_idx on invite(email);
 create index invite_person_id_idx on invite(person_id);

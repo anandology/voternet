@@ -12,7 +12,7 @@ import tablib
 import urllib
 import logging
 
-from models import Place, Person, get_all_coordinators_as_dataset, get_voterid_details
+from models import Place, Person, Invite, get_all_coordinators_as_dataset, get_voterid_details
 import forms
 import googlelogin
 import account
@@ -463,6 +463,10 @@ class import_people:
             if not row.email:
                 logger.warn("Can't add invite as no email provided. Ignoring this %s", row)
                 return
+            if Invite.find_by_email(row.email):
+                logger.warn("Already found an invite with the same email. Ignoring this %s", row)
+                return
+
             place.add_invite(       
                 name=row.name, 
                 phone=row.phone, 

@@ -148,7 +148,7 @@ class Place(web.storage):
                     email=email,
                     phone=phone,
                     batch=batch)
-        
+
     def find_volunteer(self, email, phone, role):
         where = {}
         if email:
@@ -979,6 +979,14 @@ class Invite(web.storage):
         """Return person by id.
         """
         result = get_db().where("invite", id=id)
+        if result:
+            return Invite(result[0])
+
+    @staticmethod
+    def find_by_email(email):
+        """Return person by id.
+        """
+        result = get_db().where("invite", email=email)
         if result:
             return Invite(result[0])
 
