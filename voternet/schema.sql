@@ -105,6 +105,7 @@ create table invite (
     phone text,
     place_id integer references places not null,
     person_id integer references people default null, -- added after signup is complete
+    tstamp timestamp default (current_timestamp at time zone 'UTC'),
     batch text 
 );
 
