@@ -452,6 +452,9 @@ class import_people:
         if row.phone and place.find_volunteer(email=None, phone=row.phone, role=row.role):
             logger.warn("Already found a vol with same phone number and role. Ignoring this %s", row)
             return
+        if not row.email and not row.phone:
+            logger.warn("No email/phone number specified. Ignoring this %s", row)
+            return
 
         place.add_volunteer(name=row.name, phone=row.phone, email=row.email, voterid=row.voterid, role=row.role)
         return True
