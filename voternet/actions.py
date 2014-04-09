@@ -1,5 +1,5 @@
 from webapp import xrender, check_config
-from models import Place
+from models import Place, Invite
 import utils
 import sys
 import web
@@ -19,12 +19,19 @@ def email_fill_voterid(place_key):
         raise ValueError("Invalid place {0}".format(place_key))
 
     agents = [a for a in place.get_pb_agents() if a.email and not a.voterid]
-    conn = utils.get_smtp_conn()
 
     pool = ThreadPool(10)
     def sendmail(a):
         utils.sendmail_voterid_pending(a)
-    pool.map(sendmail, agents)        
+    pool.map(sendmail, agents)
+
+def email_invites():
+    def sendmail(a):
+        utils.sendmail_voterid_pending(a)
+    pool = ThreadPool(10)
+    agents = Invite.find_all()    
+    print agents
+    map(sendmail, agents)
 
 def email_voterid_added(place_key):
     """Email all volunteers that their voter ID registration is complete.
@@ -110,6 +117,7 @@ def main():
         'autoadd_pb_agents': autoadd_pb_agents,
         'update_voterinfo': update_voterinfo,
         'add_pb_agents': add_pb_agents,       
+        'email_invites': email_invites,
         'debug': debug, 
     }
     cmdname = sys.argv[1]
@@ -117,6 +125,8 @@ def main():
     cmd = CMDS.get(cmdname)
     if cmdname == 'add_pb_agents':
         add_pb_agents(sys.argv[2], sys.argv[3])
+    elif cmdname == 'email_invites':
+        email_invites()
     elif cmd:
         places = sys.argv[2:]
         for p in places:

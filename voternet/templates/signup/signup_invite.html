@@ -1,0 +1,20 @@
+$def with (form)
+
+$var title: Booth Agent Registration
+$var container_class = "container"
+
+<div class="container">
+  <h2>Booth Agent Registration</h2>
+
+  <p>Sign up a polling booth agent for AAM AADMI PARTY, Karnataka.</p>
+
+  <div>
+    <form role="form" method="POST">
+      $:render_field(form.name, placeholder="Enter name")
+      $:render_field(form.phone, placeholder="Phone Number")
+      $:render_field(form.email, placeholder="Email Address")
+      $:render_field(form.voterid)
+
+      <button type="submit" name="action" value="save" class="btn btn-primary">Signup</button>
+    </form>
+</div>

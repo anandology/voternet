@@ -1,20 +1,25 @@
 import web
 import os
+import logging
 from wtforms import Form, StringField, HiddenField, validators, ValidationError
-from models import Place
+from models import Place, Invite
 import webapp
 import utils
-import logging
 
 urls = (
     "/(.?.?)", "signup",
+    "/signup/(\d+)-(.*)", "signup_invite",
     "/unsubscribe", "unsubscribe",
     "/wards.js", "wards_js"
 )
+
 app = web.application(urls, globals())
 path = os.path.join(os.path.dirname(__file__), "templates/signup")
-render = web.template.render(path, base="site")
-xrender = web.template.render(path)
+tglobals = {
+    'render_field': webapp.xrender.formfield
+}
+render = web.template.render(path, base="site", globals=tglobals)
+xrender = web.template.render(path, globals=tglobals)
 
 db = None
 
@@ -51,6 +56,14 @@ class SignupForm(BaseForm):
         if not place:
             raise ValidationError("Please select a place from the dropdown.")
 
+class SignupInviteForm(BaseForm):
+    name = StringField('Name', [validators.Required()])
+    phone = StringField('Phone Number', [
+        validators.Required(), 
+        validators.Regexp(r'^\+?[0-9 -]{10,}$', message="That doesn't like a valid phone number.")])
+    email = StringField('Email Address', [validators.Required(), validators.Email()])
+    voterid = StringField('Voter ID')
+
 class UnsubscribeForm(BaseForm):
     email = StringField('E-mail Address', [validators.Email(), validators.Required()])
 
@@ -82,6 +95,43 @@ class signup:
             return render.thankyou(place, agent)
         else:
             return render.signup(form)
+
+class signup_invite:
+    def GET(self, id, digest):
+        invite = self.get_invite(id, digest)
+        if not invite:
+            raise web.notfound()
+
+        # if he is alrady added as agent, then let him edit that page directly.
+        if invite.person:
+            cms_url = web.config.get("cmd_url") or "http://cms.aapvol.in/"
+            cms_url = cms_url.strip("/")
+            raise web.seeother(cms_url + "/account/edit/" + invite.person.get_edit_token())
+
+        form = SignupInviteForm(invite)
+        return render.signup_invite(form)
+
+    def POST(self, id, digest):
+        invite = self.get_invite(id, digest)
+        if not invite:
+            raise web.notfound()
+
+        i = web.input()
+        form = SignupInviteForm(i)
+        if not form.validate():
+            return render.signup_invite(form)
+
+        agent = invite.signup(i.name, i.email, i.phone, i.voterid)
+        if agent.get_voterid_info():
+            utils.sendmail_voterid_added(agent)
+        else:
+            utils.sendmail_voterid_pending(agent)
+        return render.thankyou(agent.place, agent)
+
+    def get_invite(self, id, digest):
+        invite = Invite.find(id)
+        if invite and invite.digest() == digest:
+            return invite
 
 class unsubscribe:
     def GET(self):

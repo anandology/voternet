@@ -96,3 +96,17 @@ create table unsubscribe (
     email text,
     tstamp timestamp default (current_timestamp at time zone 'UTC')
 );
+
+-- signup invites for people who might be interested
+create table invite (
+    id serial primary key,
+    name text,
+    email text,
+    phone text,
+    place_id integer references places not null,
+    person_id integer references people default null, -- added after signup is complete
+    batch text 
+);
+
+create index invite_batch_idx on invite(batch);
+create index invite_person_id_idx on invite(person_id);

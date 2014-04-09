@@ -734,7 +734,8 @@ class Person(web.storage):
         return get_voterid_details(self.voterid)
 
     def populate_voterid_info(self):
-        if self.voterid and not self.get_voterid_info():
+        d = self.get_voterid_info()
+        if self.voterid and not d:
             d = voterlib.get_voter_details(self.voterid)
             # The voter ID might have been added while we are fetching the voter details.
             # Usually happens when user press save button twice.
@@ -742,9 +743,9 @@ class Person(web.storage):
                 key = "KA/AC{0:03d}/PB{1:04d}".format(int(d.ac_num), int(d.part_no))
                 d.pb_id = Place.find(key).id
                 get_db().insert("voterid_info", **d)
-                if self.role == "pb_agent" and self.place_id != d.pb_id:
-                    self.update(place_id=d.pb_id)
-                    logger.info("Reassigned %s <%s> as %s to %s", self.name, self.email, self.role, self.place.key)
+        if d and self.role == "pb_agent" and self.place_id != d.pb_id:
+            self.update(place_id=d.pb_id)
+            logger.info("Reassigned %s <%s> as %s to %s", self.name, self.email, self.role, self.place.key)
 
     def get_agent_status(self):
         """Return one of [None, "pending", "verified", mismatch"].
@@ -945,3 +946,67 @@ class Thing(web.storage):
             get_db().update("things", where="id=$id", data=self.jsondata, vars=self)
         else:
             get_db().insert("things", key=self.key, type=self.type, data=self.jsondata)
+
+class Invite(web.storage):
+    @property
+    def place(self):
+        return Place.from_id(self.place_id)
+
+    @property
+    def person(self):
+        return self.person_id and Person.find_by_id(self.person_id)
+
+    @property
+    def role(self):
+        """This is required to make Invite work like person when sending emails.
+        """
+        return "pb_agent"
+
+    def get_url(self):
+        # to indicate that this is not a real volunteer
+        return None
+
+    @staticmethod
+    def find(id):
+        """Return person by id.
+        """
+        result = get_db().where("invite", id=id)
+        if result:
+            return Invite(result[0])
+
+    @staticmethod
+    def find_all():
+        result = get_db().query("SELECT * FROM invite WHERE person_id is NULL")
+        return [Invite(row) for row in result]
+
+    def digest(self):
+        msg = "{} {}".format(self.id, self.email)
+        return hmac.HMAC(web.config.secret_key, msg).hexdigest()
+
+    def get_signup_token(self):
+        return "{}-{}".format(self.id, self.digest())
+
+    def add_person_id(self, person_id):
+        get_db().update("invite", person_id=person_id, where="id=$id", vars=self)
+
+    def signup(self, name, email, phone, voterid):
+        place = self.place
+        with get_db().transaction():
+            agent = place.find_volunteer(email, phone, 'pb_agent')
+            if agent:
+                if voterid and not agent.voterid:
+                    agent.update(voterid=voterid)
+            else:
+                agent = place.add_volunteer(
+                    name=name,
+                    phone=phone,
+                    email=email,
+                    voterid=voterid,
+                    role='pb_agent',
+                    notes=self.batch)
+            self.add_person_id(agent.id)
+            agent.populate_voterid_info()
+            return agent
+
+    def __repr__(self):
+        return "<{} {}>".format(self.__class__.__name__, dict(self))

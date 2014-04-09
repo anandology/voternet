@@ -10,7 +10,10 @@ Please sign up to become a Polling Booth Agent for the election day. You will be
 
 Please click the link below to fill in your voter ID details and be part of the change that you wish to see in the country. You will receive more details once you register. 
 
-http://cms.aapvol.in/account/edit/$agent.get_edit_token()
+$if agent.get_url():
+    http://cms.aapvol.in/account/edit/$agent.get_edit_token()
+$else:
+    http://ka.aapvol.in/signup/$agent.get_signup_token()
 
 Jai Hind! Jai Karnataka!!
 
