@@ -747,7 +747,7 @@ class send_sms:
         form = forms.SMSForm(i)
         if not form.validate():
             return render.sms(place, form)
-        people = self.get_people(i.people)
+        people = self.get_people(place, i.people)
         count = utils.send_sms(people, i.message)
         flash.add_flash_message("success", "Successfully sent SMS to {} people".format(count))
         return render.sms(place, form)
