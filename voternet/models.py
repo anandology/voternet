@@ -1008,8 +1008,12 @@ class Invite(web.storage):
 
     def signup(self, name, email, phone, voterid):
         place = self.place
+        voterid_details = voterid and get_voterid_details(voterid)
         with get_db().transaction():
             agent = place.find_volunteer(email, phone, 'pb_agent')
+            if not agent and voterid_details:
+                p2 = Place.from_id(voterid_details.pb_id)
+                agent = p2.find_volunteer(email, phone, 'pb_agent')
             if agent:
                 if voterid and not agent.voterid:
                     agent.update(voterid=voterid)
