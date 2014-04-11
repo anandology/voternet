@@ -21,16 +21,20 @@ def email_fill_voterid(place_key):
 
     agents = [a for a in place.get_pb_agents() if a.email and not a.voterid]
 
-    pool = ThreadPool(10)
+    pool = ThreadPool(20)
     def sendmail(a):
         utils.sendmail_voterid_pending(a)
     pool.map(sendmail, agents)
 
 def email_invites():
     def sendmail(a):
-        utils.sendmail_voterid_pending(a)
+        try:
+            utils.sendmail_voterid_pending(a)
+        except Exception:
+            logger.error("failed to send email to %s", a)
     agents = Invite.find_all()    
-    map(sendmail, agents)
+    pool = ThreadPool(20)    
+    pool.map(sendmail, agents)
 
 def add_invites(place_key, filename, batch):
     from webapp import import_people
@@ -45,7 +49,7 @@ def add_invites(place_key, filename, batch):
     with get_db().transaction():
         for row in rows:
             name, phone, email = row
-            name = re_badchars.sub("", name)
+            name = re_badchars.sub("", name).strip()
             d = web.storage(name=name, phone=phone, email=email, place=None, role=None)
             if import_people().add_volunteer(d, place, batch=batch, as_invite=True):
                 count += 1
