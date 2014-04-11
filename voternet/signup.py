@@ -44,7 +44,7 @@ class SignupForm(BaseForm):
     phone = StringField('Phone Number', [
         validators.Required(), 
         validators.Regexp(r'^\+?[0-9 -]{10,}$', message="That doesn't like a valid phone number.")])
-    email = StringField('Email Address', [validators.Required(), validators.Email()])
+    email = StringField('Email Address')
     voterid = StringField('Voter ID')
     address = StringField('Locality', [validators.Required()])
     ward = HiddenField()
@@ -55,6 +55,13 @@ class SignupForm(BaseForm):
         place = Place.find(self.ward.data)
         if not place:
             raise ValidationError("Please select a place from the dropdown.")
+
+    def validate_email(self, field):
+        """Email field is optional. validate it when it has some value.
+        """
+        if field.data:
+            email_validator = validators.Email()
+            email_validator(self, field)
 
 class SignupInviteForm(BaseForm):
     name = StringField('Name', [validators.Required()])
