@@ -2,13 +2,14 @@ $def with (page)
 <!DOCTYPE html>
 <html>
   <head>
-    <title>$page.get('title', 'Volunteer Sign Up') - AAP Karnataka</title>
+    <title>$page.get('title', 'Volunteer Sign Up') - config.signup_title</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">    
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 
     <script type="text/javascript" src="http://cms.aapvol.in/static/js/jquery.min.js"></script>
 
@@ -106,7 +107,7 @@ $def with (page)
       $ container_class = page.get("container_class", "container-fluid")
       <div class="$container_class">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">AAP Karnataka<br/><small>Volunteer Management System</small></a>
+          <a class="navbar-brand" href="/">$config.signup_title<br/><small>Volunteer Management System</small></a>
         </div>
       </div>
     </nav>

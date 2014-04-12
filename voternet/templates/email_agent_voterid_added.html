@@ -1,8 +1,8 @@
 $def with (agent)
-$var subject: Successfully registered Voter ID for AAP booth agent
+$var subject: Successfully registered Voter ID for booth agent
 Dear $agent.name,
 
-Your voter ID has been successfully registered as a valid booth agent for AAM AADMI PARTY. Here are the details of your booth:
+Your voter ID has been successfully registered as a valid booth agent. Here are the details of your booth:
 $ booth = agent.place
 $ ward = booth.get_parent("WARD")
 $ ac = booth.get_parent("AC")
@@ -25,10 +25,3 @@ $ coordinators = (ward and ward.get_coordinators()) or ac.get_coordinators()
 
 Thank you for stepping up and volunteering to be a booth agent. Together, we can easily overthrow the corrupt politicians and bring in the change that we wish to see in the country.
 
-Jai Hind! Jai Karnataka!!
-
----
-Aam Aadmi Party, Karnataka
-Facebook : https://www.facebook.com/AAPKarnataka
-Helpline : 080-23012227
-Twitter : @aapkarnataka

@@ -16,7 +16,8 @@ urls = (
 app = web.application(urls, globals())
 path = os.path.join(os.path.dirname(__file__), "templates/signup")
 tglobals = {
-    'render_field': webapp.xrender.formfield
+    'render_field': webapp.xrender.formfield,
+    'config': web.config,
 }
 render = web.template.render(path, base="site", globals=tglobals)
 xrender = web.template.render(path, globals=tglobals)
@@ -44,7 +45,7 @@ class SignupForm(BaseForm):
     phone = StringField('Phone Number', [
         validators.Required(), 
         validators.Regexp(r'^\+?[0-9 -]{10,}$', message="That doesn't like a valid phone number.")])
-    email = StringField('Email Address')
+    email = StringField('Email Address',)
     voterid = StringField('Voter ID')
     address = StringField('Locality', [validators.Required()])
     ward = HiddenField()
@@ -94,11 +95,13 @@ class signup:
                 voterid=i.voterid,
                 role='pb_agent',
                 notes=notes)
-            agent.populate_voterid_info()
-            if agent.get_voterid_info():
-                utils.sendmail_voterid_added(agent)
-            else:
-                utils.sendmail_voterid_pending(agent)
+            # agent.populate_voterid_info()
+            # if agent.get_voterid_info():
+            #     utils.sendmail_voterid_added(agent)
+            # else:
+            #     utils.sendmail_voterid_pending(agent)
+            message = xrender.email_thankyou(place, i)
+            utils.send_email(agent.email, message)
             return render.thankyou(place, agent)
         else:
             return render.signup(form)

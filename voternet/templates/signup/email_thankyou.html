@@ -2,7 +2,7 @@ $def with (place, i)
 $var subject: Thanks for signing up as volunteer
 Dear $i.name,
 
-Thank for signing up as volunteer for Aam Aadmi Party, Karnataka.
+Thank for signing up as volunteer for Loksatta Party.
 
 You have signup with the following details:
 
@@ -13,10 +13,17 @@ Locality: $i.address
 
 Your locality is part of:
 
-$place.name Ward
-$place.get_parent("AC").name Assembly Constituency
-$place.get_parent("PC").name Parliamentary Constituency
-$ coordinators = place.get_coordinators()
+$if place.type == "ward":
+    $place.name Ward
+    $place.get_parent("AC").name Assembly Constituency
+    $place.get_parent("PC").name Parliamentary Constituency
+    $ coordinators = place.get_coordinators()
+$elif place.type == "AC":
+    $place Assembly Constituency
+    $place.get_parent("PC").name Parliamentary Constituency
+    $ coordinators = place.get_coordinators()
+$else:
+    $ coordinators = []
 
 $if coordinators:
     $if len(coordinators) == 1:
@@ -29,13 +36,5 @@ $if coordinators:
         $c.phone
         $c.email
 
-    Please get in touch with your ward co-ordinator immediately and take up the responsibility of fighting corruption and bringing clean politics to our country. We have very little time left.
-
-    If you have any trouble contacting the ward co-ordinator, please call the call center number 080-23012227.
-$else:
-    Please call the call center number 080-23012227 immediately and take up the responsibility of fighting corruption and bringing clean politics to our country. We have very little time left.
-
-
 Thank you,
-Aam Aadmi Party, Karnataka
-
+Loksatta Party
