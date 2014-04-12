@@ -39,6 +39,14 @@ def send_email(to_addr, message, cc=None, bcc=None, conn=None):
             print "Bcc: ", bcc
         print
         print message
+    elif not web.config.get('smtp_server'):
+        web.sendmail(
+            from_address=web.config.from_address, 
+            to_addr=to_addr, 
+            subject=subject, 
+            message=message,
+            cc=cc,
+            bcc=bcc)
     else:
         logger.info("{}: sending email to {} with subject {!r}".format(email_count, to_addr, subject))
         envelope = envelopes.Envelope(    
