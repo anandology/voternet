@@ -118,7 +118,7 @@ def sendmail_voterid_pending(agent, conn=None):
     if agent.role == "pb_agent":
         msg = xrender.email_agent_voterid_pending(agent)
         if agent.email in unsubscribes:
-            logger.ward("Ignoring %s as he unsubscribed", agent.email)
+            logger.warn("Ignoring %s as he unsubscribed", agent.email)
         else:
             send_email(agent.email, msg, conn=conn)
 
