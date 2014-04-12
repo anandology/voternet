@@ -42,7 +42,7 @@ def send_email(to_addr, message, cc=None, bcc=None, conn=None):
     elif not web.config.get('smtp_server'):
         web.sendmail(
             from_address=web.config.from_address, 
-            to_addr=to_addr, 
+            to_address=to_addr, 
             subject=subject, 
             message=message,
             cc=cc,
