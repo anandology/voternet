@@ -79,7 +79,7 @@ def login_requrired(handler):
         if not user:
             params = {"next": web.ctx.fullpath}
             raise web.seeother("/account/login?" + urllib.urlencode(params))
-        elif not user.is_authorized():
+        elif not user.is_authorized() and not user.email not in web.config.get("super_admins", []):
             return render.permission_denied()
     return handler()
 
