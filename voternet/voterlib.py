@@ -14,12 +14,16 @@ def get_voter_details(voterid):
         return
 
     logger.info("get_voter_details %s", voterid)    
-    b = web.Browser()
-    b.open(URL)
-    b.select_form(index=0)
-    b['ctl00$ContentPlaceHolder1$ddlDistrict'] = ['21']
-    b['ctl00$ContentPlaceHolder1$txtEpic'] = voterid
-    b.submit()
+    try:
+        b = web.Browser()
+        b.open(URL)
+        b.select_form(index=0)
+        b['ctl00$ContentPlaceHolder1$ddlDistrict'] = ['21']
+        b['ctl00$ContentPlaceHolder1$txtEpic'] = voterid
+        b.submit()
+    except IOError:
+        logger.error("failed to request voterid details", exc_info=True)
+        return web.storage()
 
     soup = b.get_soup()
     table = soup.find("table", {"id": "ctl00_ContentPlaceHolder1_GridView1"})
