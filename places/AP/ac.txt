@@ -1,0 +1,294 @@
+PC01	AC001	Sirpur
+PC01	AC005	Asifabad (ST)
+PC01	AC006	Khanapur (ST)
+PC01	AC007	Adilabad
+PC01	AC008	Boath (ST)
+PC01	AC009	Nirmal
+PC01	AC010	Mudhole
+PC02	AC002	Chennur (SC)
+PC02	AC003	Bellampalli (SC)
+PC02	AC004	Mancherial
+PC02	AC022	Dharmapuri (SC)
+PC02	AC023	Ramagundam
+PC02	AC024	Manthani
+PC02	AC025	Peddapalle
+PC03	AC026	Karimnagar
+PC03	AC027	Choppadandi (SC)
+PC03	AC028	Vemulawada
+PC03	AC029	Sircilla
+PC03	AC030	Manakondur (SC)
+PC03	AC031	Huzurabad
+PC03	AC032	Husnabad
+PC04	AC011	Armur
+PC04	AC012	Bodhan
+PC04	AC017	Nizamabad (Urban)
+PC04	AC018	Nizamabad (Rural)
+PC04	AC019	Balkonda
+PC04	AC020	Koratla
+PC04	AC021	Jagtial
+PC05	AC013	Jukkal (SC)
+PC05	AC014	Banswada
+PC05	AC015	Yellareddy
+PC05	AC016	Kamareddy
+PC05	AC035	Narayankhed
+PC05	AC036	Andole (SC)
+PC05	AC038	Zahirabad (SC)
+PC06	AC033	Siddipet
+PC06	AC034	Medak
+PC06	AC037	Narsapur
+PC06	AC039	Sangareddy
+PC06	AC040	Patancheru
+PC06	AC041	Dubbak
+PC06	AC042	Gajwel
+PC07	AC043	Medchal
+PC07	AC044	Malkajgiri
+PC07	AC045	Quthbullapur
+PC07	AC046	Kukatpally
+PC07	AC047	Uppal
+PC07	AC049	Lal Bahadur Nagar
+PC07	AC071	Secunderabad Cantt (SC)
+PC08	AC057	Musheerabad
+PC08	AC059	Amberpet
+PC08	AC060	Khairatabad
+PC08	AC061	Jubilee Hills
+PC08	AC062	Sanathnagar
+PC08	AC063	Nampally
+PC08	AC070	Secunderabad
+PC09	AC058	Malakpet
+PC09	AC064	Karwan
+PC09	AC065	Goshamahal
+PC09	AC066	Charminar
+PC09	AC067	Chandrayangutta
+PC09	AC068	Yakutpura
+PC09	AC069	Bahadurpura
+PC10	AC050	Maheswaram
+PC10	AC051	Rajendranagar
+PC10	AC052	Serilingampally
+PC10	AC053	Chevella (SC)
+PC10	AC054	Pargi
+PC10	AC055	Vicarabad(SC)
+PC10	AC056	Tandur
+PC11	AC072	Kodangal
+PC11	AC073	Narayanpet
+PC11	AC074	Mahbubnagar
+PC11	AC075	Jadcherla
+PC11	AC076	Devarkadra
+PC11	AC077	Makthal
+PC11	AC084	Shadnagar
+PC12	AC078	Wanaparthy
+PC12	AC079	Gadwal
+PC12	AC080	Alampur (SC)
+PC12	AC081	Nagarkurnool
+PC12	AC082	Achampet (SC)
+PC12	AC083	Kalwakurthy
+PC12	AC085	Kollapur
+PC13	AC086	Devarakonda(ST)
+PC13	AC087	Nagarjuna Sagar
+PC13	AC088	Miryalaguda
+PC13	AC089	Huzurnagar
+PC13	AC090	Kodad
+PC13	AC091	Suryapet
+PC13	AC092	Nalgonda
+PC14	AC048	Ibrahimpatnam
+PC14	AC093	Munugode
+PC14	AC094	Bhongir
+PC14	AC095	Nakrekal(SC)
+PC14	AC096	Thungathurthi (SC)
+PC14	AC097	Alair
+PC14	AC098	Jangaon
+PC15	AC099	Ghanpur (Station) (SC)
+PC15	AC100	Palakurthi
+PC15	AC104	Parkal
+PC15	AC105	Warangal West (Assembly constituency)
+PC15	AC106	Warangal East (Assembly constituency)
+PC15	AC107	Wardhannapet (SC)
+PC15	AC108	Bhupalpalle
+PC16	AC101	Dornakal (ST)
+PC16	AC102	Mahabubabad (ST)
+PC16	AC103	Narsampet
+PC16	AC109	Mulug (ST)
+PC16	AC110	Pinapaka (ST)
+PC16	AC111	Yellandu (ST)
+PC16	AC119	Bhadrachalam (ST)
+PC17	AC112	Khammam
+PC17	AC113	Palair
+PC17	AC114	Madhira (SC)
+PC17	AC115	Wyra (ST)
+PC17	AC116	Sathupalle (SC)
+PC17	AC117	Kothagudem
+PC17	AC118	Aswaraopeta (ST)
+PC18	AC129	Palakonda (ST)
+PC18	AC130	Kurupam (ST)
+PC18	AC131	Parvathipuram (SC)
+PC18	AC132	Salur (ST)
+PC18	AC147	Araku Valley (ST)
+PC18	AC148	Paderu (ST)
+PC18	AC172	Rampachodovaram (ST)
+PC19	AC120	Ichchapuram
+PC19	AC121	Palasa
+PC19	AC122	Tekkali
+PC19	AC123	Pathapatnam
+PC19	AC124	Srikakulam
+PC19	AC125	Amadalavalasa
+PC19	AC127	Narasannapeta
+PC20	AC126	Etcherla
+PC20	AC128	Rajam (SC)
+PC20	AC133	Bobbili
+PC20	AC134	Cheepurupalli
+PC20	AC135	Gajapathinagaram
+PC20	AC136	Nellimarla
+PC20	AC137	Vizianagaram
+PC21	AC138	Srungavarapukota
+PC21	AC139	Bhimli
+PC21	AC140	Visakhapatnam East
+PC21	AC141	Visakhapatnam South
+PC21	AC142	Visakhapatnam North
+PC21	AC143	Visakhapatnam West
+PC21	AC144	Gajuwaka
+PC22	AC145	Chodavaram
+PC22	AC146	Madugula
+PC22	AC149	Anakapalle
+PC22	AC150	Pendurthi
+PC22	AC151	Yelamanchili
+PC22	AC152	Payakaraopet (SC)
+PC22	AC153	Narsipatnam
+PC23	AC154	Tuni
+PC23	AC155	Prathipadu
+PC23	AC156	Pithapuram
+PC23	AC157	Kakinada Rural
+PC23	AC158	Peddapuram
+PC23	AC160	Kakinada City
+PC23	AC171	Jaggampeta
+PC24	AC161	Ramachandrapuram
+PC24	AC162	Mummidivaram
+PC24	AC163	Amalapuram (SC)
+PC24	AC164	Razole (SC)
+PC24	AC165	Gannavaram (SC)
+PC24	AC166	Kothapeta
+PC24	AC167	Mandapeta
+PC25	AC159	Anaparthy
+PC25	AC168	Rajanagaram
+PC25	AC169	Rajahmundry City
+PC25	AC170	Rajahmundry Rural
+PC25	AC173	Kovvur (SC)
+PC25	AC174	Nidadavole
+PC25	AC185	Gopalapuram (SC)
+PC26	AC175	Achanta
+PC26	AC176	Palacole
+PC26	AC177	Narsapuram
+PC26	AC178	Bhimavaram
+PC26	AC179	Undi
+PC26	AC180	Tanuku
+PC26	AC181	Tadepalligudem
+PC27	AC182	Unguturu
+PC27	AC183	Denduluru
+PC27	AC184	Eluru
+PC27	AC186	Polavaram (ST)
+PC27	AC187	Chintalapudi (SC)
+PC27	AC189	Nuzvid
+PC27	AC192	Kaikalur
+PC28	AC190	Gannavaram
+PC28	AC191	Gudivada
+PC28	AC193	Pedana
+PC28	AC194	Machilipatnam
+PC28	AC195	Avanigadda
+PC28	AC196	Pamarru (SC)
+PC28	AC197	Penamaluru
+PC29	AC188	Tiruvuru (SC)
+PC29	AC198	Vijayawada West
+PC29	AC199	Vijayawada Central
+PC29	AC200	Vijayawada East
+PC29	AC201	Mylavaram
+PC29	AC202	Nandigama (SC)
+PC29	AC203	Jaggayyapeta
+PC30	AC205	Tadikonda (SC)
+PC30	AC206	Mangalagiri
+PC30	AC207	Ponnuru
+PC30	AC210	Tenali
+PC30	AC212	Prathipadu (SC)
+PC30	AC213	Guntur West
+PC30	AC214	Guntur East
+PC31	AC204	Pedakurapadu
+PC31	AC215	Chilakaluripet
+PC31	AC216	Narasaraopet
+PC31	AC217	Sattenapalli
+PC31	AC218	Vinukonda
+PC31	AC219	Gurajala
+PC31	AC220	Macherla
+PC32	AC208	Vemuru (SC)
+PC32	AC209	Repalle
+PC32	AC211	Bapatla
+PC32	AC223	Parchur
+PC32	AC224	Addanki
+PC32	AC225	Chirala
+PC32	AC226	Santhanuthalapadu (SC)
+PC33	AC221	Yerragondapalem (SC)
+PC33	AC222	Darsi
+PC33	AC227	Ongole
+PC33	AC229	Kondapi (SC)
+PC33	AC230	Markapuram
+PC33	AC231	Giddalur
+PC33	AC232	Kanigiri
+PC34	AC253	Allagadda
+PC34	AC254	Srisailam
+PC34	AC255	Nandikotkur (SC)
+PC34	AC257	Panyam
+PC34	AC258	Nandyal
+PC34	AC259	Banaganapalle
+PC34	AC260	Dhone
+PC35	AC256	Kurnool
+PC35	AC261	Pattikonda
+PC35	AC262	Kodumur (SC)
+PC35	AC263	Yemmiganur
+PC35	AC264	Mantralayam
+PC35	AC265	Adoni
+PC35	AC266	Alur
+PC36	AC267	Rayadurg
+PC36	AC268	Uravakonda
+PC36	AC269	Guntakal
+PC36	AC270	Tadpatri
+PC36	AC271	Singanamala (SC)
+PC36	AC272	Anantapur Urban
+PC36	AC273	Kalyandurg
+PC37	AC274	Raptadu
+PC37	AC275	Madakasira (SC)
+PC37	AC276	Hindupur
+PC37	AC277	Penukonda
+PC37	AC278	Puttaparthi
+PC37	AC279	Dharmavaram
+PC37	AC280	Kadiri
+PC38	AC243	Badvel(SC)
+PC38	AC245	Kadapa
+PC38	AC248	Pulivendla
+PC38	AC249	Kamalapuram
+PC38	AC250	Jammalamadugu
+PC38	AC251	Proddatur
+PC38	AC252	Mydukur
+PC39	AC228	Kandukur
+PC39	AC233	Kavali
+PC39	AC234	Atmakur
+PC39	AC235	Kovur
+PC39	AC236	Nellore City
+PC39	AC237	Nellore Rural
+PC39	AC242	Udayagiri
+PC40	AC238	Sarvepalli
+PC40	AC239	Gudur (SC)
+PC40	AC240	Sullurpeta (SC)
+PC40	AC241	Venkatagiri
+PC40	AC286	Tirupati
+PC40	AC287	Srikalahasti
+PC40	AC288	Satyavedu (SC)
+PC41	AC244	Rajampet
+PC41	AC246	Kodur (SC)
+PC41	AC247	Rayachoti
+PC41	AC281	Thamballapalle
+PC41	AC282	Pileru
+PC41	AC283	Madanapalle
+PC41	AC284	Punganur
+PC42	AC285	Chandragiri
+PC42	AC289	Nagari
+PC42	AC290	Gangadhara Nellore (SC)
+PC42	AC291	Chittoor
+PC42	AC292	Puthalapattu (SC)
+PC42	AC293	Palamaner
+PC42	AC294	Kuppam
