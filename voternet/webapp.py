@@ -929,6 +929,17 @@ def open_shell():
     console.push("from voternet import models")
     console.interact()
 
+def signup_middleware(app):
+    from voternet import signup
+    signup_app = signup.app.wsgifunc()
+    def newapp(environ, start_response):
+        print environ['HTTP_HOST']
+        if environ.get('HTTP_HOST', '-') == web.config.signup_host:
+            return signup_app(environ, start_response)
+        else:
+            return app(environ, start_response)
+    return newapp
+
 def main():
     FORMAT = "%(asctime)s [%(name)s] [%(levelname)s] %(message)s"
     logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -939,7 +950,7 @@ def main():
 
     logger = logging.getLogger(__name__)
     logger.info("starting the webapp")
-    app.run()
+    app.run(signup_middleware)
 
 if __name__ == "__main__":
     main()
