@@ -1,6 +1,6 @@
 
 CREATE TYPE place_type AS ENUM (
-    'STATE', 'REGION', 'PC', 'AC', 'WARD', 'PS', 'PB');
+    'STATE', 'REGION', 'PC', 'AC', 'WARD', 'PX', 'PB');
 
 create table places (
     id serial primary key,
@@ -16,7 +16,7 @@ create table places (
     pc_id integer references places,
     ac_id integer references places,
     ward_id integer references places,
-    ps_id integer references places
+    px_id integer references places
 );
 
 create unique index places_code_idx on places(code, parent_id);

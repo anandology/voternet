@@ -27,10 +27,10 @@ class Place(web.storage):
         PC="Parliamentary Constituency",
         AC="Assembly Constituency",
         WARD="Ward",
-        PS="Polling Station",
+        PX="Polling Center",
         PB="Polling Booth")
 
-    TYPES = ['STATE', 'REGION', 'PC', 'AC', 'WARD', 'PB']
+    TYPES = ['STATE', 'REGION', 'PC', 'AC', 'WARD', 'PX', 'PB']
 
     CODE_PREFIXES = {
         "STATE": "",
@@ -38,10 +38,11 @@ class Place(web.storage):
         "PC": "PC",
         "AC": "AC",
         "WARD": "W",
+        "PX": "PX",
         "PB": "PB"
     }
 
-    COLUMN_NAMES = dict(STATE="state_id", REGION="region_id", PC="pc_id", AC="ac_id", WARD="ward_id")
+    COLUMN_NAMES = dict(STATE="state_id", REGION="region_id", PC="pc_id", AC="ac_id", WARD="ward_id", PX="px_id")
 
     @property
     def url(self):
@@ -330,7 +331,7 @@ class Place(web.storage):
             pc_id=self.pc_id,
             ac_id=self.ac_id,
             ward_id=self.ward_id,
-            ps_id=self.ps_id,
+            px_id=self.px_id,
             parent_id=self.id)
 
         # set the parent id in the apprpriate field
