@@ -1,12 +1,14 @@
 import web
 import os
 import logging
+import json
 from wtforms import Form, StringField, HiddenField, validators, ValidationError
 from models import Place, Invite
 import webapp
 import utils
 
 urls = (
+    "/signup_api", "signup_api",
     "/(.?.?)", "signup",
     "/signup/(\d+)-(.*)", "signup_invite",
     "/unsubscribe", "unsubscribe",
@@ -45,7 +47,7 @@ class SignupForm(BaseForm):
     phone = StringField('Phone Number', [
         validators.Required(), 
         validators.Regexp(r'^\+?[0-9 -]{10,}$', message="That doesn't like a valid phone number.")])
-    email = StringField('Email Address',)
+    email = StringField('Email Address', [validators.Required(), validators.Email()])
     voterid = StringField('Voter ID')
     address = StringField('Locality', [validators.Required()])
     ward = HiddenField()
@@ -105,6 +107,53 @@ class signup:
             return render.thankyou(place, agent)
         else:
             return render.signup(form)
+
+class signup_api:
+    def POST(self):
+        d = self.do_post()
+        web.header("content-type", "application/json")
+        return json.dumps(d)
+
+    def do_post(self):
+        i = web.input()
+        form = SignupForm(i)
+        if not form.validate():
+            errors = {}
+            for k in ["name", "phone", "email", "voterid", "address"]:
+                field = getattr(form, k)
+                if field.errors:
+                    errors[k] = field.errors[0]
+            return dict(status="error", errors=errors, input=i)
+        else:
+            place = Place.find(i.ward) # place is  of type AC
+            agent = place.add_volunteer(
+                name=i.name, 
+                phone=i.phone,
+                email=i.email,
+                voterid=i.voterid,
+                role='pb_agent')
+
+            ac = place
+            pc = place.get_parent("PC")
+
+            return {
+                "status": "ok", 
+                "errors": {},
+                "input": i,
+                "agent": {
+                    "name": agent.name,
+                    "phone": agent.phone,
+                    "email": agent.email,
+                    "voterid": agent.voterid
+                },
+                "place": {
+                    "locality": i.address,
+                    "ac": ac.name,
+                    "ac_key": ac.key,
+                    "pc": pc.name,
+                    "pc_key": pc.key
+                }
+            }
 
 class signup_invite:
     def GET(self, id, digest):
