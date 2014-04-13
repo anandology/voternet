@@ -295,17 +295,27 @@ class pb_list:
         data = json.loads(web.data())['data']
 
         for row in data:
-            code = place.code + "/" + row['code']
+            code = place.key + "/" + row['code']
             pb = Place.find(code)
 
             if row['ward'] and row['ward'].strip():
                 # Extract te group code from its name
-                code = place.code + "/" + row['ward'].split("-")[0].strip()
-                ward = Place.find(code)
+                key = place.key + "/" + row['ward'].split("-")[0].strip()
+                ward = Place.find(key)
                 if pb.ward_id != ward.id:
                     pb.set_ward(ward)
             else:
                 pb.set_ward(None)
+
+            if row['px'] and row['px'].strip():
+                # Extract te group code from its name
+                key = place.key + "/" + row['px'].split("-")[0].strip()
+                px = Place.find(key)
+                if pb.px_id != px.id:
+                    pb.set_px(px)
+            else:
+                pb.set_px(None)
+
         web.header("content-type", "application/json")
         return '{"result": "ok"}'
 

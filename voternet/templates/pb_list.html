@@ -28,15 +28,17 @@ $var title: $place.name / Polling Booths
 
 <script type="text/javascript">
 \$(function() {
-    $ data = [{"code": p.code, "name": p.name, "ward": p.get_zone()} for p in place.get_all_polling_booths()]
+    $ data = [{"code": p.code, "name": p.name, "ward": p.get_zone(), "px": p.get_parent("PX") and p.get_parent("PX").name} for p in place.get_all_polling_booths()]
     var data = $:json_encode(data);
 
     $ wards = [w.name for w in place.get_wards()] + [w.name for w in place.get_groups()] 
     var wards = $:json_encode(wards);
+    $ pxs = [px.name for px in place.get_children("PX")]
+    var pxs = $:json_encode(pxs)
 
     \$('#example').handsontable({
       data: data,
-      colHeaders: ["Code", "Name", "Ward / Group"], 
+      colHeaders: ["Code", "Name", "PX", "Ward / Group"], 
       columns: [{
         data: "code",
         readOnly: true,
@@ -44,12 +46,16 @@ $var title: $place.name / Polling Booths
         data: "name",
         readOnly: true,        
       }, {
+        data: "px",
+        type: 'dropdown',
+        source: pxs
+      }, {
         data: "ward",
         type: 'dropdown',
         source: wards
       }],
       contextMenu: false,
-      colWidths: [75, 800, 225]
+      colWidths: [75, 400, 400, 200]
     });
 });
 
