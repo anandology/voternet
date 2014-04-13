@@ -87,6 +87,33 @@ def add_polling_booths(state, dir):
                     ward_id=ward_id)
         commit_lazy_inserts()
 
+def add_polling_centers(state, filename):
+    d = {}
+    with db.transaction():
+        for ac_code, px_code, pb_code, name in read_csv(filename):
+            print "adding polling center", state.id, ac_code, px_code
+            if (ac_code, px_code) not in d:
+                key = "{0}/{1}/{2}".format(state.key, ac_code, px_code)                    
+                if not db.select("places", where="type='PS' AND key=$key", vars=locals()):
+                    pb_key = "{0}/{1}/{2}".format(state.key, ac_code, pb_code)
+                    pb = Place.find(pb_key)
+                    lazy_insert("places", key=key, name=name, type="PS", 
+                        code=key.split("/")[-1],
+                        state_id=state.id,
+                        region_id=pb.region_id,
+                        pc_id=pb.pc_id,
+                        ac_id=pb.ac_id,
+                        ward_id=pb.ward_id)
+                d[ac_code, px_code] = 1
+        commit_lazy_inserts()
+
+    with db.transaction():
+        for ac_code, px_code, pb_code, name in read_csv(filename):
+            key = "{0}/{1}/{2}".format(state.key, ac_code, px_code)                    
+            px = Place.find(key)
+            pb_key = "{0}/{1}/{2}".format(state.key, ac_code, pb_code)
+            db.update("places", px_id=px.id, where="key=$pb_key", vars=locals())
+
 _inserts = {}
 def lazy_insert(table, **row):
     rows = _inserts.setdefault(table, [])
@@ -125,6 +152,14 @@ def main():
         web.ctx.current_user = None
 
         state.add_volunteer("Fix Your Name", email, "0000000000", role="admin")
+        return
+    if "--polling-centers" in sys.argv:
+        index = sys.argv.index("--polling-centers")
+        state_code = sys.argv[index+1]
+        filename = sys.argv[index+2]
+        state = Place.find(state_code)
+        print "add_polling_centers", state, filename
+        add_polling_centers(state, filename)
         return
     
     dir = sys.argv[1]
