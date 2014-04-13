@@ -94,10 +94,10 @@ def add_polling_centers(state, filename):
             print "adding polling center", state.id, ac_code, px_code
             if (ac_code, px_code) not in d:
                 key = "{0}/{1}/{2}".format(state.key, ac_code, px_code)                    
-                if not db.select("places", where="type='PS' AND key=$key", vars=locals()):
+                if not db.select("places", where="type='PX' AND key=$key", vars=locals()):
                     pb_key = "{0}/{1}/{2}".format(state.key, ac_code, pb_code)
                     pb = Place.find(pb_key)
-                    lazy_insert("places", key=key, name=name, type="PS", 
+                    lazy_insert("places", key=key, name=name, type="PX", 
                         code=key.split("/")[-1],
                         state_id=state.id,
                         region_id=pb.region_id,
