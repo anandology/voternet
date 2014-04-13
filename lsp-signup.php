@@ -145,7 +145,7 @@ function render_body() {
             </div>
         </div>
         <div class="col-md-8" style="height: 100%">
-            <div id="map-canvas" style="height: 100%; min-height: 500px;"></div>
+            <div id="map-canvas" style="height: 100%; min-height: 570px;"></div>
         </div>
     </div>
 </div>
@@ -305,7 +305,7 @@ function render_header() {
         padding: 0px
       }
       #panel2 {
-        padding: 0px 20px;
+        padding: 0px 0px 20px 20px;
       }
       .gray {
         color: #555;
@@ -376,6 +376,19 @@ function render_header() {
         font-size: 13px;
         font-weight: 300;
       }
+
+      /* overwrite margin of the page */
+      .no-sidebars #content {
+        margin: 0 !important;
+      }
+
+      #main {
+        padding: 0 !important;
+      }
+
+      #content-wrap {
+        margin: 0px !important;
+      }      
     </style>
   <?
 }
