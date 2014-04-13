@@ -103,6 +103,10 @@ class Place(web.storage):
         districts = state._get_ac_to_district_mapping()
         return districts.get(ac.code)
 
+    def get_children(self, type):
+        rows = get_db().query("SELECT * FROM places WHERE type=$type AND {0} = $self.id ORDER BY key".format(self.type_column), vars=locals())
+        return [Place(row) for row in rows]
+
     @property
     def volunteers(self):
         return self.get_people(['coordinator', 'volunteer', 'pb_agent'])
@@ -292,6 +296,11 @@ class Place(web.storage):
     def set_ward(self, ward):
         self.ward_id = ward and ward.id
         get_db().update("places", ward_id=self.ward_id, where="id=$self.id", vars=locals())
+        self._invalidate_object_cache()
+
+    def set_px(self, px):
+        self.px_id = px and px.id
+        get_db().update("places", px_id=self.px_id, where="id=$self.id", vars=locals())
         self._invalidate_object_cache()
 
     def set_parent(self, type, parent):
