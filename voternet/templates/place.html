@@ -96,10 +96,10 @@ $code:
 
             $ a = place.get_agent_counts2()
 
-            <h1>Summary</h1>
+            <h2>Summary</h2>
             $ counts = place.get_counts()                        
             <div>
-                <h2>Booth Agents</h2>
+                <h3>Booth Agents</h3>
                 <ul class="list-unstyled">
                     <li><strong>$a.assigned_pb_agents</strong> assigned agents in <strong>$a.assigned_pbs</strong> booths</li>
                     <li><strong>$a.unassigned_pb_agents</strong> unassigned agents</li>
@@ -112,7 +112,7 @@ $code:
                 <div><strong>$a.assigned_pbs</strong> of <strong>$counts['PB']</strong> booths covered (<strong>$percent%</strong>)</div>
             </div>
             <div>
-                <h2>Center Agents</h2>
+                <h3>Center Agents</h3>
                 <ul class="list-unstyled">
                     <li><strong>$a.assigned_px_agents</strong> assigned agents in <strong>$a.assigned_pxs</strong> centers</li>
                     <li><strong>$a.unassigned_px_agents</strong> unassigned agents</li>
@@ -125,7 +125,7 @@ $code:
                 <div><strong>$a.assigned_pxs</strong> of <strong>$counts['PB']</strong> centers covered (<strong>$percent%</strong>)</div>
             </div>
             <div>
-                <h2>This $place.type_label has</h2>
+                <h3>This $place.type_label has</h3>
                 <ul class="list-unstyled">
                     $for t in subtypes[1:]:
                         $ count = counts.get(t.code, 0)
