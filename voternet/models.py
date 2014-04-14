@@ -297,11 +297,26 @@ class Place(web.storage):
         self.ward_id = ward and ward.id
         get_db().update("places", ward_id=self.ward_id, where="id=$self.id", vars=locals())
         self._invalidate_object_cache()
+        if self.type == "PB":
+            px = self.get_parent("PX")
+            px and px.autoupdate_ward()
 
     def set_px(self, px):
         self.px_id = px and px.id
         get_db().update("places", px_id=self.px_id, where="id=$self.id", vars=locals())
         self._invalidate_object_cache()
+        px = self.get_parent("PX")
+        px and px.autoupdate_ward()
+
+    def autoupdate_ward(self):
+        d = {}
+        for pb in self.get_children("PB"):
+            ward = pb.get_parent("WARD")
+            if ward:
+                d[ward.key] = d.get(ward.key, 0) + 1
+        if d:
+            top_ward = max(d, key=d.__getitem__)
+            self.set_ward(Place.find(top_ward))
 
     def set_parent(self, type, parent):
         if self.get_parent(type) == parent:
