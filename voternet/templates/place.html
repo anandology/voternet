@@ -118,19 +118,20 @@ $code:
                 </div>
                 <p class="text-$get_progress_class(percent)"><strong>$a.assigned_pbs</strong> of <strong>$counts['PB']</strong> booths covered (<strong>$percent%</strong>)</p>
             </div>
-            <div>
-                <h3>Center Agents</h3>
-                <ul class="list-unstyled">
-                    <li><strong>$a.assigned_px_agents</strong> assigned agents in <strong>$a.assigned_pxs</strong> centers</li>
-                    <li><strong>$a.unassigned_px_agents</strong> unassigned agents</li>
-                </ul>
-                $ percent = (a.assigned_pxs * 100) / counts['PB']
-                <div class="progress" style="margin-bottom: 5px;">
-                    <div class="progress-bar progress-bar-$get_progress_class(percent)" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
+            $if counts.get('PX'):
+                <div>
+                    <h3>Center Agents</h3>
+                    <ul class="list-unstyled">
+                        <li><strong>$a.assigned_px_agents</strong> assigned agents in <strong>$a.assigned_pxs</strong> centers</li>
+                        <li><strong>$a.unassigned_px_agents</strong> unassigned agents</li>
+                    </ul>
+                    $ percent = (a.assigned_pxs * 100) / counts['PB']
+                    <div class="progress" style="margin-bottom: 5px;">
+                        <div class="progress-bar progress-bar-$get_progress_class(percent)" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
+                        </div>
                     </div>
+                    <p class="text-$get_progress_class(percent)"><strong>$a.assigned_pxs</strong> of <strong>$counts['PX']</strong> centers covered (<strong>$percent%</strong>)</p>
                 </div>
-                <p class="text-$get_progress_class(percent)"><strong>$a.assigned_pxs</strong> of <strong>$counts['PX']</strong> centers covered (<strong>$percent%</strong>)</p>
-            </div>
             <div>
                 <h3>This $place.type_label has</h3>
                 <ul class="list-unstyled">
