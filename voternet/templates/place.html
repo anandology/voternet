@@ -50,6 +50,13 @@ $code:
             return "text-warning"
         else:
             return "text-success"
+    def get_progress_class(percent):
+        if percent <= 33:
+            return "danger"
+        elif percent <= 66:
+            return "warning"
+        else:
+            return "success"
 
 <ul class="breadcrumb breadcrumb-collapse hidden-print">
     $for p in place.get_parents():
@@ -106,10 +113,10 @@ $code:
                 </ul>
                 $ percent = (a.assigned_pbs * 100) / counts['PB']
                 <div class="progress" style="margin-bottom: 5px;">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
+                    <div class="progress-bar progress-bar-$get_progress_class(percent)" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
                     </div>
                 </div>
-                <div><strong>$a.assigned_pbs</strong> of <strong>$counts['PB']</strong> booths covered (<strong>$percent%</strong>)</div>
+                <p class="text-$get_progress_class(percent)"><strong>$a.assigned_pbs</strong> of <strong>$counts['PB']</strong> booths covered (<strong>$percent%</strong>)</p>
             </div>
             <div>
                 <h3>Center Agents</h3>
@@ -119,10 +126,10 @@ $code:
                 </ul>
                 $ percent = (a.assigned_pxs * 100) / counts['PB']
                 <div class="progress" style="margin-bottom: 5px;">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
+                    <div class="progress-bar progress-bar-$get_progress_class(percent)" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
                     </div>
                 </div>
-                <div><strong>$a.assigned_pxs</strong> of <strong>$counts['PB']</strong> centers covered (<strong>$percent%</strong>)</div>
+                <p class="text-$get_progress_class(percent)"><strong>$a.assigned_pxs</strong> of <strong>$counts['PB']</strong> centers covered (<strong>$percent%</strong>)</p>
             </div>
             <div>
                 <h3>This $place.type_label has</h3>
@@ -251,10 +258,10 @@ $code:
                 </ul>
                 $ percent = (a.assigned_pbs * 100) / counts['PB']
                 <div class="progress" style="margin-bottom: 5px;">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
+                    <div class="progress-bar progress-bar-$get_progress_class(percent)" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
                     </div>
                 </div>
-                <div><strong>$a.assigned_pbs</strong> of <strong>$counts['PB']</strong> booths covered (<strong>$percent%</strong>)</div>
+                <p class="text-$get_progress_class(percent)"trong>$a.assigned_pbs</strong> of <strong>$counts['PB']</strong> booths covered (<strong>$percent%</strong>)</p>
             </td>                
             <td>
                 <ul class="list-unstyled">
@@ -263,10 +270,10 @@ $code:
                 </ul>
                 $ percent = (a.assigned_pxs * 100) / counts['PX']
                 <div class="progress" style="margin-bottom: 5px;">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
+                    <div class="progress-bar progress-bar-$get_progress_class(percent)" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
                     </div>
                 </div>
-                <div><strong>$a.assigned_pxs</strong> of <strong>$counts['PX']</strong> centers covered (<strong>$percent%</strong>)</div>
+                <p class="text-$get_progress_class(percent)"><strong>$a.assigned_pxs</strong> of <strong>$counts['PX']</strong> centers covered (<strong>$percent%</strong>)</p>
             </td>                
         </tr>
 
