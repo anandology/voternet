@@ -806,7 +806,7 @@ class Person(web.storage):
                 key = "KA/AC{0:03d}/PB{1:04d}".format(int(d.ac_num), int(d.part_no))
                 d.pb_id = Place.find(key).id
                 get_db().insert("voterid_info", **d)
-        if d and self.role == "pb_agent" and self.place_id != d.pb_id:
+        if d and d.get('pb_id') and self.role == "pb_agent" and self.place_id != d.pb_id:
             self.update(place_id=d.pb_id)
             logger.info("Reassigned %s <%s> as %s to %s", self.name, self.email, self.role, self.place.key)
 
