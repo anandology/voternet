@@ -60,9 +60,11 @@ $code:
   <div class="col-md-9">
     <h1 class="place-h1">$place.name <span class="small">$place.type_label</span></h1>
 
+    <!--
     <div class="hidden-print">
         <a href="$place.url/info">See info about this place</a>
     </div>
+    -->
 
     $ d = place.get_localities()
 
@@ -86,42 +88,18 @@ $code:
               <a href="$place.get_url()/users" class="btn btn-default hidden-print" role="button">See Admin Users</a>
               <br/><br/>
 
-            $if place_writable:
-                <div>
-                  <a href="$place.get_url()/add-people" class="btn btn-primary active hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
-                  $if place.type == "AC":
-                    <a href="$place.get_url()/import-people" class="btn btn-primary active pull-right hidden-print" role="button">Bulk Import Volunteers</a>
-
-                  $if place.type in ["PC", "AC", "WARD"]:
-                      <h4>Manage Polling Booth Agents</h4>
-                      <div>
-                        <a href="$place.get_url()/pb-agents" class="btn btn-primary active hidden-print" role="button">Manage PB Agents</a>
-                      </div>
-                  $if place.type in ["STATE", "REGION", "PC", "AC", "WARD"]:
-                      <h4>Download <small>as XLS</small></h4>
-                      <a href="$place.get_url()/volunteers.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a><br/><br/>
-                      <a href="$place.get_url()/pb-agents.xls" class="btn btn-primary active hidden-print pull-left" role="button"><span class="glyphicon glyphicon-download"></span> All PB Agents</a><br/><br/>
-                  $if place.type in ['PC', 'AC']:
-                      <h4>Actions</h4>
-                      <a href="$place.get_url()/sms" class="btn btn-primary">Send SMS</a>
-                </div>
-                $if place.type == 'WARD':
-                    <h4>Volunteer Signups</h4>
-                    <div class="hidden-print" style="margin: 10px 0px;">
-                        $len(place.get_signups()) people have signed up as volunteers at this ward.
-                        <br/>
-                        <br/>
-                        <a href="$place.get_url()/signups" class="btn btn-primary">Review Signups</a>
-                    </div>
 
         </div>
         <div class="col-md-6">
-            <h4>Total Volunteers Per Day</h4>
-            $:render_template("graph", place.get_volunteer_data_for_graph(), "volunteer-graph")
+            $# <h4>Total Volunteers Per Day</h4>
+            $# $:render_template("graph", place.get_volunteer_data_for_graph(), "volunteer-graph")
 
             <h4>Summary</h4>
             <div class="row">
-                <div class="col-md-6">
+                <!-- 
+                <div class="col-md-6"> 
+                -->
+                <div class="col-md-12"> 
                     <div style="border-left: 5px solid #ddd; padding-left: 10px">                    
                     <ul class="list-unstyled">
                         $ counts = place.get_counts()
@@ -139,6 +117,7 @@ $code:
                     </ul>                    
                     </div>
                 </div>
+                <!--
                 <div class="col-md-6">
                     <div style="border-left: 5px solid #ddd; padding-left: 10px">
                     $ summary = place.get_volunteer_summary()
@@ -150,9 +129,39 @@ $code:
                     </ul>
                     </div>
                 </div>
+                -->
             </div>                
         </div>        
     </div>
+    $if place_writable:
+        <div>
+          $if place.type in ["STATE", "REGION", "PC", "AC", "WARD"]:
+              <div id="download-links">
+              <h4>Download <small>as XLS</small></h4>
+              <a href="$place.get_url()/volunteers.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a>
+              <a href="$place.get_url()/pb-agents.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All PB Agents</a>
+              </div>
+          <div id="actions">
+          <h4>Actions</h4>
+          <a href="$place.get_url()/add-people" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
+          $if place.type == "AC":
+            <a href="$place.get_url()/import-people" class="btn btn-primary hidden-print" role="button">Bulk Import Volunteers</a>
+          $if place.type in ["PC", "AC", "WARD"]:
+              <a href="$place.get_url()/pb-agents" class="btn btn-primary hidden-print" role="button">Manage PB Agents</a>
+          $if place.type in ['PC', 'AC']:
+              <a href="$place.get_url()/sms" class="btn btn-primary">Send SMS</a>
+          </div>
+        </div>
+        $if place.type == 'WARD':
+            <h4>Volunteer Signups</h4>
+            <div class="hidden-print" style="margin: 10px 0px;">
+                $len(place.get_signups()) people have signed up as volunteers at this ward.
+                <br/>
+                <br/>
+                <a href="$place.get_url()/signups" class="btn btn-primary">Review Signups</a>
+            </div>
+
+    <!--
     <h2>Coverage <small>Total #houses visited</small></h2>
     <div class="row">
         <div class="col-md-6">
@@ -180,6 +189,7 @@ $code:
            data-date-format="yyyy-mm-dd" data-date="$get_today().strftime('%Y-%m-%d')"
            style="line-height: 1.2;"><strong>Some Other Date?</strong><br/><small style="color: #888;">&nbsp;</small></a>
         </div>
+    -->
 
     $if place_readable:
         <h2>Activity</h2>
