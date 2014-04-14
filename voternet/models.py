@@ -414,6 +414,36 @@ class Place(web.storage):
         pending = total-confirmed
         return web.storage(total=total, confirmed=confirmed, confirmed_booths=confirmed_booths, pending=pending)
 
+    @cache.object_memoize(key="agent_counts2")
+    def get_agent_counts2(self):
+        total_pb_agents, _ = self._get_agent_counts("pb_agent")
+        assigned_pb_agents, assigned_booths = self._get_agent_counts("pb_agent", 'PB')
+
+        total_px_agents, _ = self._get_agent_counts("px_agent")
+        assigned_px_agents, assigned_centers = self._get_agent_counts("px_agent", 'PX')
+
+        return web.storage({
+            "assigned_pb_agents": assigned_pb_agents,
+            "assigned_pbs": assigned_booths,
+            "unassigned_pb_agents": total_pb_agents - assigned_pb_agents,
+            "assigned_px_agents": assigned_px_agents,
+            "unassigned_px_agents": total_px_agents - assigned_px_agents,            
+            "assigned_pxs": assigned_centers,
+        })
+
+    def _get_agent_counts(self, role, place_type=None):
+        where = "(places.%s=$self.id OR places.id=$self.id)" % self.type_column
+        if place_type:
+            where += " AND places.type=$place_type"
+        result = get_db().query(
+            "SELECT count(*) as count, count(distinct places.id) as place_count FROM people, places" +
+            " WHERE people.role=$role" + 
+            "   AND people.place_id=places.id" +
+            "   AND " + where, 
+            vars=locals())
+        row = result[0]
+        return row.count, row.place_count
+
     @cache.object_memoize(key="volunteer_counts_by_date")
     def get_volunteer_counts_by_date(self):
         if self.type == "PB":
