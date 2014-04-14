@@ -94,43 +94,44 @@ $code:
             $# <h4>Total Volunteers Per Day</h4>
             $# $:render_template("graph", place.get_volunteer_data_for_graph(), "volunteer-graph")
 
-            <h4>Summary</h4>
-            <div class="row">
-                <!-- 
-                <div class="col-md-6"> 
-                -->
-                <div class="col-md-12"> 
-                    <div style="border-left: 5px solid #ddd; padding-left: 10px">                    
-                    <ul class="list-unstyled">
-                        $ counts = place.get_counts()
-                        $ vcounts = place.get_volunteer_counts()
+            $ a = place.get_agent_counts2()
 
-                        $for t in subtypes:
-                            $ count = counts.get(t.code, 0)
-                            $ vcount = vcounts.get(t.code, 0)
-                            <li class="$get_color_class(vcount, count)"><strong>$commify(vcount)</strong> vols in <strong>$commify(count)</strong> $plural(t.code)</li>
-                    </ul>            
-                    <ul class="list-unstyled" style="border-top: 1px dotted #ddd">
-                        $ a = place.get_agent_counts()
-                        <li><strong>$a.confirmed</strong> confirmed agents in $a.confirmed_booths booths</li>
-                        <li><strong>$a.pending</strong> pending agents</li>
-                    </ul>                    
+            <h1>Summary</h1>
+            $ counts = place.get_counts()                        
+            <div>
+                <h2>Booth Agents</h2>
+                <ul class="list-unstyled">
+                    <li><strong>$a.assigned_pb_agents</strong> assigned agents in <strong>$a.assigned_pbs</strong> booths</li>
+                    <li><strong>$a.unassigned_pb_agents</strong> unassigned agents</li>
+                </ul>
+                $ percent = (a.assigned_pbs * 100) / counts['PB']
+                <div class="progress" style="margin-bottom: 5px;">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
                     </div>
                 </div>
-                <!--
-                <div class="col-md-6">
-                    <div style="border-left: 5px solid #ddd; padding-left: 10px">
-                    $ summary = place.get_volunteer_summary()
-                    <ul class="list-unstyled" style="">
-                        <li>$commify(summary['today']) vols joined today</li>
-                        <li>$commify(summary['yesterday']) vols joined yesterday</li>
-                        <li>$commify(summary['thisweek']) vols joined this week</li>
-                        <li><strong>$commify(summary['total']) vols joined so far</strong></li>
-                    </ul>
+                <div><strong>$a.assigned_pbs</strong> of <strong>$counts['PB']</strong> booths covered (<strong>$percent%</strong>)</div>
+            </div>
+            <div>
+                <h2>Center Agents</h2>
+                <ul class="list-unstyled">
+                    <li><strong>$a.assigned_px_agents</strong> assigned agents in <strong>$a.assigned_pxs</strong> centers</li>
+                    <li><strong>$a.unassigned_px_agents</strong> unassigned agents</li>
+                </ul>
+                $ percent = (a.assigned_pxs * 100) / counts['PB']
+                <div class="progress" style="margin-bottom: 5px;">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
                     </div>
                 </div>
-                -->
-            </div>                
+                <div><strong>$a.assigned_pxs</strong> of <strong>$counts['PB']</strong> centers covered (<strong>$percent%</strong>)</div>
+            </div>
+            <div>
+                <h2>This $place.type_label has</h2>
+                <ul class="list-unstyled">
+                    $for t in subtypes[1:]:
+                        $ count = counts.get(t.code, 0)
+                        <li><strong>$commify(count)</strong> $plural(t.label)</li>
+                </ul>                
+            </div>            
         </div>        
     </div>
     $if place_writable:
@@ -220,6 +221,7 @@ $code:
                             <div><a href="tel:$person.phone">$person.phone</a></div>
                     </div>
             </td>
+            <!--
             <td>
                 <ul class="list-unstyled">
                     $ counts = p.get_counts()
@@ -240,6 +242,32 @@ $code:
                 <strong>$p.get_coverage_count()</strong>
                 <small>houses visited</small>
             </td>
+            -->
+            $ a = p.get_agent_counts2()
+            <td>
+                <ul class="list-unstyled">
+                    <li><strong>$a.assigned_pb_agents</strong> assigned agents</li>
+                    <li><strong>$a.unassigned_pb_agents</strong> unassigned agents</li>
+                </ul>
+                $ percent = (a.assigned_pbs * 100) / counts['PB']
+                <div class="progress" style="margin-bottom: 5px;">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
+                    </div>
+                </div>
+                <div><strong>$a.assigned_pbs</strong> of <strong>$counts['PB']</strong> booths covered (<strong>$percent%</strong>)</div>
+            </td>                
+            <td>
+                <ul class="list-unstyled">
+                    <li><strong>$a.assigned_px_agents</strong> assigned agents</li>
+                    <li><strong>$a.unassigned_px_agents</strong> unassigned agents</li>
+                </ul>
+                $ percent = (a.assigned_pxs * 100) / counts['PX']
+                <div class="progress" style="margin-bottom: 5px;">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="$percent" aria-valuemin="0" aria-valuemax="100" style="width: $percent%;">
+                    </div>
+                </div>
+                <div><strong>$a.assigned_pxs</strong> of <strong>$counts['PX']</strong> centers covered (<strong>$percent%</strong>)</div>
+            </td>                
         </tr>
 
     $def render_places_table(places, label):            
@@ -250,19 +278,17 @@ $code:
                 <th>#</th>
                 <th>Name</th>
                 <th>Coordinators</th>
-                <th>Volunteers</th>
-                <th style="width: 200px;">Coverage</th>
+                <th style="width: 200px;">Booth Agents</th>
+                <th style="width: 200px;">Center Agents</th>
             <tr> 
             $for p in places:
-                $ counts = p.get_counts()
-                $ vcounts = p.get_volunteer_counts()
-                $if sum(vcounts.values()):
+                $ a = p.get_agent_counts2()
+                $if a.assigned_pbs or a.assigned_pxs:
                     $:render_place(p, "active", serial.next())
 
             $for p in places:
-                $ counts = p.get_counts()
-                $ vcounts = p.get_volunteer_counts()
-                $if not sum(vcounts.values()):
+                $ a = p.get_agent_counts2()
+                $if not (a.assigned_pbs or a.assigned_pxs):
                     $:render_place(p, "inactive", serial.next())
         </table>    
 
