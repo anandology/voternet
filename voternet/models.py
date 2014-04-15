@@ -444,20 +444,44 @@ class Place(web.storage):
             "assigned_px_agents": assigned_px_agents,
             "unassigned_px_agents": total_px_agents - assigned_px_agents,            
             "assigned_pxs": assigned_centers,
+            "assigned_pxs_including_pbs": self._get_px_count(),            
         })
 
     def _get_agent_counts(self, role, place_type=None):
         where = "(places.%s=$self.id OR places.id=$self.id)" % self.type_column
         if place_type:
             where += " AND places.type=$place_type"
+        if isinstance(role, list):
+            where += " AND people.role IN $role"
+        else:
+            where += " AND people.role = $role"
         result = get_db().query(
-            "SELECT count(*) as count, count(distinct places.id) as place_count FROM people, places" +
-            " WHERE people.role=$role" + 
-            "   AND people.place_id=places.id" +
+            "SELECT count(*) as count, count(distinct places.id) as place_count, count(distinct places.px_id) as px_count FROM people, places" +
+            " WHERE people.place_id=places.id" +
             "   AND " + where, 
             vars=locals())
         row = result[0]
         return row.count, row.place_count
+
+    def _get_px_count(self):
+        """When counting PX agents, we count both PB agents and PX agents.
+        """
+        q1 = ("SELECT places.id FROM places, people" +
+            " WHERE people.place_id=places.id" +
+            "   AND people.role='px_agent'" + 
+            "   AND places.type='PX'" +
+            "   AND places.{}=$self.id OR places.id=$self.id".format(self.type_column)) 
+
+        q2 = ("SELECT places.px_id FROM places, people" +
+            " WHERE people.place_id=places.id" +
+            "   AND people.role='pb_agent'" + 
+            "   AND places.type='PB'" +
+            "   AND places.{}=$self.id OR places.id=$self.id".format(self.type_column)) 
+
+        q =  "SELECT count(*) FROM ({} UNION {}) as t".format(q1, q2)
+        result = get_db().query(q, vars=locals())
+        row = result[0]
+        return row.count
 
     @cache.object_memoize(key="volunteer_counts_by_date")
     def get_volunteer_counts_by_date(self):
