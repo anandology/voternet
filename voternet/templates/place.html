@@ -83,7 +83,7 @@ $code:
                 <h2>Volunteers</h2>
             $# Don't show volunteers/pb-agents at STATE, REGION and PC
             $if place_readable and place.type not in ['STATE', 'REGION', 'PC']:
-                $ volunteers = place.get_people(roles=["coordinator", "volunteer", "pb_agent"])
+                $ volunteers = place.get_people(roles=["coordinator", "volunteer", "pb_agent", "px_agent"])
             $else:
                 $ volunteers = place.get_coordinators()
             $if not volunteers:
