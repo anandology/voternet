@@ -767,7 +767,7 @@ class Place(web.storage):
     def get_all_coordinators_as_dataset(self, types=['STATE', 'REGION', 'PC', 'AC', 'WARD']):
         return self.get_all_volunteers_as_dataset(roles=['coordinator'], types=types)
 
-    def get_all_volunteers_as_dataset(self, roles=['volunteer', 'pb_agent', 'coordinator'], types=['STATE', 'REGION', 'PC', 'AC', 'WARD', 'PB']):
+    def get_all_volunteers_as_dataset(self, roles=['volunteer', 'pb_agent', 'px_agent', 'coordinator'], types=['STATE', 'REGION', 'PC', 'AC', 'WARD', 'PB', 'PX']):
         result = get_db().query(
             "SELECT places.type, places.pc_id, places.ac_id, places.ward_id, places.name as place," +
             " people.name as name, people.email, people.phone, people.voterid, people.role" +
