@@ -489,13 +489,13 @@ class Place(web.storage):
             " WHERE people.place_id=places.id" +
             "   AND people.role='px_agent'" + 
             "   AND places.type='PX'" +
-            "   AND places.{}=$self.id OR places.id=$self.id".format(self.type_column)) 
+            "   AND (places.{}=$self.id OR places.id=$self.id)".format(self.type_column)) 
 
         q2 = ("SELECT places.px_id FROM places, people" +
             " WHERE people.place_id=places.id" +
             "   AND people.role='pb_agent'" + 
             "   AND places.type='PB'" +
-            "   AND places.{}=$self.id OR places.id=$self.id".format(self.type_column)) 
+            "   AND (places.{}=$self.id OR places.id=$self.id)".format(self.type_column)) 
 
         q =  "SELECT count(*) FROM ({} UNION {}) as t".format(q1, q2)
         result = get_db().query(q, vars=locals())
