@@ -34,6 +34,7 @@ urls = (
     "/account/oauth2callback", "oauth2callback",
     "/login/oauth2callback", "oauth2callback",
     "/report-issue", "report_issue",
+    "/tmp/(KA/AC\d+)/px.txt", "tmp_px_dump",
 
     "/sudo", "sudo",
     "/debug", "debug",
@@ -74,6 +75,7 @@ def login_requrired(handler):
     if (not web.ctx.path.startswith("/account") 
         and not web.ctx.path.startswith("/login") 
         and not web.ctx.path.startswith("/voterid/") 
+        and not web.ctx.path.startswith("/tmp/") 
         and web.ctx.path not in whitelist):
         user = account.get_current_user()
         if not user:
@@ -915,6 +917,24 @@ class report_issue:
         utils.send_email(to_addr=web.config.super_admins, message=msg)
         flash.add_flash_message("info", "Thanks for reporting the issue. We'll get back to you shortly.")
         raise web.seeother("/")
+
+class tmp_px_dump:
+    def GET(self, key):
+        place = Place.find(key)
+        if not place:
+            raise web.notfound()
+
+        booths = place.get_all_polling_booths()
+        from collections import defaultdict
+        d = defaultdict(list)
+        for booth in booths:
+            px = booth.get_parent("PX")
+            d[px.key.split("/")[-1]].append(booth)
+
+        data = [[place.code, px_code, ",".join(b.code for b in booths)] 
+                    for px_code, booths in sorted(d.items())]
+        web.header("content-type", "text/plain")
+        return "\n".join("\t".join(row) for row in data)
 
 def load_config(configfile):
     web.config.update(yaml.load(open(configfile)))
