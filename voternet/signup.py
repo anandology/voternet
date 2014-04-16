@@ -11,7 +11,6 @@ urls = (
     "/signup/(\d+)-(.*)", "signup_invite",
     "/unsubscribe", "unsubscribe",
     "/wards.js", "wards_js",
-    "/voterid", "voterid_search"
 )
 
 app = web.application(urls, globals())
@@ -156,15 +155,6 @@ class unsubscribe:
             return render.unsubscribe(form, done=True)
         else:
             return render.unsubscribe(form)
-
-class voterid_search:
-    def GET(self):
-        i = web.input(voterid="")
-        if i.voterid:
-            voter = Voter.find(i.voterid)
-            return render.voter(voter, query=i.voterid)
-        else:
-            return render.voter()
 
 class wards_js:
     def GET(self):
