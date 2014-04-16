@@ -927,11 +927,14 @@ class tmp_px_dump:
         booths = place.get_all_polling_booths()
         from collections import defaultdict
         d = defaultdict(list)
+        pxd = {}
         for booth in booths:
             px = booth.get_parent("PX")
-            d[px.key.split("/")[-1]].append(booth)
+            px_code = px.key.split("/")[-1]
+            d[px_code].append(booth)
+            pxd[px_code] = px
 
-        data = [[place.code, px_code, ",".join(b.code for b in booths)] 
+        data = [[place.code, px_code, ",".join(b.code for b in booths), pxd[px_code].name]
                     for px_code, booths in sorted(d.items())]
         web.header("content-type", "text/plain")
         return "\n".join("\t".join(row) for row in data)
