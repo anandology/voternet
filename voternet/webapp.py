@@ -934,8 +934,14 @@ class tmp_px_dump:
             d[px_code].append(booth)
             pxd[px_code] = px
 
-        data = [[place.code, place.name, px_code, ",".join(b.code for b in booths), pxd[px_code].name]
-                    for px_code, booths in sorted(d.items())]
+        def get_row(px_code):
+            booths = d[px_code]
+            px = pxd[px_code]
+            ward = px.get_parent("WARD")
+            ward_name = ward and ward.name or "-"
+            return [place.code, place.name, px_code, ",".join(b.code for b in booths), px.name, ward_name]
+
+        data = [get_row(px_code) for px_code in sorted(d)]
         web.header("content-type", "text/plain")
         return "\n".join("\t".join(row) for row in data)
 
