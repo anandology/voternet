@@ -7,6 +7,35 @@ $def with (voter=None, query=None)
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+    <style type="text/css">
+        .clearable{
+            position:relative;
+        }
+        .data_field{
+            padding-right:17px; /* add space for the 'x' icon*/
+        }
+        span.icon_clear{
+            position:absolute;
+            top: 5px;
+            right:10px;    
+            display:none;
+            
+            /* now go with the styling */
+            cursor:pointer;
+            font-size: 1.5em;
+            /*
+            font: bold 1em sans-serif;
+            */
+            /*
+            color:#38468F;  
+            */
+            color: #444;
+        }
+        span.icon_clear:hover{
+            color:#f52;
+        }
+    </style>    
 </head>
 <body>
 <div class="container">
@@ -16,8 +45,9 @@ $def with (voter=None, query=None)
     <form method="GET" class="form-inline">
       <div class="form-group">
         <label class="sr-only" for="voterid">Voter ID</label>
-        <div class="input-group input-group-lg">
-            <input type="text" name="voterid" class="form-control" id="voterid" placeholder="Enter Your Voter ID" value="$query">
+        <div class="input-group input-group-lg clearable">
+                <input class="form-control" type="text" name="voterid" id="voterid" placeholder="Enter Your Voter ID" value="$query">
+                <span class="icon_clear">x</span>
         </div>
       </div>
       <button type="submit" class="btn btn-lg btn-primary">Search</button>
@@ -42,4 +72,16 @@ $def with (voter=None, query=None)
             <h4>Sorry, no match found.</h4>
 </div>
 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript">
+\$(document).on('propertychange keyup input paste', '.clearable input', function(){
+    var io = \$(this).val().length ? 1 : 0 ;
+    \$(this).next('.icon_clear').stop().fadeTo(300,io);
+}).on('click', '.icon_clear', function() {
+    \$(this).delay(300).fadeTo(300,0).prev('input').val('');
+});
+</script>
+
+</body>
+</html>
 
