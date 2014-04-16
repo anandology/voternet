@@ -1118,6 +1118,18 @@ class Voter(web.storage):
         result = get_db().where("voterlist", voterid=voterid.upper())
         if result:
             return Voter(result[0])
+        elif len(voterid) == 10:
+            d = get_voterid_details(voterid, fetch=True)
+            if d:
+                d2 = {
+                    "name": d.get("first_name", "") + " " + d.get("last_name", ""),
+                    "relname": d.get("rel_firstname", "") + " " + d.get("rel_lastname", ""),
+                    "ac": int(d.ac_num),
+                    "part": int(d.part_no),
+                    "srno": int(d.sl_no),
+                    "age_sex": "{}/{}".format(d.sex, d.age)
+                }
+                return Voter(d2)
 
     @property
     def ac_name(self):
