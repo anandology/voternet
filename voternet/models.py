@@ -1115,7 +1115,7 @@ class Invite(web.storage):
 class Voter(web.storage):
     @staticmethod
     def find(voterid):
-        result = get_db().where("voterlist", voterid=voterid)
+        result = get_db().where("voterlist", voterid=voterid.upper())
         if result:
             return Voter(result[0])
 
