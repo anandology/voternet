@@ -112,3 +112,17 @@ create table invite (
 create index invite_batch_idx on invite(batch);
 create index invite_email_idx on invite(email);
 create index invite_person_id_idx on invite(person_id);
+
+
+create table voterlist (
+    ac integer,
+    px integer,
+    part integer,
+    srno integer,
+    voterid text,
+    name text,
+    relname text,
+    age_sex text
+);
+
+create index voterlist_voterid_idx ON voterlist(voterid);

@@ -10,7 +10,8 @@ urls = (
     "/(.?.?)", "signup",
     "/signup/(\d+)-(.*)", "signup_invite",
     "/unsubscribe", "unsubscribe",
-    "/wards.js", "wards_js"
+    "/wards.js", "wards_js",
+    "/voterid", "voterid_search"
 )
 
 app = web.application(urls, globals())
@@ -155,6 +156,20 @@ class unsubscribe:
             return render.unsubscribe(form, done=True)
         else:
             return render.unsubscribe(form)
+
+class voterid_search:
+    def GET(self):
+        i = web.input(voterid="")
+        if i.voterid:
+            voter = self.find_voter(i.voterid)
+            return render.voter(voter, query=i.voterid)
+        else:
+            return render.voter()
+
+    def find_voter(self, voterid):
+        result = get_db().where("voterlist", voterid=voterid)
+        if result:
+            return result[0]
 
 class wards_js:
     def GET(self):
