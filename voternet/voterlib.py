@@ -21,7 +21,7 @@ def get_voter_details(voterid):
         b['ctl00$ContentPlaceHolder1$ddlDistrict'] = ['21']
         b['ctl00$ContentPlaceHolder1$txtEpic'] = voterid
         b.submit()
-    except IOError:
+    except Exception:
         logger.error("failed to request voterid details", exc_info=True)
         return web.storage()
 
