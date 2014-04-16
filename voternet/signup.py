@@ -37,7 +37,7 @@ class MultiDict(web.storage):
 
 class BaseForm(Form):
     def __init__(self, formdata=None, **kwargs):
-        formdata = formdata and MultiDict(formdata)
+        formdata = formdata and MultiDict(formdata) or None
         Form.__init__(self, formdata, **kwargs)
 
 class SignupForm(BaseForm):
@@ -191,7 +191,7 @@ def main():
         app.internalerror = web.emailerrors(
             web.config.error_email_recipients,
             app.internalerror,
-            web.config.get('from_address'))
+            web.config.get('error_from_address'))
     logger = logging.getLogger(__name__)
     logger.info("starting the signup app")
     app.run()
