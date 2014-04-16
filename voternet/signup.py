@@ -2,7 +2,7 @@ import web
 import os
 import logging
 from wtforms import Form, StringField, HiddenField, validators, ValidationError
-from models import Place, Invite
+from models import Place, Invite, Voter
 import webapp
 import utils
 
@@ -161,15 +161,10 @@ class voterid_search:
     def GET(self):
         i = web.input(voterid="")
         if i.voterid:
-            voter = self.find_voter(i.voterid)
+            voter = Voter.find(i.voterid)
             return render.voter(voter, query=i.voterid)
         else:
             return render.voter()
-
-    def find_voter(self, voterid):
-        result = get_db().where("voterlist", voterid=voterid)
-        if result:
-            return result[0]
 
 class wards_js:
     def GET(self):

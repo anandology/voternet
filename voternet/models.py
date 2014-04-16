@@ -1110,3 +1110,21 @@ class Invite(web.storage):
 
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, dict(self))
+
+
+class Voter(web.storage):
+    @staticmethod
+    def find(voterid):
+        result = get_db().where("voterlist", voterid=voterid)
+        if result:
+            return Voter(result[0])
+
+    @property
+    def ac_name(self):
+        key = "KA/AC{:03d}".format(self.ac)
+        return Place.find(key).name
+
+    @property
+    def booth_name(self):
+        key = "KA/AC{:03d}/PB{:04d}".format(self.ac, self.part)
+        return Place.find(key).name.split("-", 1)[-1]
