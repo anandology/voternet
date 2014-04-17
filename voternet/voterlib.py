@@ -3,7 +3,6 @@
 import web
 import sys
 import logging
-
 logger = logging.getLogger(__name__)
 
 URL = "http://ceokarnataka.kar.nic.in/SearchWithEpicNo_New.aspx"
@@ -21,8 +20,8 @@ def get_voter_details(voterid):
         b['ctl00$ContentPlaceHolder1$ddlDistrict'] = ['21']
         b['ctl00$ContentPlaceHolder1$txtEpic'] = voterid
         b.submit()
-    except Exception:
-        logger.error("failed to request voterid details", exc_info=True)
+    except Exception, e:
+        logger.error("failed to request voterid details for %s: %s", voterid, e)
         return web.storage()
 
     soup = b.get_soup()
