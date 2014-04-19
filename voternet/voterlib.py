@@ -61,7 +61,7 @@ def get_voter_details(district_code, ac_code, voterid):
     if len(voterid) <= 4:
         return
 
-    logger.info("get_voter_details %s", voterid)    
+    logger.info("get_voter_details(%s, %s, %s)", district_code, ac_code, voterid)    
     b = Browser()
     b.open(URL)
 
@@ -94,8 +94,12 @@ def get_voter_details(district_code, ac_code, voterid):
     soup = b.get_soup()
     table = soup.find("table", {"id": "GridView1"})
     if not table:
-        logger.error("undable to find voterid details. no data found on the page.");
+        logger.error("unable to find voterid details. no data found on the page.");
         return
+    if "no records to display" in table.getText():
+        logger.error("no record found with voterid %s", voterid);
+        return
+
     last_row = table.find_all("tr")[-1]
     data = [td.getText().strip() for td in last_row.find_all(("td", "tr"))]
 
