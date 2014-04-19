@@ -94,6 +94,7 @@ def get_voter_details(district_code, ac_code, voterid):
     soup = b.get_soup()
     table = soup.find("table", {"id": "GridView1"})
     if not table:
+        logger.error("undable to find voterid details. no data found on the page.");
         return
     last_row = table.find_all("tr")[-1]
     data = [td.getText().strip() for td in last_row.find_all(("td", "tr"))]

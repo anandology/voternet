@@ -114,16 +114,13 @@ create index invite_person_id_idx on invite(person_id);
 
 create table voterid_info (
     id serial primary key,
-    voterid       text,
+    voterid       text unique,
     pb_id         integer references places,
-    ac_num        integer,
-    ac_name       text,   
+    name          text,
+    rel_name      text,   
+    address       text,
+    age           integer,
+    gender        text,
     part_no       integer,
-    sl_no         integer,
-    first_name    text,   
-    last_name     text,   
-    rel_firstname text,   
-    rel_lastname  text,   
-    sex           text,   
-    age           integer
+    part          text
 );

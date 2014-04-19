@@ -65,7 +65,10 @@ class Place(web.storage):
         return self[col] and Place.from_id(self[col])
 
     def get_ac(self):
-        return Place.from_id(self.ac_id)
+        if self.type == "AC":
+            return self
+        else:
+            return self.get_parent("AC")
 
     def get_zone(self):
         w = self.ward_id and Place.from_id(self.ward_id)
@@ -82,6 +85,22 @@ class Place(web.storage):
         """Returns list of all sub places"""
         rows = get_db().query("SELECT * FROM places WHERE {0} = $id ORDER BY key".format(self.type_column), vars=self)
         return [Place(row) for row in rows]
+
+    def _get_ac_to_district_mapping(self):
+        """Returns AC to district mapping for a state.
+        """
+        thing = self.get_thing("districts")
+        return thing and thing.get("districts") or {}
+
+    def get_district(self):
+        if self.type == "AC":
+            ac = self
+        else:
+            ac = self.get_parent("AC")
+
+        state = self.get_parent("STATE")
+        districts = state._get_ac_to_district_mapping()
+        return districts.get(ac.code)
 
     @property
     def volunteers(self):
@@ -711,17 +730,9 @@ class Place(web.storage):
         return dataset
 
 def get_voterid_details(voterid, fetch=False):
-    if voterid:
-        rows = get_db().query("SELECT * FROM voterid_info where voterid=$voterid", vars=locals())
-        if rows:
-            return rows[0]
-        if fetch:
-            d = voterlib.get_voter_details(voterid)
-            if d:
-                key = "KA/AC{0:03d}/PB{1:04d}".format(int(d.ac_num), int(d.part_no))
-                d.pb_id = Place.find(key).id
-                get_db().insert("voterid_info", **d)
-                return d
+    rows = get_db().query("SELECT * FROM voterid_info where voterid=$voterid", vars=locals())
+    if rows:
+        return rows[0]    
 
 class Person(web.storage):
     @property
@@ -738,19 +749,34 @@ class Person(web.storage):
             result = get_db().select("people", where="id!=$id AND lower(email)=lower($email)", vars=self)
             return [Person(row) for row in result]
 
-    def get_voterid_info(self):
-        return get_voterid_details(self.voterid)
+    def get_voterid_info(self, fetch=False):
+        if not self.voterid:
+            return
+        rows = get_db().query("SELECT * FROM voterid_info where voterid=$voterid", vars=self)
+        if rows:
+            return rows[0]
+
+        if fetch:
+            ac = self.place.get_ac()
+            district = ac.get_district()
+            ac_no = str(int(web.numify(ac.code)))
+            d = voterlib.get_voter_details(district, ac_no, self.voterid)
+            if d:
+                return self._save_voterid_info(d)
+
+    def _save_voterid_info(self, info):
+        # empty or already saved
+        if not info or self.get_voterid_info():
+            return
+        info = web.storage(info) # make a copy
+        ac = self.place.get_ac()
+        key = "{0}/PB{1:04d}".format(ac.key, int(info.part_no))
+        info.pb_id = Place.find(key).id
+        get_db().insert("voterid_info", **info)
+        return info
 
     def populate_voterid_info(self):
-        d = self.get_voterid_info()
-        if self.voterid and not d:
-            d = voterlib.get_voter_details(self.voterid)
-            # The voter ID might have been added while we are fetching the voter details.
-            # Usually happens when user press save button twice.
-            if d and not self.get_voterid_info():
-                key = "KA/AC{0:03d}/PB{1:04d}".format(int(d.ac_num), int(d.part_no))
-                d.pb_id = Place.find(key).id
-                get_db().insert("voterid_info", **d)
+        d = self.get_voterid_info(fetch=True)
         if d and self.role == "pb_agent" and self.place_id != d.pb_id:
             self.update(place_id=d.pb_id)
             logger.info("Reassigned %s <%s> as %s to %s", self.name, self.email, self.role, self.place.key)
@@ -1008,7 +1034,7 @@ class Invite(web.storage):
 
     def signup(self, name, email, phone, voterid):
         place = self.place
-        voterid_details = voterid and get_voterid_details(voterid)
+        voterid_details = voterid and get_voterid_details(self, voterid)
         with get_db().transaction():
             agent = place.find_volunteer(email, phone, 'pb_agent')
             if not agent and voterid_details:

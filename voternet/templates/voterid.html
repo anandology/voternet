@@ -13,11 +13,11 @@ $if not voter:
     <em>Invalid Voter ID.</em>
 $else:
     <table class="table table-bordered">
-        <tr><td class="key">First Name</td><td>$voter.first_name</td></tr>
-        <tr><td class="key">Last Name</td><td>$voter.last_name</td></tr>
-        <tr><td class="key">Relation First Name</td><td>$voter.rel_firstname</td></tr>
-        <tr><td class="key">Relation Last Name</td><td>$voter.rel_lastname</td></tr>
-        <tr><td class="key">Sex</td><td>$voter.sex</td></tr>
+        <tr><td class="key">Name</td><td>$voter.name</td></tr>
+        <tr><td class="key">Relation Name</td><td>$voter.rel_name</td></tr>
+        <tr><td class="key">Address</td><td>$voter.address</td></tr>
+        <tr><td class="key">Gender</td><td>$voter.gender</td></tr>
+        <tr><td class="key">Age</td><td>$voter.age</td></tr>        
         <tr><td class="key">Polling Booth</td><td><a href="$voter.booth.get_url()">$voter.booth.name</a></td></tr>
         $if voter.ward:
             <tr><td class="key">Ward</td><td><a href="$voter.ward.get_url()">$voter.ward.name</a></td></tr>        
