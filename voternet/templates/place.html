@@ -311,8 +311,12 @@ $code:
         $:render_places_table(place.get_places(), plural(place.subtype_label))
 
     $if place.type == "AC":
+        $ pxs = place.get_unassigned_places("PX", "WARD")
+        $if pxs:
+            $:render_places_table(pxs, "Polling Centers Not Assigned to Any Ward")
+
         $ pbs = place.get_unassigned_polling_booths()
-        $if pbs:
+        $if not pxs and pbs:
             $:render_places_table(pbs, "Polling Booths Not Assigned to Any Ward")
     $if place.type == "STATE":
         $ pcs = place.get_unassigned_places(type="PC", parent_type="REGION")

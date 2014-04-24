@@ -41,10 +41,14 @@ $if place.type != 'STATE':
         <div class="header"><strong>$plural(place.type_label)</strong></div>
         <ul class="list-unstyled parents section-body" style="padding: 10px;">
             $if place.parent:
-                $for p in place.parent.get_places():
-                    $if p.id == place.id:
-                        <li><strong>$p.name</strong></li>
-                    $else:
-                        <li><a href="$p.get_url()">$p.name</a></li>
+                $ subplaces = place.parent.get_places()
+            $else:
+                $ ac = place.get_parent("AC")
+                $ subplaces = ac and ac.get_places(type=place.type) or []
+            $for p in subplaces:
+                $if p.id == place.id:
+                    <li><strong>$p.name</strong></li>
+                $else:
+                    <li><a href="$p.get_url()">$p.name</a></li>
         </ul>
     </section>
