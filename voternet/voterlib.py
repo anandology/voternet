@@ -106,6 +106,10 @@ def get_voter_details(district_code, ac_code, voterid):
     data = data[:-1] # skip the last column which is just a print link.
     cols = "name age house idcard rel_name part sl_no gender".split()
     d = web.storage(zip(cols, data))
+    logger.info("d %s %s", voterid, d)    
+    if not d:
+        logger.error("unable to find voterid details.")
+        return
     re_num = web.re_compile("(\d+)")
     part_no = re_num.match(d.part).group(1)
     info = web.storage(voterid=voterid, 
