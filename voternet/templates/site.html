@@ -88,6 +88,9 @@ $def with (page)
       a[href]:after {
           content: "" !important;
       }
+      span.small, a.small {
+        display: none;
+      }
     }
 
     .search-results .breadcrumb {
@@ -158,7 +161,7 @@ $def with (page)
 
     <div class="container">   
         $if user and user.id:
-            <div class="alert alert-info">
+            <div class="alert alert-info hidden-print">
                 <strong>Welcome $user.name</strong>! You are $user.role for <a class="alert-link" href="$user.place.get_url()">$user.place.name <small>$user.place.type_label</small></a>.
             </div>
         $ flashes = get_flashed_messages()

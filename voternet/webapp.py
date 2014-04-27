@@ -161,6 +161,8 @@ tglobals = {
     "plural": plural,
     "markdown": markdown.markdown,
     "sum": sum,
+    "max": max,
+    "storage": web.storage,
     "json_encode": json.dumps,
     "get_current_user": account.get_current_user,
     "limitname": limitname,
