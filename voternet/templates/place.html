@@ -142,7 +142,10 @@ $code:
         </div>        
     </div>
     <div class="visible-print">
-        <h2>Polling Center Agents</h2>
+        $if place.type == "PX":
+            <h2>Polling Center Agents</h2>
+        $else:
+            <h2>Volunteers</h2>
         $ vols = place.volunteers
         $ vols += [storage(name=None, phone=None, email=None)] * (8-len(vols))
         <table class="table table-bordered">
@@ -158,16 +161,17 @@ $code:
                     <td>$v.email</td>
                 </tr>
         </table>
+    </div>
 
     $if place_writable:
-        <div>
+        <div  class="hidden-print">
           $if place.type in ["STATE", "REGION", "PC", "AC", "WARD"]:
               <div id="download-links">
               <h4>Download <small>as XLS</small></h4>
               <a href="$place.get_url()/volunteers.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a>
               <a href="$place.get_url()/pb-agents.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All PB Agents</a>
               </div>
-          <div id="actions" class="hidden-print">
+          <div id="actions">
           <h4>Actions</h4>
           <a href="$place.get_url()/add-people" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
           $if place.type == "AC":
