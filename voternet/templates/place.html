@@ -58,7 +58,7 @@ $code:
         else:
             return "success"
 
-<ul class="breadcrumb breadcrumb-collapse hidden-print">
+<ul class="breadcrumb breadcrumb-collapse">
     $for p in place.get_parents():
         <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
 </ul>
@@ -75,7 +75,7 @@ $code:
 
     $ d = place.get_localities()
 
-    <div class="row">
+    <div class="row  hidden-print">
         <div class="col-md-6">
             $if place_writable:
                 <h2>Volunteers <a class="small" href="$place.get_url()/people">See all</a></h2>
@@ -94,8 +94,6 @@ $code:
           $if place_admin and place.type == "STATE":
               <a href="$place.get_url()/users" class="btn btn-default hidden-print" role="button">See Admin Users</a>
               <br/><br/>
-
-
         </div>
         <div class="col-md-6">
             $# <h4>Total Volunteers Per Day</h4>
@@ -143,6 +141,24 @@ $code:
             </div>            
         </div>        
     </div>
+    <div class="visible-print">
+        <h2>Polling Center Agents</h2>
+        $ vols = place.volunteers
+        $ vols += [storage(name=None, phone=None, email=None)] * (8-len(vols))
+        <table class="table table-bordered">
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+            </tr>
+            $for v in vols:
+                <tr>
+                    <td>$v.name</td>
+                    <td>$v.phone</td>
+                    <td>$v.email</td>
+                </tr>
+        </table>
+
     $if place_writable:
         <div>
           $if place.type in ["STATE", "REGION", "PC", "AC", "WARD"]:
@@ -151,13 +167,13 @@ $code:
               <a href="$place.get_url()/volunteers.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a>
               <a href="$place.get_url()/pb-agents.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All PB Agents</a>
               </div>
-          <div id="actions">
+          <div id="actions" class="hidden-print">
           <h4>Actions</h4>
-          <a href="$place.get_url()/add-people" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
+          <a href="$place.get_url()/add-people" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
           $if place.type == "AC":
-            <a href="$place.get_url()/import-people" class="btn btn-primary hidden-print" role="button">Bulk Import Volunteers</a>
+            <a href="$place.get_url()/import-people" class="btn btn-primary" role="button">Bulk Import Volunteers</a>
           $if place.type in ["PC", "AC", "WARD"]:
-              <a href="$place.get_url()/pb-agents" class="btn btn-primary hidden-print" role="button">Manage PB Agents</a>
+              <a href="$place.get_url()/pb-agents" class="btn btn-primary" role="button">Manage PB Agents</a>
           $if place.type in ['PC', 'AC']:
               <a href="$place.get_url()/sms" class="btn btn-primary">Send SMS</a>
           </div>
@@ -202,6 +218,7 @@ $code:
     -->
 
     $if place_readable:
+        <div class="hidden-print">
         <h2>Activity</h2>
         $if place.type in ["STATE", "PC"]:
             $ activities = place.get_activity(limit=5, types=['volunteer-added'])
@@ -212,6 +229,7 @@ $code:
             <div><a href="$place.get_url()/activity">See more ...</a></div>
         $else:
             <em>No activity yet.</em>
+        </div>
 
     $def render_place(p, klass, index):
         <tr class="$klass">   
@@ -285,6 +303,36 @@ $code:
             </td>                
         </tr>
 
+    $def render_place_print(p, klass, index):
+        $if place_writable:
+            $ vols = p.volunteers 
+        $else:
+            $ vols = []
+        $ vols += [storage(name=None, phone=None, email=None)] * (4-len(vols))
+        $ n = len(vols)
+        $for person in vols:    
+            <tr class="$klass">   
+                $if loop.index == 1:
+                    <td rowspan="$n">$index</td>             
+                    <td rowspan="$n"><a href="$p.get_url()">$p.name</a></td>
+                <td>$person.name</td>
+                <td>$person.phone</td>
+                <td>$person.email</td>
+            </tr>
+    $def render_places_table_print(places, label):    
+        <h2>$label</h2>
+        <table class="table table-bordered">
+            $ serial = counter()
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th style="width: 150px;">Agent Name</th>
+                <th style="width: 100px;">Phone</th>
+                <th style="width: 120px;">Email</th>
+            <tr> 
+            $for p in places:
+                $:render_place_print(p, "active", serial.next())
+
     $def render_places_table(places, label):            
         <h2>$label</h2>
         <table class="table table-bordered">
@@ -308,7 +356,16 @@ $code:
         </table>    
 
     $if place.subtype:
-        $:render_places_table(place.get_places(), plural(place.subtype_label))
+        $if place.type == "PX":
+            <div class="hidden-print">
+                $:render_places_table(place.get_places(), plural(place.subtype_label))
+            </div>
+            <div class="visible-print">
+                $:render_places_table_print(place.get_places(), "Polling Booth Agents")
+            </div>
+
+        $else:
+            $:render_places_table(place.get_places(), plural(place.subtype_label))
 
     $if place.type == "AC":
         $ pxs = place.get_unassigned_places("PX", "WARD")
