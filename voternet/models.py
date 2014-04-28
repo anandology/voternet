@@ -16,6 +16,13 @@ def get_db():
     params = web.config.get("db_parameters") or dict(dbn="postgres", db="voternet")
     return web.database(**params)
 
+@web.memoize
+def get_voter_db():
+    if web.config.get("voterdb"):
+        return web.database(**web.config.voterdb)
+    else:
+        return get_db()
+
 re_normalize = re.compile("[^a-z]")
 def normalize(name):
     return re_normalize.sub("", name.lower())
@@ -1115,28 +1122,31 @@ class Invite(web.storage):
 class Voter(web.storage):
     @staticmethod
     def find(voterid):
-        result = get_db().where("voterlist", voterid=voterid.upper())
+        result = get_voter_db().where("voter", voterid=voterid.upper())
         if result:
-            return Voter(result[0])
-        elif len(voterid) == 10:
-            d = get_voterid_details(voterid, fetch=True)
-            if d:
-                d2 = {
-                    "name": d.get("first_name", "") + " " + d.get("last_name", ""),
-                    "relname": d.get("rel_firstname", "") + " " + d.get("rel_lastname", ""),
-                    "ac": int(d.ac_num),
-                    "part": int(d.part_no),
-                    "srno": int(d.sl_no),
-                    "age_sex": "{}/{}".format(d.sex, d.age)
-                }
-                return Voter(d2)
+            row = result[0]
+            if row.data:
+                data = json.loads(row.data)
+                return Voter(data, ac=row.ac, part=row.part)
+        # elif len(voterid) == 10:
+        #     d = get_voterid_details(voterid, fetch=True)
+        #     if d:
+        #         d2 = {
+        #             "name": d.get("first_name", "") + " " + d.get("last_name", ""),
+        #             "relname": d.get("rel_firstname", "") + " " + d.get("rel_lastname", ""),
+        #             "ac": int(d.ac_num),
+        #             "part": int(d.part_no),
+        #             "srno": int(d.sl_no),
+        #             "age_sex": "{}/{}".format(d.sex, d.age)
+        #         }
+        #         return Voter(d2)
 
     @property
     def ac_name(self):
-        key = "KA/AC{:03d}".format(self.ac)
+        key = "UP/AC{:03d}".format(self.ac)
         return Place.find(key).name
 
     @property
     def booth_name(self):
-        key = "KA/AC{:03d}/PB{:04d}".format(self.ac, self.part)
+        key = "UP/AC{:03d}/PB{:04d}".format(self.ac, self.part)
         return Place.find(key).name.split("-", 1)[-1]
