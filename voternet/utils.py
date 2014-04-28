@@ -5,7 +5,7 @@ import datetime
 import functools
 from models import Thing, get_db
 import envelopes 
-import urllib
+import urllib, urllib2
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +129,72 @@ def sendmail_voterid_pending(agent, conn=None):
             logger.ward("Ignoring %s as he unsubscribed", agent.email)
         else:
             send_email(agent.email, msg, conn=conn)
+
+lsp_email_template = """$def with (agent, coordinators)
+Dear $agent.name,
+$ ac = agent.place.get_ac()
+
+Thank you for offering to be our polling day volunteer.
+
+You have signed up with the following details:
+
+Name: $agent.name
+Phone: $agent.phone
+Email: $agent.email
+Voter ID: $agent.get('voterid', 'not provided')
+
+$if agent.place.type == "PB":
+    Based on your voterid, you are assigned to
+    $agent.place.name booth
+    in $ac.name assembly constituency.
+$else:
+    Based on your locality, you are assigned to
+    $ac.name assembly constituency.
+$""
+Our coordinators from this constituency are:
+
+  $for c in coordinators:
+      $c.name
+      $c.phone
+      $c.email
+
+They will contact you shortly. Please feel free to reach out to them so you can immediately get included in the team.
+
+Thank you
+Loksatta Team
+"""
+
+@limit_once
+def lsp_sendmail(agent):
+    url = "https://win.loksatta.org/agentemail"
+    place = agent.place.get_ac()
+
+    def process_person(p):
+        name = p.name.strip("*")
+        return web.storage(name=name, email=p.email, phone=p.phone)
+
+    coordinators = [process_person(p) for p in place.get_coordinators() if p.name.endswith("*")]
+    coordinator_emails = ", ".join("{} <{}>".format(p.name, p.email) for p in coordinators if p.email)
+
+    t = web.template.Template(lsp_email_template)
+    msg = web.safestr(t(agent, coordinators))
+
+    params = {
+        "secret_token": web.config.lsp_email_secret_key,
+        "from": "Loksatta Party <info@loksattaparty.com>",
+        "to": agent.email,
+        "cc": coordinator_emails,
+        "reply_to": coordinator_emails, 
+        "subject": "Thank you for signup of as polling day volunteer",
+        "message": msg
+    }
+    if web.config.get("lsp_email_bcc"):
+        params['bcc'] = web.config.lsp_email_bcc
+
+    print "sending email to", agent.email
+    x = urllib2.urlopen(url, urllib.urlencode(params)).read()
+    with open("/tmp/a.html", "w") as f:
+        f.write(x)
 
 def process_phone(number):
     if not number:

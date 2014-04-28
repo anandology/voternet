@@ -110,6 +110,14 @@ def update_voterinfo(place_key):
     for a in place.get_all_volunteers("pb_agent"):
         a.populate_voterid_info()
 
+def lsp_email_agents(place_key):
+    place = Place.find(place_key)
+    if not place:
+        raise ValueError("Invalid place {0}".format(place_key))    
+
+    for a in place.get_all_volunteers("pb_agent"):
+        utils.lsp_sendmail(a)
+
 def debug(place_key):
     place = Place.find(place_key)
     if not place:
@@ -137,11 +145,13 @@ def main():
         'update_voterinfo': update_voterinfo,
         'add_pb_agents': add_pb_agents,       
         'email_invites': email_invites,
+        'lsp_email_agents': lsp_email_agents,
         'debug': debug, 
     }
     cmdname = sys.argv[1]
     print cmdname
     cmd = CMDS.get(cmdname)
+    print cmd
     if cmdname == 'add_pb_agents':
         add_pb_agents(sys.argv[2], sys.argv[3])
     elif cmdname == 'email_invites':
