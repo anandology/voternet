@@ -76,6 +76,10 @@ def parse_datetime(value):
         tokens = re.split('-|T|:|\.| ', value)
         return datetime.datetime(*map(int, tokens))        
 
+
+class Ignore(Exception):
+    pass
+
 def limit_once(f):
     """Decorator to call the function only once.
     """
@@ -83,7 +87,10 @@ def limit_once(f):
     def g(agent, *a, **kw):
         key = f.__name__ + "/" + agent.email
         if not Thing.find(key):
-            f(agent, *a, **kw)
+            try:
+                f(agent, *a, **kw)
+            except Ignore:
+                return
             Thing(key=key, type="email", sent_on=datetime.datetime.utcnow().isoformat()).save()
         else:
             logger.info("Already sent {} email to {}. Ignoring...".format(f.__name__, agent.email))
@@ -175,6 +182,10 @@ def lsp_sendmail(agent):
 
     coordinators = [process_person(p) for p in place.get_coordinators() if p.name.endswith("*")]
     coordinator_emails = ", ".join("{} <{}>".format(p.name, p.email) for p in coordinators if p.email)
+
+    # don't send email and tell limit_once to not consider it as done.
+    if not coordinators:
+        raise Ignore()
 
     t = web.template.Template(lsp_email_template)
     msg = web.safestr(t(agent, coordinators))

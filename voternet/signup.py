@@ -135,6 +135,7 @@ class signup_api:
 
             ac = place
             pc = place.get_parent("PC")
+            utils.lsp_sendmail(agent)
 
             return {
                 "status": "ok", 
