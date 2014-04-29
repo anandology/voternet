@@ -16,6 +16,13 @@ def get_db():
     params = web.config.get("db_parameters") or dict(dbn="postgres", db="voternet")
     return web.database(**params)
 
+@web.memoize
+def get_voter_db():
+    if web.config.get("voterdb"):
+        return web.database(**web.config.voterdb)
+    else:
+        return get_db()
+
 re_normalize = re.compile("[^a-z]")
 def normalize(name):
     return re_normalize.sub("", name.lower())
@@ -1136,3 +1143,20 @@ class Invite(web.storage):
 
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, dict(self))
+
+class Voter(web.storage):
+    @staticmethod
+    def find(voterid):
+        result = get_voter_db().where("voter", voterid=voterid.upper())
+        if result:
+            return Voter(result[0])
+
+    @property
+    def ac_name(self):
+        key = "AP/AC{:03d}".format(self.ac)
+        return Place.find(key).name
+
+    @property
+    def booth_name(self):
+        key = "AP/AC{:03d}/PB{:04d}".format(self.ac, self.part)
+        return Place.find(key).name.split("-", 1)[-1]
