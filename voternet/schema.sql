@@ -124,3 +124,17 @@ create table voterid_info (
     part_no       integer,
     part          text
 );
+
+create table voter (
+    id serial primary key,
+    voterid     text,
+    ac          integer,
+    part        integer,
+    srno        integer,
+    name          text,
+    rel_name      text,   
+    gener_age     text
+);
+
+create index voter_voterid_idx on voter(voterid);
+    
