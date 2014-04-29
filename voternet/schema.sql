@@ -133,8 +133,8 @@ create table voter (
     srno        integer,
     name          text,
     rel_name      text,   
-    gener_age     text
+    gender_age     text
 );
 
 create index voter_voterid_idx on voter(voterid);
-    
+
