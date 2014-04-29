@@ -969,12 +969,15 @@ def open_shell():
     console.interact()
 
 def signup_middleware(app):
-    from voternet import signup
+    from voternet import signup, voter_search
     signup_app = signup.app.wsgifunc()
+    voter_app = voter_search.app.wsgifunc()
     def newapp(environ, start_response):
         print environ['HTTP_HOST']
         if environ.get('HTTP_HOST', '-') == web.config.signup_host:
             return signup_app(environ, start_response)
+        elif environ.get('HTTP_HOST', '-') == web.config.get('voter_host'):
+            return voter_app(environ, start_response)
         else:
             return app(environ, start_response)
     return newapp
