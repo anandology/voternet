@@ -11,7 +11,12 @@ $ place_writable = place.writable_by(get_current_user())
     $for person in users:
         <tr class="person person-$person.role">
             <td style="width: 20px;">$loop.index</td>
-            <td><strong>$person.name</strong> <small>$person.role.title()</small><br/>
+            <td>
+                $if place_writable:            
+                    <a href="$person.get_url()"><strong>$person.name</strong></a>
+                $else:
+                    <strong>$person.name</strong>
+                <small>$person.role.title()</small><br/>
                 $if person.email:
                     <div><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:$person.email">$person.email</a></div>
                 $if person.phone:
