@@ -31,9 +31,9 @@ $var title: $place.name / Polling Booths
     $ data = [{"code": p.code, "name": p.name, "ward": p.get_zone(), "px": p.get_parent("PX") and p.get_parent("PX").name} for p in place.get_all_polling_booths()]
     var data = $:json_encode(data);
 
-    $ wards = [w.name for w in place.get_wards()] + [w.name for w in place.get_groups()] 
+    $ wards = [""] + [w.name for w in place.get_wards()] + [w.name for w in place.get_groups()]
     var wards = $:json_encode(wards);
-    $ pxs = [px.name for px in place.get_children("PX")]
+    $ pxs = [""] + [px.name for px in place.get_children("PX")]
     var pxs = $:json_encode(pxs)
 
     \$('#example').handsontable({
