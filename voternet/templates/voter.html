@@ -60,7 +60,7 @@ $def with (voter=None, query=None)
             <br/>
             <br/>
 
-            <table class="table" style="width: auto;">
+            <table class="table" style="width: auto;" class="scroll-here">
                 <tr><td style="max-width: 100px;">Name</td><td>$voter.name</td></tr>
                 <tr><td>Polling Station</td><td>$voter.booth_name</td></tr>
                 <tr><td>Part</td><td>$voter.part</td></tr>
@@ -70,7 +70,7 @@ $def with (voter=None, query=None)
                 <tr><td>Gender/Age</td><td>$voter.gender_age</td></tr>
             </table>
         $else:
-            <h4>Sorry, no match found.</h4>
+            <h4 class="scroll-here">Sorry, no match found.</h4>
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -80,6 +80,10 @@ $def with (voter=None, query=None)
     \$(this).next('.icon_clear').stop().fadeTo(300,io);
 }).on('click', '.icon_clear', function() {
     \$(this).delay(300).fadeTo(300,0).prev('input').val('');
+});
+\$(function() {
+    if (\$(".scroll-here").length)
+        \$("html,body").animate({scrollTop: \$(".scroll-here").offset().top});
 });
 </script>
 
