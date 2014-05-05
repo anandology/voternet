@@ -34,7 +34,7 @@ urls = (
     "/account/oauth2callback", "oauth2callback",
     "/login/oauth2callback", "oauth2callback",
     "/report-issue", "report_issue",
-    "/tmp/(KA/AC\d+)/px.txt", "tmp_px_dump",
+    "/tmp/([A-Z][A-Z]/AC\d+)/px.txt", "tmp_px_dump",
 
     "/sudo", "sudo",
     "/debug", "debug",
