@@ -23,9 +23,9 @@ $def with (ac, voters=[], query=None)
             }    
         }
 
-        @media (min-width: 450px) {
+        @media (min-width: 320px) {
             form {
-                width: 400px;
+                width: 300px;
             }
             input#q {
                 width: 100%;
@@ -82,6 +82,34 @@ $def with (ac, voters=[], query=None)
         a, a:visited {
             color: #BD8471;
         }
+
+        .voter-card {
+            border: 1px solid #C4BDB2;
+            border-radius: 5px;
+            text-align: left;
+            width: 300px;  
+            padding: 10px;
+            padding-top: 0px;
+            background: #D4CDC2;
+        }
+        .voter-card .section {
+            margin: 10px 0px;
+        }
+        .voter-card .key {
+            font-size: 0.8em;
+        }
+        .voter-card .value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .voter-card a {
+            color: inherit;
+        }
+
+        .section.section-small .value {
+            font-size: 0.9em;
+            font-weight: normal;
+        }
     </style>    
 </head>
 <body>
@@ -111,16 +139,35 @@ $def with (ac, voters=[], query=None)
             <br/>
             $if len(voters) == 1:
                 $ voter = voters[0]
-                <table class="table" style="width: auto;">
-                    <tr><td style="max-width: 100px;">Name</td><td>$voter.name</td></tr>
-                    <tr><td>Polling Station</td><td>$voter.booth_name</td></tr>
-                    <tr><td>Part</td><td>$voter.part</td></tr>
-                    <tr><td>Serial</td><td>$voter.srno</td></tr>
-                    <tr><td>Assembly Constitency</td><td>$voter.ac_name</td></tr>
-                    <tr><td>Relation Name</td><td>$voter.rel_name</td></tr>
-                    <tr><td>Gender/Age</td><td>$voter.gender_age</td></tr>
-                    <tr><td>Address</td><td><a href="/AC$ac?q=$voter.address">$voter.address</a></td></tr>
-                </table>
+                <div class="voter-card">
+                    <div class="section" style="margin-bottom: -10px;">
+                        <div class="key2" style="text-align: right; font-weight: bold; font-size: 0.9em;">$voter.voterid</div>
+                    </div>
+                    <div class="section">
+                        <div class="key">Name</div>
+                        <div class="value">$voter.name.title()</div>
+                    </div>
+                    <div class="section">
+                        <div class="key">Part / Serial</div>
+                        <div class="value">$voter.part / $voter.srno</div>
+                    </div>
+                    <div class="section">
+                        <div class="key">Address</div>
+                        <div class="value"><a href="/AC$ac?q=$voter.address">$voter.address</a></div>
+                    </div>
+                    <div class="section section-small">
+                        <div class="key">Booth</div>
+                        <div class="value">$voter.booth_name</a></div>
+                    </div>
+                    <div class="section section-small">
+                        <div class="key">Relation Name</div>
+                        <div class="value">$voter.rel_name.title()</a></div>
+                    </div>
+                    <div class="section section-small">
+                        <div class="key">Gender / Age</div>
+                        <div class="value">$voter.gender_age</a></div>
+                    </div>
+                </div>
             $else:
                 <table class="table" style="width: auto;">
                     <tr>
@@ -135,7 +182,7 @@ $def with (ac, voters=[], query=None)
                             <td>$v.part</td>
                             <td>$v.srno</td>
                             <td><a href="/AC$ac?q=$v.voterid">$v.voterid</a></td>
-                            <td>$v.name</td>
+                            <td>$v.name.title()</td>
                             <td><a href="/AC$ac?q=$v.address">$v.address</a></td>
                         </tr>
                 </table>
