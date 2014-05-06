@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 urls = (
     "/", "voterid_search",
-    "/AC(\d+)", 'voterid_search_ac',
+    "/(?:AC|ac)(\d+)", 'voterid_search_ac',
 )
 
 re_voterid = re.compile("[A-Z]+[0-9]{5,}")
