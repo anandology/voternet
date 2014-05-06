@@ -119,7 +119,8 @@ def get_voter_details(district_code, ac_code, voterid):
             gender=d.gender, 
             address=d.house,
             part_no=part_no,
-            part=d.part)
+            part=d.part,
+            serial=d.sl_no)
     logger.info("voter info %s %s", voterid, info)
     return info
 

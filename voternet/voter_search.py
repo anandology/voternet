@@ -1,9 +1,11 @@
 import os
 import web
-from models import Voter
+from models import Voter, get_voter_db
 from webapp import check_config
 import logging
 import json
+import voterlib
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +13,8 @@ urls = (
     "/", "voterid_search",
     "/AC(\d+)", 'voterid_search_ac',
 )
+
+re_voterid = re.compile("[A-Z]+[0-9]{5,}")
 
 app = web.application(urls, globals())
 
@@ -91,11 +95,30 @@ class voterid_search_ac:
 
     def find_voters(self, ac, q):
         voters = Voter.search(ac, q)
+        if not voters:
+            voters = self.fetch_voterid_details(ac, q)
         if voters:
             logger.info("%s - %d matches found", q, len(voters))
         else:
             logger.info("%s - no match found", q)
         return voters
+
+    def fetch_voterid_details(self, ac, voterid):
+        if str(ac) == '142' and re_voterid.match(voterid):
+            d = voterlib.get_voter_details('13', '142', voterid)
+            if d:
+                db = get_voter_db()
+                d2 = web.storage(
+                    voterid=voterid,
+                    ac=ac,
+                    part=d['part_no'],
+                    srno=d['serial'],
+                    name=d['name'],
+                    rel_name=d['rel_name'],
+                    gender_age='{0}/{1}'.format(d['gender'], d['age']),
+                    address=d['address'])
+                db.insert("voter", **d2)
+                return [d2]
 
 def main():
     FORMAT = "%(asctime)s [%(name)s] [%(levelname)s] %(message)s"
