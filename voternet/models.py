@@ -1151,6 +1151,19 @@ class Voter(web.storage):
         if result:
             return Voter(result[0])
 
+    @staticmethod
+    def search(ac, q):
+        q = q.upper()
+        qlike = '%' + q + '%'
+        result = get_voter_db().query(
+            "SELECT * FROM voter" +
+            " WHERE ac=$ac" +
+            " AND (voterid=$q OR upper(name) like $qlike OR upper(address) like $qlike)" +
+            " ORDER BY part, srno" +
+            " LIMIT 100",
+            vars=locals())
+        return result.list()
+
     @property
     def ac_name(self):
         key = "AP/AC{:03d}".format(self.ac)

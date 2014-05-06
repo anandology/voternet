@@ -1,0 +1,99 @@
+$def with (voters=[], query=None)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Polling Booth</title>
+
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+    <style type="text/css">
+        .clearable{
+            position:relative;
+        }
+        .data_field{
+            padding-right:17px; /* add space for the 'x' icon*/
+        }
+        span.icon_clear{
+            position:absolute;
+            top: 5px;
+            right:10px;    
+            display:none;
+            
+            /* now go with the styling */
+            cursor:pointer;
+            font-size: 1.5em;
+            /*
+            font: bold 1em sans-serif;
+            */
+            /*
+            color:#38468F;  
+            */
+            color: #444;
+        }
+        span.icon_clear:hover{
+            color:#f52;
+        }
+    </style>    
+</head>
+<body>
+<div class="container">
+    <h1>Find Your Polling Booth <small>in Vizag Noth</small></h1>
+    <br/>
+    <br/>
+    <form method="GET" class="form-inline">
+      <div class="form-group">
+        <label class="sr-only" for="voterid">Voter ID</label>
+        <div class="input-group input-group-lg clearable">
+                <input class="form-control" type="text" name="q" id="voterid" placeholder="Enter Your Voter ID/House/Name" value="$query">
+                <span class="icon_clear">x</span>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-lg btn-primary">Search</button>
+    </form>
+    <br/>
+    $if query:
+        $if voters:
+            <h4>Found $len(voters) matches</h4>
+            <br/>
+            <br/>
+
+            <table class="table scroll-here" style="width: auto;">
+                <tr>
+                    <th>Booth</th>
+                    <th>Serial</th>
+                    <th>Voter ID</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                </tr>
+                $for v in voters:
+                    <tr>
+                        <td>$v.part</td>
+                        <td>$v.srno</td>
+                        <td>$v.voterid</td>
+                        <td>$v.name</td>
+                        <td>$v.address</td>
+                    </tr>
+            </table>
+        $else:
+            <h4 class="scroll-here">Sorry, no match found.</h4>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript">
+\$(document).on('propertychange keyup input paste', '.clearable input', function(){
+    var io = \$(this).val().length ? 1 : 0 ;
+    \$(this).next('.icon_clear').stop().fadeTo(300,io);
+}).on('click', '.icon_clear', function() {
+    \$(this).delay(300).fadeTo(300,0).prev('input').val('');
+});
+\$(function() {
+    if (\$(".scroll-here").length)
+        \$("html,body").animate({scrollTop: \$(".scroll-here").offset().top});
+});
+</script>
+
+</body>
+</html>
+
