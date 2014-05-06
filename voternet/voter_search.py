@@ -73,9 +73,9 @@ class voterid_search_ac:
         if i.q:
             logger.info("request for %s", i.q)
             voters = self.find_voters(ac, i.q)
-            return render.voter_ac(voters, query=i.q)
+            return render.voter_ac(ac, voters, query=i.q)
         else:
-            return render.voter_ac()
+            return render.voter_ac(ac)
 
     def GET_json(self, ac, i):
         web.header("content-type", "application/json")        

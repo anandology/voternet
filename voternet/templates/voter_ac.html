@@ -1,68 +1,87 @@
-$def with (voters=[], query=None)
+$def with (ac, voters=[], query=None)
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Your Polling Booth</title>
 
+    <!--
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    -->
 
     <style type="text/css">
-        .clearable{
-            position:relative;
+        @media (min-width: 650px) {
+            .container {
+                margin: 0 auto;
+                width: 600px;
+            }
         }
-        .data_field{
-            padding-right:17px; /* add space for the 'x' icon*/
+
+        body {
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+            font-size: 14px;            
         }
-        span.icon_clear{
-            position:absolute;
-            top: 5px;
-            right:10px;    
-            display:none;
-            
-            /* now go with the styling */
-            cursor:pointer;
-            font-size: 1.5em;
-            /*
-            font: bold 1em sans-serif;
-            */
-            /*
-            color:#38468F;  
-            */
-            color: #444;
+
+        h1 {
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;        
         }
-        span.icon_clear:hover{
-            color:#f52;
+
+        table {
+            display: table;
+            border-collapse: separate;
+            border-spacing: 2px;
+            border-color: gray;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }   
+        tr {
+            display: table-row;
+            vertical-align: inherit;
+            border-color: inherit;
+        }
+
+        .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+            padding: 8px;
+            line-height: 1.428571429;
+            vertical-align: top;
+            border-top: 1px solid #ddd;
+        }        
+
+        input#q {
+            font-size: 18px;
+            line-height: 1.33;
+            border-radius: 6px; 
         }
     </style>    
 </head>
 <body>
 <div class="container">
-    <h1>Find Your Polling Booth <small>in Vizag Noth</small></h1>
-    <div style="margin-top: -10px;">
-        <a href="/">Home</a> | <a href="/AC142">Vizag North</a>
+    <h3 style="color: #666; margin-bottom: 0px;">Find Your Polling Booth in</h3>
+    <h1 style="margin-top: 0px; margin-bottom: 0px;">Vizag North</h1>
+    <div style="margin-top: 0px; font-size: 0.9em;">
+        <a href="/">Home</a> | <strong>Vizag North</strong>
     </div>
     <br/>
     <form method="GET" class="form">
       <div class="form-group">
         <label for="q">Enter Voter ID, House Number or Name</label>
-        <div class="input-group input-group-lg clearable">
-                <input class="form-control" type="text" name="q" id="q" placeholder="" value="$query">
-                <span class="icon_clear">x</span>
+        <div>
+          <input class="form-control" type="text" name="q" id="q" value="$query">
         </div>
       </div>
-      <button type="submit" class="btn btn-lg btn-primary">Search</button>
-      <button type="button" class="btn btn-lg btn-default clear" id="button-clear" onClick="clearValue();">Clear</button>
+      <div style="margin-top: 5px; padding:0px;">
+        <input type="submit" class="btn btn-lg btn-primary" value="Search" />
+        <input type="button" class="btn btn-lg btn-default" id="button-clear" value="Clear" onClick="
+      clearValue();" />
+      </div>
     </form>
-    <br/>
     $if query:
         $if voters:
             $if len(voters) == 100:
                 <h4>Found many matches, showing first 100.</h4>
             $else:
                 <h4>Found $len(voters) matches</h4>
-            <br/>
             <br/>
 
             <table class="table scroll-here" style="width: auto;">
@@ -77,9 +96,9 @@ $def with (voters=[], query=None)
                     <tr>
                         <td>$v.part</td>
                         <td>$v.srno</td>
-                        <td><a href="/?voterid=$v.voterid">$v.voterid</a></td>
+                        <td><a href="/AC$ac?q=$v.voterid">$v.voterid</a></td>
                         <td>$v.name</td>
-                        <td>$v.address</td>
+                        <td><a href="/AC$ac?q=$v.address">$v.address</a></td>
                     </tr>
             </table>
         $else:

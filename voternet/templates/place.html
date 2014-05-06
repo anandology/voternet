@@ -9,6 +9,17 @@ $ place_admin = place.writable_by(user, roles=['admin'])
 
 $ subtypes = place.get_all_subtypes()
 
+<style type="text/css">
+    @media print {
+      a[href]:after {
+          content: "" !important;
+      }
+      span.small, a.small {
+        display: none;
+      }
+    }
+</style>
+
 $def render_people(people):
     <table class="table table-bordered">
         $ roles = {"pb_agent": "Polling Booth Agent", "px_agent": "Polling Center Agent"}
@@ -58,7 +69,7 @@ $code:
         else:
             return "success"
 
-<ul class="breadcrumb breadcrumb-collapse">
+<ul class="breadcrumb breadcrumb-collapse hidden-print">
     $for p in place.get_parents():
         <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
 </ul>
