@@ -12,29 +12,6 @@ $def with (ac, voters=[], query=None)
             margin-right: auto;
             margin-left: auto;
         }    
-        @media (min-width: 992px) {
-            .container {
-                width: 970px;
-            }
-        }
-        @media (min-width: 768px) {
-            .container {
-                width: 750px;
-            }    
-        }
-
-        @media (min-width: 320px) {
-            form {
-                width: 300px;
-            }
-            input#q {
-                width: 100%;
-            }
-            #button-clear {
-                float: right;
-            }
-        }
-
         body {
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
             font-size: 14px;            
@@ -87,11 +64,11 @@ $def with (ac, voters=[], query=None)
             border: 1px solid #C4BDB2;
             border-radius: 5px;
             text-align: left;
-            width: 300px;  
             padding: 10px;
             padding-top: 0px;
             background: #D4CDC2;
             color: black;
+            width: 100%;
         }
         .voter-card .section {
             margin: 10px 0px;
@@ -111,6 +88,32 @@ $def with (ac, voters=[], query=None)
             font-size: 0.9em;
             font-weight: normal;
         }
+
+        @media (min-width: 992px) {
+            .container {
+                width: 970px;
+            }
+        }
+        @media (min-width: 768px) {
+            .container {
+                width: 750px;
+            }    
+        }
+
+        @media (min-width: 320px) {
+            form {
+                width: 300px;
+            }
+            input#q {
+                width: 100%;
+            }
+            #button-clear {
+                float: right;
+            }
+            .voter-card {
+                width: 300px;  
+            }
+        }        
     </style>    
 </head>
 <body>
@@ -142,7 +145,7 @@ $def with (ac, voters=[], query=None)
                 $ voter = voters[0]
                 <div class="voter-card">
                     <div class="section" style="margin-bottom: -10px;">
-                        <div class="key2" style="text-align: right; font-weight: bold; font-size: 0.9em;">$voter.voterid</div>
+                        <div class="key2" style="text-align: right; font-weight: bold; font-size: 0.9em;"><a href="/AC$ac?q=$voter.voterid">$voter.voterid</a></div>
                     </div>
                     <div class="section">
                         <div class="key">Name</div>
