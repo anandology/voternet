@@ -5,16 +5,33 @@ $def with (ac, voters=[], query=None)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Your Polling Booth</title>
 
-    <!--
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
-    -->
-
     <style type="text/css">
-        @media (min-width: 650px) {
+        .container {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }    
+        @media (min-width: 992px) {
             .container {
-                margin: 0 auto;
-                width: 600px;
+                width: 970px;
+            }
+        }
+        @media (min-width: 768px) {
+            .container {
+                width: 750px;
+            }    
+        }
+
+        @media (min-width: 450px) {
+            form {
+                width: 400px;
+            }
+            input#q {
+                width: 100%;
+            }
+            #button-clear {
+                float: right;
             }
         }
 
@@ -53,19 +70,28 @@ $def with (ac, voters=[], query=None)
             line-height: 1.33;
             border-radius: 6px; 
         }
+
+        body {
+            background: #ECE5D7;
+            color: #626262;
+        }
+
+        h1 {
+            color: #A65647;
+        }
+        a, a:visited {
+            color: #BD8471;
+        }
     </style>    
 </head>
 <body>
 <div class="container">
     <h3 style="color: #666; margin-bottom: 0px;">Find Your Polling Booth in</h3>
-    <h1 style="margin-top: 0px; margin-bottom: 0px;">Vizag North</h1>
-    <div style="margin-top: 0px; font-size: 0.9em;">
-        <a href="/">Home</a> | <strong>Vizag North</strong>
-    </div>
-    <br/>
+    <h1 style="margin-top: 0px;">Visakhapatnam North</h1>
+
     <form method="GET" action="/AC$ac" class="form">
       <div class="form-group">
-        <label for="q">Enter Voter ID, House Number or Name</label>
+        <label for="q" style="font-size: 0.9em;">Enter voter ID, house number or name</label>
         <div>
           <input class="form-control" type="text" name="q" id="q" value="$query">
         </div>
