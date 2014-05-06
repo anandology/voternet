@@ -40,22 +40,28 @@ $def with (voters=[], query=None)
 <body>
 <div class="container">
     <h1>Find Your Polling Booth <small>in Vizag Noth</small></h1>
+    <div style="margin-top: -10px;">
+        <a href="/">Home</a> | <a href="/AC142">Vizag North</a>
+    </div>
     <br/>
-    <br/>
-    <form method="GET" class="form-inline">
+    <form method="GET" class="form">
       <div class="form-group">
-        <label class="sr-only" for="voterid">Voter ID</label>
+        <label for="q">Enter Voter ID, House Number or Name</label>
         <div class="input-group input-group-lg clearable">
-                <input class="form-control" type="text" name="q" id="voterid" placeholder="Enter Your Voter ID/House/Name" value="$query">
+                <input class="form-control" type="text" name="q" id="q" placeholder="" value="$query">
                 <span class="icon_clear">x</span>
         </div>
       </div>
       <button type="submit" class="btn btn-lg btn-primary">Search</button>
+      <button type="button" class="btn btn-lg btn-default clear" id="button-clear" onClick="clearValue();">Clear</button>
     </form>
     <br/>
     $if query:
         $if voters:
-            <h4>Found $len(voters) matches</h4>
+            $if len(voters) == 100:
+                <h4>Found many matches, showing first 100.</h4>
+            $else:
+                <h4>Found $len(voters) matches</h4>
             <br/>
             <br/>
 
@@ -71,7 +77,7 @@ $def with (voters=[], query=None)
                     <tr>
                         <td>$v.part</td>
                         <td>$v.srno</td>
-                        <td>$v.voterid</td>
+                        <td><a href="/?voterid=$v.voterid">$v.voterid</a></td>
                         <td>$v.name</td>
                         <td>$v.address</td>
                     </tr>
@@ -80,6 +86,7 @@ $def with (voters=[], query=None)
             <h4 class="scroll-here">Sorry, no match found.</h4>
 </div>
 
+<!--
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script type="text/javascript">
 \$(document).on('propertychange keyup input paste', '.clearable input', function(){
@@ -92,6 +99,15 @@ $def with (voters=[], query=None)
     if (\$(".scroll-here").length)
         \$("html,body").animate({scrollTop: \$(".scroll-here").offset().top});
 });
+</script>
+-->
+<script type="text/javascript">
+function clearValue() {
+    var q = document.getElementById("q");
+    q.value = "";
+    q.focus();
+}
+
 </script>
 
 </body>
