@@ -1144,6 +1144,7 @@ class Invite(web.storage):
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, dict(self))
 
+re_voterid = re.compile("[A-Z]{2,3}[0-9]{5,}")
 class Voter(web.storage):
     @staticmethod
     def find(voterid):
@@ -1153,6 +1154,9 @@ class Voter(web.storage):
 
     @staticmethod
     def search(ac, q):
+        if re_voterid.match(q):
+            v = Voter.find(q)
+            return v and [v] or []
         q = q.upper()
         qlike = '%' + q + '%'
         result = get_voter_db().query(
