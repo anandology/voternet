@@ -1166,7 +1166,7 @@ class Voter(web.storage):
             " ORDER BY part, srno" +
             " LIMIT 100",
             vars=locals())
-        return result.list()
+        return [Voter(v) for v in result]
 
     @property
     def ac_name(self):
