@@ -558,8 +558,16 @@ class voter_info:
 class list_people:
     @placify(roles=['coordinator', 'admin'])
     def GET(self, place):
-        i = web.input(notes=[])
+        i = web.input(notes=[], email=None, format="html")
+        if i.format == "json":
+            return self.GET_json(place, i)
         return render.people(place, i.notes)
+
+    def GET_json(self, place, i):
+        people = place.get_all_volunteers(["coordinator", "volunteer", "pb_agent"], notes=i.notes, email=i.email)
+        d = [p.dict() for p in people]
+        web.header("content-type", "application/json")
+        return json.dumps(d)
 
 class edit_person:
     @placify()

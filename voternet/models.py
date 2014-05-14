@@ -109,7 +109,7 @@ class Place(web.storage):
     def get_pb_agents(self):
         return self.get_all_volunteers("pb_agent")
 
-    def get_all_volunteers(self, role="volunteer", notes=None):
+    def get_all_volunteers(self, role="volunteer", notes=None, email=None):
         """Returns all volunteers in the sub tree.
         """
         where = ""
@@ -123,6 +123,9 @@ class Place(web.storage):
                 where += " AND notes IN $notes"
             else:
                 where += " AND notes=$notes"
+
+        if email:
+            where += " AND email=$email"
 
         result = get_db().query(
             "SELECT people.* FROM people, places" + 
@@ -948,6 +951,16 @@ class Person(web.storage):
             db.delete("invite", where="person_id=$self.id", vars=locals())
             db.delete("people", where="id=$self.id", vars=locals())
         place._invalidate_object_cache()
+
+    def dict(self):
+        return {
+            "name": self.name,
+            "email": self.email,
+            "phone": self.phone,
+            "voterid": self.voterid,
+            "role": self.role,
+            "place": self.place.key
+        }
 
     def __repr__(self):           
         return "<Person: %s>" % dict(self)
