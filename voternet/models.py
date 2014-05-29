@@ -619,6 +619,18 @@ class Place(web.storage):
         else:
             return []
 
+    def get_messages(self, limit=5):
+        places = [self] + self.get_parents()
+        place_ids = [p.id for p in places]
+        return Message.find(place_id=place_ids, limit=limit)
+
+    def find_message(self, id):
+        m = Message.by_id(id)
+        if m and m.place_id == self.id:
+            return m
+
+    def post_message(self, message, author):
+        return Message.create(place=self, author=author, message=message)
 
     @cache.object_memoize(key="coverage_count")
     def get_coverage_count(self):
@@ -964,6 +976,47 @@ class Person(web.storage):
 
     def __repr__(self):           
         return "<Person: %s>" % dict(self)
+
+class Message(web.storage):
+    @property
+    def place(self):
+        return Place.from_id(self.place_id)
+
+    @property
+    def author(self):
+        return Person.find_by_id(self.author_id)
+
+    @property
+    def url(self):
+        return "{}/messages/{}".format(self.place.url, self.id) 
+
+    @staticmethod
+    def create(place, author, message):
+        d = {
+            "place_id": place.id,
+            "author_id": author.id,
+            "message": message
+        }
+        message_id = get_db().insert("messages", **d)
+        return Message.find(message_id)
+
+    @staticmethod
+    def find(place_id=None, limit=10):
+        wheres = []
+        if place_id and isinstance(place_id, list):
+            wheres.append("place_id IN $place_id")
+        else:
+            wheres.append("place_id = $place_id")
+
+        where = " AND ".join(wheres)
+        result = get_db().select("messages", where=where, order="tstamp desc", vars=locals())
+        return [Message(row) for row in result]
+
+    @staticmethod
+    def by_id(message_id):
+        result = get_db().select("messages", where="id=$message_id", vars=locals())
+        if result:
+            return Message(result[0])
 
 class Activity(web.storage):
     def get_place(self):

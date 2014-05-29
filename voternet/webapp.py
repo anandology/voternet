@@ -63,6 +63,9 @@ urls = (
     "/([\w/]+)/pb-agents.xls", "download_pb_agents",
     "/([\w/]+)/activity", "activity",
     "/([\w/]+)/sms", "send_sms",
+    "/([\w/]+)/messages", "messages",
+    "/([\w/]+)/messages/(\d+)", "view_message",
+    "/([\w/]+)/messages/new", "new_message",
     "/([\w/]+)", "place",
     "/(.*/PB\d+)/(\d\d\d\d-\d\d-\d\d)", "coverage",
 )
@@ -824,6 +827,36 @@ class send_sms:
             return place.volunteers
         else:
             return []
+
+class new_message:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        return render.new_message(place)
+
+    @placify(roles=['admin', 'coordinator'])
+    def POST(self, place):
+        i = web.input(message="")
+        if not i.message:
+            return render.new_message(place)
+        else:
+            user = account.get_current_user()
+            place.post_message(i.message, author=user)
+            flash.add_flash_message("info", "Your message been posted successfully.")
+            return web.seeother(place.url)
+
+class messages:
+    @placify()
+    def GET(self, place):
+        return render.messages(place)
+
+class view_message:
+    @placify()
+    def GET(self, place, msg_id):
+        m = place.find_message(msg_id)
+        if m:
+            return render.view_message(place, m)
+        else:
+            raise web.notfound()
 
 class login:
     def GET(self):

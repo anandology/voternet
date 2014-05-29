@@ -1,0 +1,15 @@
+$def with (place)
+
+$var title: Post New Message
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+<h1><a href="$place.get_url()">$place.name</a> / Post New Message</h1>
+<form class="form" role="form" method="POST">
+    <div class="form-group">    
+        <textarea name="message" rows="6" style="width: 100%;"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Post</button>
+</form>

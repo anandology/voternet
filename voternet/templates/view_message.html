@@ -1,0 +1,11 @@
+$def with (place, m)
+
+$var title: Messages of $place.name
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+<h1><a href="$place.get_url()">$place.name</a> / <a href="$place.get_url()/messages">Messages</a> / $m.id</h1>
+
+$:render_template("show_message", m)

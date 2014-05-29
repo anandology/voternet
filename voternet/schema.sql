@@ -88,8 +88,19 @@ create table activity (
 
 create index activity_type_idx on activity(type);
 create index activity_place_id_idx on activity(place_id);
-create index activity_person_id_idx on activity(type);
+create index activity_person_id_idx on activity(person_id);
 create index activity_tstamp_idx on activity(tstamp);
+
+create table messages (
+    id serial primary key,
+    place_id integer references places,
+    author_id integer references people,
+    message text,
+    tstamp timestamp default (current_timestamp at time zone 'UTC')
+);
+
+create index messages_place_id_idx on messages(place_id);
+create index messages_author_id_idx on messages(author_id);
 
 create table unsubscribe (
     id serial primary key,
@@ -126,3 +137,4 @@ create table voterlist (
 );
 
 create index voterlist_voterid_idx ON voterlist(voterid);
+

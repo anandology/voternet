@@ -1,0 +1,10 @@
+$def with (m)
+<div class="message">
+    <div class="message-head">
+        <div><span class="author">$m.author.name</span> posted at <a href="$m.place.get_url()">$m.place.name <small>$m.place.type</small></a></div>
+        <div class="timestamp"><a href="$m.url">$datestr(m.tstamp) <span class="glyphicon glyphicon-link"</span></a></div>
+    </div>
+    <div class="message-text">
+        $m.message
+    </div>
+</div>

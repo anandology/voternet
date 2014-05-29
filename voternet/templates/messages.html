@@ -1,0 +1,24 @@
+$def with (place)
+
+$var title: Messages of $place.name
+
+$ user = get_current_user()
+$ place_writable = place.writable_by(user)
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+<h1><a href="$place.get_url()">$place.name</a> / Messages</h1>
+
+$if place_writable:
+    <div class="message-controls">
+        <a href="$place.get_url()/messages/new" class="btn btn-primary hidden-print" role="button"></span>Post New Message</a>
+    </div>            
+
+$ messages = place.get_messages(limit=1000)
+$if not messages:
+    <em>No messages found.</em>
+$else:
+    $for m in messages:
+        $:render_template("show_message", m)

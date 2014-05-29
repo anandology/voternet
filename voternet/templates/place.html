@@ -235,6 +235,21 @@ $code:
             <em>No activity yet.</em>
         </div>
 
+        <h2>Messages</h2>
+        $ messages = place.get_messages()
+        $if not messages:
+            <em>No messages yet.</em>
+        $else:
+            $for m in messages:
+                $:render_template("show_message", m)
+            <div class="messages-seeall">
+                <a href="$place.get_url()/messages">See all messages...</a>
+            </div>
+        $if place_writable:
+            <div class="message-controls">
+                <a href="$place.get_url()/messages/new" class="btn btn-primary hidden-print" role="button"></span>Post New Message</a>
+            </div>            
+
     $def render_place(p, klass, index):
         <tr class="$klass">   
             <td>$index</td>             
