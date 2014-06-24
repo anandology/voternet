@@ -4,7 +4,7 @@ $var title: $place.name
 
 $ user = get_current_user()
 $ place_writable = place.writable_by(user)
-$ place_readable = place.writable_by(user, roles=['admin', 'coordinator', 'volunteer', 'pb_agent', 'member', 'active_member'])
+$ place_readable = place.writable_by(user, roles=['admin', 'coordinator', 'volunteer', 'pb_agent', 'member', 'active_member', 'user'])
 $ place_admin = place.writable_by(user, roles=['admin'])
 
 $ subtypes = place.get_all_subtypes()
