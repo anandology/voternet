@@ -565,13 +565,12 @@ class Place(web.storage):
         return bool(result)
 
     def viewable_by(self, user):
-        print "viewable_by", user.email, web.config.get('super_admins', [])
         # super admins can view any page.
         if user.email in web.config.get('super_admins', []):
             return True
 
         # If they can write, then can view as well.
-        if self.writable_by(user):
+        if self.writable_by(user, roles=['coordinator', 'admin', 'user']):
             return True
 
         result = get_db().query("SELECT people.* FROM people, places" +
