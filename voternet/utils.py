@@ -7,6 +7,7 @@ from models import Thing, get_db
 import envelopes 
 import urllib
 import subprocess
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +70,9 @@ def sendmail_batch(batch, async=False):
     If async is True, a new process will be created for sending messages.
     """
     if async:
-        p = subprocess.Popen("python voternet/utils.py sendmail-batch {}".format(batch.id), shell=True)
+        python = sys.executable
+        args = [python, "voternet/utils.py", "sendmail-batch", str(batch.id)]
+        p = subprocess.Popen(args)
         return
     messages = batch.get_messages(status='pending')
     conn = get_smtp_conn()
@@ -170,7 +173,6 @@ def send_sms(agents, message):
     return len(phones)
 
 def main():
-    import sys
     import webapp
     from models import SendMailBatch
     webapp.check_config()
