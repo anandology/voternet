@@ -71,9 +71,12 @@ def sendmail_batch(batch, async=False):
     """
     if async:
         python = sys.executable
-        args = [python, "voternet/utils.py", "sendmail-batch", str(batch.id)]
+        args = [
+            python, "voternet/utils.py",
+            "--config", web.config.configfile,
+            "sendmail-batch", str(batch.id)]
         p = subprocess.Popen(args)
-        return
+        return p
     messages = batch.get_messages(status='pending')
     conn = get_smtp_conn()
     for m in messages:

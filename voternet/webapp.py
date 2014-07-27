@@ -1043,6 +1043,7 @@ def check_config():
         configfile = sys.argv[index+1]
         sys.argv = sys.argv[:index] + sys.argv[index+2:]
         load_config(configfile)
+        web.config.configfile = configfile
 
         if web.config.get('error_email_recipients'):
             app.internalerror = web.emailerrors(
