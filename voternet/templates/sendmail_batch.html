@@ -1,0 +1,37 @@
+$def with (place, batch)
+
+$var title: Send Email Status - $place.name
+
+<ul class="breadcrumb breadcrumb-collapse hidden-print">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+
+<h1 class="place-h1"><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Send E-mail Status</h1>
+
+<h2>Subject: $batch.subject</h2>
+
+$ stats = batch.get_stats()
+
+$if stats.total:
+    $ sent = stats.get('sent', 0)
+    $ sent_percent = (100 * sent) / stats.total
+    $ failed = stats.get('failed', 0) 
+    $ failed_percent = (100 * failed) / stats.total
+    <div><strong>Progress</strong></div>
+    <div class="progress" style="max-width: 50%;">
+      <div class="progress-bar progress-bar-success" style="width: $sent_percent%">
+        <span class="sr-only">$sent_percent% Sent</span>
+      </div>
+      <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: $failed_percent%">
+        <span class="sr-only">$failed_percent failed</span>
+      </div>
+    </div>
+    Sent to $sent out of $stats.total people, $failed failed.
+
+    <div style="margin-top: 20px; padding: 10px 0px; border-top: 1px solid #ddd; font-size: 0.9em;">Reload this webpage to see the updated progress.
+    </div>
+$else:
+    <em>No people matched.</em>
+</div>
+

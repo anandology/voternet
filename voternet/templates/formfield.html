@@ -1,4 +1,4 @@
-$def with (field, **kwargs)
+$def with (field, help=None, **kwargs)
 $ kwargs['class'] = "form-control"
 $if field.errors:
     $ klass="has-error"
@@ -8,6 +8,8 @@ $else:
     $:field.label
     $:field(**kwargs)
     <ul class="help-block list-unstyled">
+        $if help:
+            <li>$help</li>
         $for error in field.errors:
             <li>$error</li>
     </ul>

@@ -12,7 +12,7 @@ import tablib
 import urllib
 import logging
 
-from models import Place, Person, Invite, get_all_coordinators_as_dataset, get_voterid_details
+from models import Place, Person, Invite, SendMailBatch, get_all_coordinators_as_dataset, get_voterid_details
 import forms
 import googlelogin
 import account
@@ -63,6 +63,8 @@ urls = (
     "/([\w/]+)/pb-agents.xls", "download_pb_agents",
     "/([\w/]+)/activity", "activity",
     "/([\w/]+)/sms", "send_sms",
+    "/([\w/]+)/email", "send_email",
+    "/([\w/]+)/email/(\d+)", "send_email_batch",
     "/([\w/]+)/messages", "messages",
     "/([\w/]+)/messages/(\d+)", "view_message",
     "/([\w/]+)/messages/new", "new_message",
@@ -827,6 +829,49 @@ class send_sms:
             return place.volunteers
         else:
             return []
+
+
+class send_email:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place):
+        form = forms.EmailForm()
+        return render.send_email(place, form)
+
+    @placify(roles=['admin', 'coordinator'])
+    def POST(self, place):
+        i = web.input()
+        form = forms.EmailForm(i)
+        if not form.validate():
+            return render.send_email(place, form)
+
+        if i.action == "preview":
+            preview = web.storage()
+            preview.to_address = "Test Person <test@example.com>"
+            preview.from_address = web.config.from_address
+            preview.subject = i.subject
+            preview.message = i.message.replace("{name}", 'Test Person')
+            return render.send_email(place, form, preview)
+        else:
+            people = send_sms().get_people(place, i.people)
+            print i.people, people
+            batch = SendMailBatch.new(
+                from_address=web.config.from_address,
+                subject=i.subject,
+                message=i.message)
+            batch.add_people(people)
+            utils.sendmail_batch(batch, async=True)
+            raise web.seeother(place.url + "/email/" + str(batch.id))
+
+class send_email_batch:
+    @placify(roles=['admin', 'coordinator'])
+    def GET(self, place, id):
+        batch = SendMailBatch.find(id=id)
+        return render.sendmail_batch(place, batch)
+
+    def sendmail(self, batch, person):
+        message = batch.message.replace('{name}', person.name)
+        utils.send_email(to_address=person.to_address, message=message, subject=batch.subject)
+
 
 class new_message:
     @placify(roles=['admin', 'coordinator'])

@@ -1215,3 +1215,50 @@ class Voter(web.storage):
     def booth_name(self):
         key = "UP/AC{:03d}/PB{:04d}".format(self.ac, self.part)
         return Place.find(key).name.split("-", 1)[-1]
+
+class SendMailBatch(web.storage):
+    @staticmethod
+    def find(id):
+        result = get_db().where("sendmail_batch", id=id)
+        if result:
+            return SendMailBatch(result[0])
+
+    @staticmethod
+    def new(from_address, subject, message, notes=""):
+        id = get_db().insert("sendmail_batch",
+            from_address=from_address,
+            subject=subject,
+            message=message,
+            notes=notes)
+        return SendMailBatch.find(id)
+
+    def add_people(self, people):
+        # remove dups by putting them in a dict
+        people_dict = dict((p.email, p) for p in people if p.email)
+        people = people_dict.values()
+
+        values = [{"batch_id": self.id, "to_address": p.email, "name": p.name} for p in people]
+        get_db().multiple_insert("sendmail_message", values)
+
+    def get_messages(self, status="pending"):
+        rows = get_db().query(
+            "SELECT * FROM sendmail_message" +
+            " WHERE batch_id=$self.id AND status=$status",
+            vars=locals())
+        return [SendMailMessage(row) for row in rows]
+
+    def get_stats(self):
+        result = get_db().query(
+            "SELECT status, count(*) as count" +
+            " FROM sendmail_message" +
+            " WHERE batch_id=$id " +
+            " GROUP BY status",
+            vars=self)
+        stats = web.storage((row.status, row.count) for row in result)
+        stats.total = sum(stats.values())
+        return stats
+
+class SendMailMessage(web.storage):
+    def set_status(self, status):
+        get_db().update("sendmail_message", where="id=$id", status=status, vars=self)
+        self.status = status

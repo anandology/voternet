@@ -138,3 +138,24 @@ create table voterlist (
 
 create index voterlist_voterid_idx ON voterlist(voterid);
 
+
+create table sendmail_batch (
+    id serial primary key,
+    from_address text,
+    subject text,
+    message text,
+    created timestamp default (current_timestamp at time zone 'utc'),
+    notes text
+);
+
+create index sendmail_batch_created_idx on sendmail_batch(created);
+
+create table sendmail_message (
+    id serial primary key,
+    batch_id integer references sendmail_batch,
+    to_address text,
+    name text,
+    status text default 'pending' -- pending, sent, failed
+);
+
+create index sendmail_message_batch_id_status_idx on sendmail_message(batch_id, status);

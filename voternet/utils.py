@@ -6,12 +6,16 @@ import functools
 from models import Thing, get_db
 import envelopes 
 import urllib
+import subprocess
 
 logger = logging.getLogger(__name__)
 
 email_count = 0
 
 def get_smtp_conn():
+    if web.config.debug:
+        return None
+
     return envelopes.conn.SMTP(
         host=web.config.smtp_server, 
         port=web.config.smtp_port,
@@ -22,10 +26,11 @@ def get_smtp_conn():
 def get_unsubscribes():
     return set(row.email for row in get_db().select("unsubscribe"))
 
-def send_email(to_addr, message, cc=None, bcc=None, conn=None):
+def send_email(to_addr, message, cc=None, bcc=None, conn=None, subject=None):
     global email_count
     email_count += 1
-    subject = message.subject.strip()
+    if subject is None:
+        subject = message.subject.strip()
     message = web.safestr(message)
     cc = cc or []
     bcc = bcc or web.config.get("email_bcc_address") or []
@@ -39,6 +44,7 @@ def send_email(to_addr, message, cc=None, bcc=None, conn=None):
             print "Bcc: ", bcc
         print
         print message
+        return True
     else:
         logger.info("{}: sending email to {} with subject {!r}".format(email_count, to_addr, subject))
         envelope = envelopes.Envelope(    
@@ -51,9 +57,29 @@ def send_email(to_addr, message, cc=None, bcc=None, conn=None):
         conn = conn or get_smtp_conn()
         try:
             conn.send(envelope)
+            return True
         except Exception:
             logger.error("failed to send email to {}".format(to_addr), exc_info=True)
+            return False
         #web.sendmail(web.config.from_address, to_addr, subject, message, cc=cc, bcc=bcc)
+
+def sendmail_batch(batch, async=False):
+    """Starts sending all messages in the given batch.
+
+    If async is True, a new process will be created for sending messages.
+    """
+    if async:
+        p = subprocess.Popen("python voternet/utils.py sendmail-batch {}".format(batch.id), shell=True)
+        return
+    messages = batch.get_messages(status='pending')
+    conn = get_smtp_conn()
+    for m in messages:
+        message = batch.message.replace('{name}', m.name)
+        success = send_email(m.to_address, message=message, subject=batch.subject, conn=conn)
+        if success:
+            m.set_status('sent')
+        else:
+            m.set_status('failed')
 
 def parse_datetime(value):
     """Creates datetime object from isoformat.
@@ -142,3 +168,22 @@ def send_sms(agents, message):
         response = urllib.urlopen(url)
         logger.info("sms response\n%s", response.read())
     return len(phones)
+
+def main():
+    import sys
+    import webapp
+    from models import SendMailBatch
+    webapp.check_config()
+    cmd = sys.argv[1]
+    if cmd == "sendmail-batch":
+        batch_id = sys.argv[2]
+        batch = SendMailBatch.find(batch_id)
+        if batch:
+            sendmail_batch(batch)
+        else:
+            print >> sys.stderr, "unknown batch", batch_id
+    else:
+        print >> sys.stderr, "unknown command", cmd
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,31 @@
+$def with (place, form, preview=None)
+
+$var title: Send Email - $place.name
+
+<ul class="breadcrumb breadcrumb-collapse hidden-print">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+</ul>
+
+<h1 class="place-h1"><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Send E-mail</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="POST">
+            $:render_template("formfield", form.people)
+            $:render_template("formfield", form.subject)
+            $:render_template("formfield", form.message, help="Use {name} to substitue the name of the person.")
+            <button type="submit" class="btn btn-primary" name="action" value="send-email">Send E-mail</button>
+            <button type="submit" class="btn btn-default pull-right" name="action" value="preview">Preview</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        $if preview:
+            <h2>Preview</h2>
+            From: $preview.from_address<br/>
+            To: $preview.to_address<br/>
+            Subject: $preview.subject<br/>
+            <br/>
+            <div style="white-space: pre">$preview.message</div>
+    </div>
+</div>

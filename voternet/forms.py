@@ -56,6 +56,17 @@ class SMSForm(BaseForm):
                     ('self', 'Just Me (for testing)'),
                     ('agents.confirmed', 'Confirmed Booth Agents'),
                     ('agents.pending', 'Pending Booth Agents'),
-                    ('volunteers.all', 'All Volunteers (including agents and coordinators)'),
+                    ('volunteers', 'All Volunteers (including agents and coordinators)'),
                 ])
+    message = StringField("Message", validators=[validators.Required()], widget=TextArea())
+
+class EmailForm(BaseForm):
+    people = SelectField('Send Email to',
+                choices=[
+                    ('self', 'Just Me (for testing)'),
+                    ('agents.confirmed', 'Confirmed Booth Agents'),
+                    ('agents.pending', 'Pending Booth Agents'),
+                    ('volunteers', 'All Volunteers (including agents and coordinators)'),
+                ])
+    subject = StringField('Subject', validators=[validators.Required()])
     message = StringField("Message", validators=[validators.Required()], widget=TextArea())
