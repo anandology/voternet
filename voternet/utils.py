@@ -79,7 +79,13 @@ def sendmail_batch(batch, async=False):
         return p
     messages = batch.get_messages(status='pending')
     conn = get_smtp_conn()
+    unsubscribes = get_unsubscribes()
+
     for m in messages:
+        if m.email in unsubscribes:
+            m.set_status('unsubscribed')
+            continue
+
         message = batch.message.replace('{name}', m.name).replace('{email}', m.email or "")
         success = send_email(m.to_address, message=message, subject=batch.subject, conn=conn)
         if success:
@@ -164,7 +170,8 @@ def process_phone(number):
     return number
 
 def send_sms(agents, message):
-    phones = [process_phone(a.phone) for a in agents]
+    unsubscribes = get_unsubscribes()
+    phones = [process_phone(a.phone) for a in agents if a.email not in unsubscribes]
     phones = set(p for p in phones if p and len(p) == 10)
     for chunk in web.group(phones, 300):
         phone_numbers = ",".join(chunk)
