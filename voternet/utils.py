@@ -80,7 +80,7 @@ def sendmail_batch(batch, async=False):
     messages = batch.get_messages(status='pending')
     conn = get_smtp_conn()
     for m in messages:
-        message = batch.message.replace('{name}', m.name)
+        message = batch.message.replace('{name}', m.name).replace('{email}', m.email or "")
         success = send_email(m.to_address, message=message, subject=batch.subject, conn=conn)
         if success:
             m.set_status('sent')

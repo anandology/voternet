@@ -844,6 +844,8 @@ class send_email:
         if not form.validate():
             return render.send_email(place, form)
 
+        i.message = i.message + "\n\n---\nIf you do not like to receive any emails from us, please unsubscribe at http://ka.aapvol.in/unsubscribe?email={email}"
+
         if i.action == "preview":
             preview = web.storage()
             preview.to_address = "Test Person <test@example.com>"
@@ -853,7 +855,6 @@ class send_email:
             return render.send_email(place, form, preview)
         else:
             people = send_sms().get_people(place, i.people)
-            print i.people, people
             batch = SendMailBatch.new(
                 from_address=web.config.from_address,
                 subject=i.subject,
