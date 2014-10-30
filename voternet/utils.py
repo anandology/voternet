@@ -82,11 +82,11 @@ def sendmail_batch(batch, async=False):
     unsubscribes = get_unsubscribes()
 
     for m in messages:
-        if m.email in unsubscribes:
+        if m.to_address in unsubscribes:
             m.set_status('unsubscribed')
             continue
 
-        message = batch.message.replace('{name}', m.name).replace('{email}', m.email or "")
+        message = batch.message.replace('{name}', m.name).replace('{email}', m.to_address or "")
         success = send_email(m.to_address, message=message, subject=batch.subject, conn=conn)
         if success:
             m.set_status('sent')
