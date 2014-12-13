@@ -747,14 +747,20 @@ class do_search:
         else:
             return render.search(i.q, nmatched, results)
 
+def is_coordinator(levels=['STATE']):
+    user = account.get_current_user()
+    _is_admin = user and user.role == 'admin'
+    _is_coordinator = user and user.role == 'coordinator' and user.place.type in levels
+    return _is_admin or _is_coordinator
+
+
 class download:
     def GET(self, name):
-        user = account.get_current_user()
+        if not is_coordinator():
+            raise web.notfound()
+
         if name == "contacts.xls":
-            is_admin = user and user.role == 'admin'
-            is_coordinator = user and user.role == 'coordinator' and user.place.type in ['STATE', 'PC']
-            if is_admin or is_coordinator:
-                return self.download_contacts()
+            return self.download_contacts()
         raise web.notfound()
 
     def download_contacts(self):
@@ -765,6 +771,9 @@ class download:
 
 class download_coordinators:
     def GET(self, code):
+        if not is_coordinator():
+            raise web.notfound()
+
         place = Place.find(key=code)
         if not place:
             raise web.notfound()
@@ -779,6 +788,9 @@ class download_coordinators:
 class download_volunteers:
     @placify(roles=['coordinator', 'admin'])
     def GET(self, place):
+        if not is_coordinator():
+            raise web.notfound()
+
         dataset = place.get_all_volunteers_as_dataset()
         web.header("Content-disposition", "attachment; filename=%s-volunteers.xls" % place.code)
         web.header("Content-Type", "application/vnd.ms-excel")
@@ -787,6 +799,9 @@ class download_volunteers:
 class download_pb_agents:
     @placify(roles=['coordinator', 'admin'])
     def GET(self, place):
+        if not is_coordinator():
+            raise web.notfound()
+
         dataset = place.get_all_volunteers_as_dataset(roles=['pb_agent'])
         web.header("Content-disposition", "attachment; filename=%s-pb-agents.xls" % place.code)
         web.header("Content-Type", "application/vnd.ms-excel")
