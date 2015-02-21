@@ -39,4 +39,5 @@ def get_voter_details(voterid):
     return web.storage(d)
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format = "[%(levelname)s] : %(filename)s:%(lineno)d : %(message)s")
     print get_voter_details(sys.argv[1])
