@@ -291,34 +291,6 @@
             .find("input").attr("disabled", "disabled");
         });
 
-        /*
-        $("#field-is-voter-at-residence input").change(function() {
-          var value = $("input:radio[name='is_voter_at_residence']:checked").val();
-          console.log(value);
-          if (value == 'YES') {
-            console.log("disabled");
-            $("#field-proxy-voterid").addClass("disabled")
-              .find("input").attr("disabled", "disabled");
-          }
-          else {
-            $("#field-proxy-voterid").removeClass("disabled")
-              .find("input").removeAttr("disabled");           
-          }
-
-          if (value != 'YES' && value != 'NO') { // not valid voterid
-            console.log("disabled");
-            $("#field-voterid").addClass("disabled")
-              .find("input").attr("disabled", "disabled");
-          }
-          else {
-            $("#field-voterid").removeClass("disabled")
-              .find("input").removeAttr("disabled");           
-          }
-
-
-        });
-*/
-
         function zeropad(num, length) {
           var s = "000000" + num;
           return s.substr(s.length-length, length);
