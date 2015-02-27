@@ -921,11 +921,12 @@ class view_message:
 
 class login:
     def GET(self):
-        i = web.input(next=None)
+        i = web.input(next=None, error="false")
         next = i.next or "/"
+        error = i.error == "true"
         google = googlelogin.GoogleLogin()
         form = forms.LoginForm()        
-        return render.login(google.get_redirect_url(state=next), error=False, form=form)
+        return render.login(google.get_redirect_url(state=next), error=error, form=form)
 
     def POST(self):
         i = web.input(next=None)
@@ -1008,8 +1009,10 @@ class oauth2callback:
                     account.set_login_cookie(userinfo.email)
                     raise web.seeother(next)
             except IOError:
-                return render.login(google.get_redirect_url(), error=True, form=forms.LoginForm())
-        raise web.seeother("/account/login")
+                raise web.seeother(next + "?error=true")
+                #return render.login(google.get_redirect_url(), error=True, form=forms.LoginForm())
+
+        raise web.seeother(next)
 
 class report_issue:
     def GET(self):
