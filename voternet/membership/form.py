@@ -73,7 +73,7 @@ class RegistrationForm(BaseForm):
         "ENGLISH",
         "HINDI", 
         "OTHER SOUTH INDIAN LANGUAGE"
-    ])
+    ], [validators.Required()])
 
     skills = checkbox_field("Areas where you can volunteer for Central Team", [
         "Accounting/Finance",
@@ -108,7 +108,7 @@ class RegistrationForm(BaseForm):
         "Trainers",
         "Video Editor / Film Maker",
         "Volunteer management",
-    ])
+    ], [validators.Required()])
 
     active_volunteer = radio_field("Have you volunteered for Aam Aadmi Party before?", ['YES', 'NO'])
 
