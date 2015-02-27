@@ -22,12 +22,17 @@ class member_registration:
         return render_template("index.html", form=form, user=user, google_url=google_url)
 
     def POST(self):
+        user = account.get_current_user()
+        google = googlelogin.GoogleLogin()
+        next = web.ctx.path
+        google_url = google.get_redirect_url(state=next)
+
         form = RegistrationForm(web.webapi.rawinput())
-        if form.validate():
+        if user and form.validate():
             self.add_member(form.data)
             return "done"
         else:
-            return render_template("index.html", form=form)
+            return render_template("index.html", form=form, user=user, google_url=google_url)
 
     def add_member(self, data):
         def process_value(value):
