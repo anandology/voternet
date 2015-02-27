@@ -1,65 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>AAP BLR - Member Registration Form</title>
-    <meta charset='utf-8'>    
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% macro styles() -%}
+  <style type="text/css">
+    .small {
+      color: gray;
+      font-weight: normal;
+      display: block;
+      margin-top: -2px;
+      margin-bottom: 5px;
+    }
+    label {
+      display: block;
+    }
+    input.radio, input.checkbox {
+      margin-left: 0px !important;
+    }
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    .verify-voterid {
+      margin: 5px 0px;
+    }
 
-    <style type="text/css">
-      .small {
-        color: gray;
-        font-weight: normal;
-        display: block;
-        margin-top: -2px;
-        margin-bottom: 5px;
-      }
-      label {
-        display: block;
-      }
-      input.radio, input.checkbox {
-        margin-left: 0px !important;
-      }
+    .form-group-voterid {
+    }
 
-      .verify-voterid {
-        margin: 5px 0px;
-      }
+    .section {
+      border: 1px solid #ddd;
+      background: white;
+      padding: 20px;
+      margin: 20px 0px;
+      border-radius: 10px;
+    }
+    .section h2 {
+      margin-top: 0px;
+    }
+    .hidden2 {
+        display: none;
+    }
 
-      .form-group-voterid {
-      }
+    body {
+      background: #eef;
+    }
 
-      .section {
-        border: 1px solid #ddd;
-        background: white;
-        padding: 20px;
-        margin: 20px 0px;
-        border-radius: 10px;
-      }
-      .section h2 {
-        margin-top: 0px;
-      }
-      .hidden2 {
-          display: none;
-      }      
+    span.ss-required-asterisk {
+      color: red;
+    }
 
-      body {
-        background: #eef;
-      }
+    .disabled {
+      color: #888;
+    }
+    .disabled span.small {
+      color: #aaa;
+    }
+  </style>
 
-      span.ss-required-asterisk {
-        color: red;
-      }
-
-      .disabled {
-        color: #888;
-      }
-      .disabled span.small {
-        color: #aaa;
-      }
-    </style>
-  </head>
+{%- endmacro %}
 
 {% macro render_field(field, help="", class_="") -%}
     {% if field.errors %}
@@ -139,7 +131,173 @@
     </div>
 {%- endmacro %}
 
+{% macro render_form() -%}
+  <form method="POST" class="form">
+    <div class="section" id="section-personal">
+      <h2>Personal Details</h2>
+      {{render_field(form.name, help="Your Name")}}
+      {{render_field(form.father_name)}}
+      {{render_field(form.gender)}}
+      {{render_field(form.mobile)}}
+      {{render_field(form.mobile2)}}
+      {{render_field(form.email, help='Capture your Primary E-Mail ID, the one used by you in Social Media')}}
+      {{render_field(form.emergency_contact)}}
+      {{render_field(form.address)}}
+      {{render_field(form.pincode)}}
+    </div>
 
+    <div class="section" id="section-voterid">
+      <h2>Voter ID</h2>
+
+      <p>Identify your polling booth by providing your Voter ID or Voter ID of your neighbour.
+      </p>
+
+      {{render_radio(form.is_voter_at_residence)}}
+
+      <div class="autodisable on-is-voter-at-residence index-2">
+      {{render_voterid(form.voterid, help="Your Voter ID No. as seen on your VOTER ID CARD")}}
+      </div>
+      <div class="autodisable on-is-voter-at-residence index-0">
+      {{render_voterid(form.proxy_voterid, help="VOTER ID of any of your immediate neighbour for mapping your location")}}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Additional Details</h2>
+      {{render_radio(form.livelihood)}}
+      {{render_field(form.employer)}}
+      {{render_checkbox(form.choice_of_communication)}}
+      {{render_radio(form.work_from)}}
+      {{render_radio(form.internet_connection)}}
+      {{render_radio(form.how_much_time)}}
+      {{render_checkbox(form.languages)}}
+      {{render_checkbox(form.skills)}}
+
+    </div>
+    <div class="section" id="section-history">
+      <h2>Your AAP Volunteering History</h2>
+      {{render_radio(form.active_volunteer)}}
+      <div class="autodisable on-active-volunteer value-NO">
+        {{render_checkbox(form.contributions)}}
+        {{render_field(form.reporting_person_name)}}
+        {{render_field(form.reporting_person_mobile)}}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Declaration</h2>
+      <p>I am citizen of India. I am above 18 years , and not enrolled as a government employee. I am not a member of any other political party registered with the Election Commission of India. I am not a member with any organization whose views, policies or actions are in conflict with the objective of the party. I have not been convicted of any offense involving moral turpitude. I have full faith of party’s objective and vision. I hereby consent to receiving any communication from the party either in writing, electronically and/or in any audio-visual format via phone (including SMS/MMS), email and/or at my address.</p>
+
+      <p>The particulars and statements made above are correct to the best of my knowledge and nothing has been concealed or withheld.
+      </p>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  <script type="text/javascript">
+    $(function() {
+
+      function replace(template, mapping) {
+        var s = template;
+        for (var pattern in mapping)
+          s = s.replace(pattern, mapping[pattern]);
+
+        console.log(s);
+        return s;
+      }
+
+      $("input[type=radio]").change(function() {
+        console.log(["radio change"]);
+        var selector = replace("input:radio[name=NAME]", {NAME: $(this).attr("name")});
+
+        var name = $(this).attr("name").replace(/_/g, "-");
+        var value = $(selector+":checked").val();
+        var index = $(selector+":checked").index(selector);
+
+        console.log(["selector", selector]);
+        console.log(["name", name]);
+        console.log(["value", value]);
+        console.log(["index", index]);
+
+        var mapping = {
+          NAME: name,
+          VALUE: value.replace(/[^a-zA-Z0-9]+/g, '-'),
+          INDEX: index
+        }
+
+        $(replace(".autodisable.on-NAME", mapping))
+          .removeClass("disabled")
+          .find("input").removeAttr("disabled", "disabled");
+
+        $(replace(".autodisable.on-NAME.value-VALUE, .autodisable.on-NAME.index-INDEX", mapping))
+          .addClass("disabled")
+          .find("input").attr("disabled", "disabled");
+      });
+
+      function zeropad(num, length) {
+        var s = "000000" + num;
+        return s.substr(s.length-length, length);
+      }
+
+      function get_parent(place, type) {
+        for (var i in place.parents) {
+          var p = place.parents[i];
+          if (p.type == type) {
+            return p;
+          }
+        }
+        return null;
+      }
+
+      $(".verify-voterid").click(function() {
+        var $parent = $(this).closest(".form-group-voterid");
+        var voterid = $parent.find(".voterid").val();
+        console.log($parent.find(".voter"));
+        $parent.find(".voter").hide();
+        $parent.find(".novoter").hide();
+        $.getJSON("http://voter.missionvistaar.in/search?voterid=" + voterid, function(data) {
+          if (!data) {
+            $parent.find(".novoter").show();
+          }
+          else {
+            $parent.find(".voter").show();
+            $parent.find(".voter-name").html("Name: " + data.name);
+            $parent.find(".voter-relname").html("Rel. Name: " + data.relname);
+            $parent.find(".voter-ac").html("AC: " + data.ac);
+            $parent.find(".voter-part").html("Booth: " + data.part);
+
+            var key = "KA/AC" + zeropad(data.ac, 3) + "/PB" + zeropad(data.part, 4);
+            $.getJSON("http://missionvistaar.in/api/place/" + key, function(place) {
+              var ward = get_parent(place, "LB");
+              var ac = get_parent(place, "AC");
+              var lc = get_parent(place, "DISTRICT");
+              if (ward)
+                $parent.find(".voter-ward").html("WARD: " + ward.name.replace(/WA0*/, ""));
+              $parent.find(".voter-ac").html("AC: " + ac.name.replace(/AC0*/, ""));
+              $parent.find(".voter-lc").html("LC: " + lc.name.replace(/PC0*/, ""));
+              $parent.find(".voter-part").html("Booth: " + place.name.replace(/PB0*/, ""));
+            });
+          }
+        });
+      });
+    });
+  </script>
+
+{%- endmacro %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AAP BLR - Member Registration Form</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    {{styles()}}
+
+  </head>
   <body>
   <nav class="navbar navbar-inverse">
     <div class="container">
@@ -156,25 +314,16 @@
     </div>
   </nav>
 
+  <div class="container">
+    <h1>Member Registration Form</h1>
+    <p>Aam Aadmi Party, Bangalore - member registration for existing and new applicants.</p>
+
     {% if not user %}
-    <div class="container">
-      <h1>Member Registration Form</h1>
-
-      <p>Aam Aadmi Party, Bangalore - member registration for existing and new applicants.</p>
-
       <div class="section">
       <p>Please Log In using google account to continue.</p>
-
       <a href="{{google_url}}" class="btn btn-primary">Login with Google</a>
       </div>
-    </div>
     {% else %}
-    <div class="container">
-      <h1>Member Registration Form</h1>
-
-      <p>Aam Aadmi Party, Bangalore - member registration for existing and new applicants.</p>
-
-
       <div class="section">
       <p>You are logged in as <strong>{{user.email}}</strong>.</p>
       <a class="btn btn-danger" href="/account/logout?next=/x/member-registration">Log Out</a>
@@ -182,164 +331,16 @@
 
       <div class="row">
         <div class="col-md-6 col-sm-12">
-          <form method="POST" class="form">
-            <div class="section" id="section-personal">   
-              <h2>Personal Details</h2>       
-              {{render_field(form.name, help="Your Name")}}
-              {{render_field(form.father_name)}}
-              {{render_field(form.gender)}}
-              {{render_field(form.mobile)}}
-              {{render_field(form.mobile2)}}
-              {{render_field(form.email, help='Capture your Primary E-Mail ID, the one used by you in Social Media')}}
-              {{render_field(form.emergency_contact)}}
-              {{render_field(form.address)}}
-              {{render_field(form.pincode)}}
-            </div>
-
-            <div class="section" id="section-voterid">
-              <h2>Voter ID</h2>
-
-              <p>Identify your polling booth by providing your Voter ID or Voter ID of your neighbour.
-              </p>
-
-              {{render_radio(form.is_voter_at_residence)}}
-
-              <div class="autodisable on-is-voter-at-residence index-2">
-              {{render_voterid(form.voterid, help="Your Voter ID No. as seen on your VOTER ID CARD")}}
-              </div>
-              <div class="autodisable on-is-voter-at-residence index-0">
-              {{render_voterid(form.proxy_voterid, help="VOTER ID of any of your immediate neighbour for mapping your location")}}
-              </div>
-            </div>
-
-            <div class="section">
-              <h2>Additional Details</h2>
-              {{render_radio(form.livelihood)}}
-              {{render_field(form.employer)}}            
-              {{render_checkbox(form.choice_of_communication)}}
-              {{render_radio(form.work_from)}}
-              {{render_radio(form.internet_connection)}}
-              {{render_radio(form.how_much_time)}}
-              {{render_checkbox(form.languages)}}
-              {{render_checkbox(form.skills)}}
-
-            </div>
-            <div class="section" id="section-history">
-              <h2>Your AAP Volunteering History</h2>
-              {{render_radio(form.active_volunteer)}}
-              <div class="autodisable on-active-volunteer value-NO">
-                {{render_checkbox(form.contributions)}}
-                {{render_field(form.reporting_person_name)}}
-                {{render_field(form.reporting_person_mobile)}}
-              </div>
-            </div>
-
-            <div class="section">
-              <h2>Declaration</h2>
-              <p>I am citizen of India. I am above 18 years , and not enrolled as a government employee. I am not a member of any other political party registered with the Election Commission of India. I am not a member with any organization whose views, policies or actions are in conflict with the objective of the party. I have not been convicted of any offense involving moral turpitude. I have full faith of party’s objective and vision. I hereby consent to receiving any communication from the party either in writing, electronically and/or in any audio-visual format via phone (including SMS/MMS), email and/or at my address.</p>
-
-              <p>The particulars and statements made above are correct to the best of my knowledge and nothing has been concealed or withheld.
-              </p>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </form> 
+          {{render_form()}}
         </div>
       </div>
+      {% endif %}
+
     </div>
     <footer>
       <br/>
       <br/>
     </footer>
-    <script type="text/javascript">
-      $(function() {
-
-        function replace(template, mapping) {
-          var s = template;
-          for (var pattern in mapping)
-            s = s.replace(pattern, mapping[pattern]);
-
-          console.log(s);
-          return s;
-        }
-
-        $("input[type=radio]").change(function() {
-          console.log(["radio change"]);
-          var selector = replace("input:radio[name=NAME]", {NAME: $(this).attr("name")});
-
-          var name = $(this).attr("name").replace(/_/g, "-");
-          var value = $(selector+":checked").val();
-          var index = $(selector+":checked").index(selector);
-
-          console.log(["selector", selector]);
-          console.log(["name", name]);
-          console.log(["value", value]);
-          console.log(["index", index]);
-
-          var mapping = {
-            NAME: name,
-            VALUE: value.replace(/[^a-zA-Z0-9]+/g, '-'),
-            INDEX: index
-          }
-
-          $(replace(".autodisable.on-NAME", mapping))
-            .removeClass("disabled")
-            .find("input").removeAttr("disabled", "disabled");
-
-          $(replace(".autodisable.on-NAME.value-VALUE, .autodisable.on-NAME.index-INDEX", mapping))
-            .addClass("disabled")
-            .find("input").attr("disabled", "disabled");
-        });
-
-        function zeropad(num, length) {
-          var s = "000000" + num;
-          return s.substr(s.length-length, length);
-        }
-
-        function get_parent(place, type) {
-          for (var i in place.parents) {
-            var p = place.parents[i];
-            if (p.type == type) {
-              return p;
-            }
-          }
-          return null;
-        }
-
-        $(".verify-voterid").click(function() {
-          var $parent = $(this).closest(".form-group-voterid");
-          var voterid = $parent.find(".voterid").val();
-          console.log($parent.find(".voter"));
-          $parent.find(".voter").hide();
-          $parent.find(".novoter").hide();          
-          $.getJSON("http://voter.missionvistaar.in/search?voterid=" + voterid, function(data) {
-            if (!data) {
-              $parent.find(".novoter").show();
-            }
-            else {
-              $parent.find(".voter").show();
-              $parent.find(".voter-name").html("Name: " + data.name);
-              $parent.find(".voter-relname").html("Rel. Name: " + data.relname);
-              $parent.find(".voter-ac").html("AC: " + data.ac);
-              $parent.find(".voter-part").html("Booth: " + data.part);
-
-              var key = "KA/AC" + zeropad(data.ac, 3) + "/PB" + zeropad(data.part, 4);
-              $.getJSON("http://missionvistaar.in/api/place/" + key, function(place) {
-                var ward = get_parent(place, "LB");
-                var ac = get_parent(place, "AC");
-                var lc = get_parent(place, "DISTRICT");
-                if (ward)
-                  $parent.find(".voter-ward").html("WARD: " + ward.name.replace(/WA0*/, ""));
-                $parent.find(".voter-ac").html("AC: " + ac.name.replace(/AC0*/, ""));
-                $parent.find(".voter-lc").html("LC: " + lc.name.replace(/PC0*/, ""));
-                $parent.find(".voter-part").html("Booth: " + place.name.replace(/PB0*/, ""));
-              });
-            }
-          });
-        });
-      });
-    </script>
-    {% endif %}
   </body>
 </html>
 
