@@ -61,7 +61,7 @@
     </style>
   </head>
 
-{% macro render_field(field, help="", class_="form-control") -%}
+{% macro render_field(field, help="", class_="") -%}
     {% if field.errors %}
         <div class="form-group has-error">
     {% else %}
@@ -73,7 +73,7 @@
           {% endif %}
           <span class="small">{{ help }}</span>          
         </label>
-        {{ field(class_=class_, **kwargs) }}
+        {{ field(class_="form-control " + class_, **kwargs) }}
         <ul class="help-block list-unstyled">
             {% for error in field.errors %}
                 <li>{{ error }}</li>
@@ -203,8 +203,13 @@
               </p>
 
               {{render_radio(form.is_voter_at_residence)}}
+
+              <div class="autodisable on-is-voter-at-residence index-2">
               {{render_voterid(form.voterid, help="Your Voter ID No. as seen on your VOTER ID CARD")}}
+              </div>
+              <div class="autodisable on-is-voter-at-residence index-0">
               {{render_voterid(form.proxy_voterid, help="VOTER ID of any of your immediate neighbour for mapping your location")}}
+              </div>
             </div>
 
             <div class="section">
@@ -218,10 +223,15 @@
               {{render_checkbox(form.languages)}}
               {{render_checkbox(form.skills)}}
 
+            </div>
+            <div class="section" id="section-history">
+              <h2>Your AAP Volunteering History</h2>
               {{render_radio(form.active_volunteer)}}
-              {{render_checkbox(form.contributions)}}
-              {{render_field(form.reporting_person_name)}}
-              {{render_field(form.reporting_person_mobile)}}
+              <div class="autodisable on-active-volunteer value-NO">
+                {{render_checkbox(form.contributions)}}
+                {{render_field(form.reporting_person_name)}}
+                {{render_field(form.reporting_person_mobile)}}
+              </div>
             </div>
 
             <div class="section">
@@ -243,6 +253,45 @@
     </footer>
     <script type="text/javascript">
       $(function() {
+
+        function replace(template, mapping) {
+          var s = template;
+          for (var pattern in mapping)
+            s = s.replace(pattern, mapping[pattern]);
+
+          console.log(s);
+          return s;
+        }
+
+        $("input[type=radio]").change(function() {
+          console.log(["radio change"]);
+          var selector = replace("input:radio[name=NAME]", {NAME: $(this).attr("name")});
+
+          var name = $(this).attr("name").replace(/_/g, "-");
+          var value = $(selector+":checked").val();
+          var index = $(selector+":checked").index(selector);
+
+          console.log(["selector", selector]);
+          console.log(["name", name]);
+          console.log(["value", value]);
+          console.log(["index", index]);
+
+          var mapping = {
+            NAME: name,
+            VALUE: value.replace(/[^a-zA-Z0-9]+/g, '-'),
+            INDEX: index
+          }
+
+          $(replace(".autodisable.on-NAME", mapping))
+            .removeClass("disabled")
+            .find("input").removeAttr("disabled", "disabled");
+
+          $(replace(".autodisable.on-NAME.value-VALUE, .autodisable.on-NAME.index-INDEX", mapping))
+            .addClass("disabled")
+            .find("input").attr("disabled", "disabled");
+        });
+
+        /*
         $("#field-is-voter-at-residence input").change(function() {
           var value = $("input:radio[name='is_voter_at_residence']:checked").val();
           console.log(value);
@@ -268,6 +317,7 @@
 
 
         });
+*/
 
         function zeropad(num, length) {
           var s = "000000" + num;
