@@ -28,14 +28,14 @@ class BaseForm(Form):
 def radio_field(label, values, **kwargs):
     return RadioField(label, [validators.Required()], choices=[(v, v) for v in values], **kwargs)
 
-def checkbox_field(label, values):
+def checkbox_field(label, values, validators=None):
     return SelectMultipleField(
         label,
         choices=[(v, v) for v in values],
         option_widget=widgets.CheckboxInput(),
-        widget=widgets.ListWidget(prefix_label=False)
+        widget=widgets.ListWidget(prefix_label=False),
+        validators=validators or []
         )
-
 
 class RegistrationForm(BaseForm):
     name = StringField('Name', [validators.Required()])
@@ -53,8 +53,10 @@ class RegistrationForm(BaseForm):
 
     employer = StringField('EMPLOYER NAME OR PROFESSION', [validators.Required()])
 
-    livelihood = radio_field("Source of Livelihood", ['SALARIED', 'SELF EMPLOYED', 'RETIRED', 'STUDENT'])
-    choice_of_communication = radio_field("Choice of Communication", ['SMS', 'WHATSAPP', 'E-MAIL', 'FACEBOOK', 'TWITTER'])
+    livelihood = radio_field("Source of Livelihood", ['SALARIED', 'SELF EMPLOYED', 'RETIRED', 'STUDENT', 'OTHER'])
+    choice_of_communication = checkbox_field("Your Preferred Choice of Communication",
+        ['SMS', 'WHATSAPP', 'E-MAIL', 'FACEBOOK', 'TWITTER'],
+        [validators.Required()])
 
     work_from = radio_field('WHERE YOU WOULD LIKE TO WORK FROM', ['HOME', 'OUTSIDE', 'BOTH'])
     internet_connection = radio_field("DO YOU HAVE INTERNET CONNECTION AT HOME", ['YES', 'NO'])
