@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AAP BLR - Member Registration Form</title>
+    <meta charset='utf-8'>    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    <style type="text/css">
+      .small {
+        color: gray;
+        font-weight: normal;
+        display: block;
+        margin-top: -2px;
+        margin-bottom: 5px;
+      }
+      label {
+        display: block;
+      }
+      input.radio, input.checkbox {
+        margin-left: 0px !important;
+      }
+
+      .verify-voterid {
+        margin: 5px 0px;
+      }
+
+      .form-group-voterid {
+      }
+
+      .section {
+        border: 1px solid #ddd;
+        background: white;
+        padding: 20px;
+        margin: 20px 0px;
+        border-radius: 10px;
+      }
+      .section h2 {
+        margin-top: 0px;
+      }
+      .hidden2 {
+          display: none;
+      }      
+
+      body {
+        background: #eef;
+      }
+
+      span.ss-required-asterisk {
+        color: red;
+      }
+
+      .disabled {
+        color: #888;
+      }
+      .disabled span.small {
+        color: #aaa;
+      }
+    </style>
+  </head>
+
+{% macro render_field(field, help="", class_="form-control") -%}
+    {% if field.errors %}
+        <div class="form-group has-error">
+    {% else %}
+        <div class="form-group">
+    {% endif %}
+        <label for="{{ field.id }}">{{ field.label.text }}
+          {% if field.flags.required %}
+            <span class="ss-required-asterisk" aria-hidden="true">*</span>          
+          {% endif %}
+          <span class="small">{{ help }}</span>          
+        </label>
+        {{ field(class_=class_, **kwargs) }}
+        <ul class="help-block list-unstyled">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{%- endmacro %}
+
+{% macro render_radio(field, help="", class_="radio") -%}
+    <div class="form-group form-group-voterid {{'has-error' if field.errors else ''}}" id="field-{{field.name.replace('_', '-')}}">
+        <label for="{{ field.id }}">{{ field.label.text }}
+          {% if field.flags.required %}
+            <span class="ss-required-asterisk" aria-hidden="true">*</span>          
+          {% endif %}        
+          <span class="small">{{ help }}</span></label>
+
+        {% for option in field %}
+          <label class="{{class_}}">
+            {{option(class_=class_)}} {{option.label}}
+          </label>
+        {% endfor %}
+
+        <ul class="help-block list-unstyled">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{%- endmacro %}
+
+{% macro render_checkbox(field, help="") -%}
+  {{render_radio(field, help=help, class_="checkbox")}}
+{%- endmacro %}
+
+{% macro render_voterid(field, help="") -%}
+    <div class="form-group form-group-voterid {{'has-error' if field.errors else ''}}" id="field-{{field.name.replace('_', '-')}}">
+      <label for="{{ field.id }}">{{ field.label.text }}
+        {% if field.flags.required %}
+          <span class="ss-required-asterisk" aria-hidden="true">*</span>          
+        {% endif %}        
+        <span class="small">{{ help }}</span>
+      </label>
+      <div>
+        {{ field(class_="form-control voterid", **kwargs) }}
+        <input type="button" class="verify-voterid" value="Verify Voter ID"/>
+        <div class="voter alert alert-success hidden2">
+            <div><strong><span class="glyphicon glyphicon-ok"></span> Verified!</strong></div>
+            <div class="voter-name"></div>
+            <div class="voter-relname"></div>
+            <div class="voter-age"></div>
+            <div class="voter-lc"></div>
+            <div class="voter-ac"></div>
+            <div class="voter-ward"></div>
+            <div class="voter-part"></div>
+        </div>
+        <div class="novoter alert alert-danger hidden2"><em>Invalid Voter ID</em></div>            
+      </div>
+      <ul class="help-block list-unstyled">
+          {% for error in field.errors %}
+              <li>{{ error }}</li>
+          {% endfor %}
+      </ul>
+    </div>
+{%- endmacro %}
+
+
+  <body>
+  <nav class="navbar navbar-inverse">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">AAM AADMI PARTY - Bangalore</a>
+      </div>
+      <p class="navbar-text navbar-right">
+        {% if user %}
+        Welcome {{user.email}} | <a href="/x/logout?next=/x/member-registration">Log Out</a>
+        {% endif %}
+      </p>
+
+    </div>
+  </nav>
+
+    {% if not user %}
+    <div class="container">
+      <h1>Member Registration Form</h1>
+
+      <p>Aam Aadmi Party, Bangalore - member registration for existing and new applicants.</p>
+
+      <div class="section">
+      <p>Please Log In using google account to continue.</p>
+
+      <a href="{{google_url}}" class="btn btn-primary">Login with Google</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="container">
+      <h1>Member Registration Form</h1>
+
+      <p>Aam Aadmi Party, Bangalore - member registration for existing and new applicants.</p>
+
+
+      <div class="section">
+      <p>You are logged in as <strong>{{user.email}}</strong>.</p>
+      <a class="btn btn-danger" href="/account/logout?next=/x/member-registration">Log Out</a>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <form method="POST" class="form">
+            <div class="section" id="section-personal">   
+              <h2>Personal Details</h2>       
+              {{render_field(form.name, help="Your Name")}}
+              {{render_field(form.father_name)}}
+              {{render_field(form.gender)}}
+              {{render_field(form.mobile)}}
+              {{render_field(form.mobile2)}}
+              {{render_field(form.email, help='Capture your Primary E-Mail ID, the one used by you in Social Media')}}
+              {{render_field(form.emergency_contact)}}
+              {{render_field(form.address)}}
+              {{render_field(form.pincode)}}
+            </div>
+
+            <div class="section" id="section-voterid">
+              <h2>Voter ID</h2>
+
+              <p>Identify your polling booth by providing your Voter ID or Voter ID of your neighbour.
+              </p>
+
+              {{render_radio(form.is_voter_at_residence)}}
+              {{render_voterid(form.voterid, help="Your Voter ID No. as seen on your VOTER ID CARD")}}
+              {{render_voterid(form.proxy_voterid, help="VOTER ID of any of your immediate neighbour for mapping your location")}}
+            </div>
+
+            <div class="section">
+              <h2>Additional Details</h2>
+              {{render_radio(form.livelihood)}}
+              {{render_field(form.employer)}}            
+              {{render_radio(form.choice_of_communication)}}
+              {{render_radio(form.work_from)}}
+              {{render_radio(form.internet_connection)}}
+              {{render_radio(form.how_much_time)}}
+              {{render_checkbox(form.languages)}}
+              {{render_checkbox(form.skills)}}
+
+              {{render_radio(form.active_volunteer)}}
+              {{render_checkbox(form.contributions)}}
+              {{render_field(form.reporting_person_name)}}
+              {{render_field(form.reporting_person_mobile)}}
+            </div>
+
+            <div class="section">
+              <h2>Declaration</h2>
+              <p>I am citizen of India. I am above 18 years , and not enrolled as a government employee. I am not a member of any other political party registered with the Election Commission of India. I am not a member with any organization whose views, policies or actions are in conflict with the objective of the party. I have not been convicted of any offense involving moral turpitude. I have full faith of party’s objective and vision. I hereby consent to receiving any communication from the party either in writing, electronically and/or in any audio-visual format via phone (including SMS/MMS), email and/or at my address.</p>
+
+              <p>The particulars and statements made above are correct to the best of my knowledge and nothing has been concealed or withheld.
+              </p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form> 
+        </div>
+      </div>
+    </div>
+    <footer>
+      <br/>
+      <br/>
+    </footer>
+    <script type="text/javascript">
+      $(function() {
+        $("#field-is-voter-at-residence input").change(function() {
+          var value = $("input:radio[name='is_voter_at_residence']:checked").val();
+          console.log(value);
+          if (value == 'YES') {
+            console.log("disabled");
+            $("#field-proxy-voterid").addClass("disabled")
+              .find("input").attr("disabled", "disabled");
+          }
+          else {
+            $("#field-proxy-voterid").removeClass("disabled")
+              .find("input").removeAttr("disabled");           
+          }
+
+          if (value != 'YES' && value != 'NO') { // not valid voterid
+            console.log("disabled");
+            $("#field-voterid").addClass("disabled")
+              .find("input").attr("disabled", "disabled");
+          }
+          else {
+            $("#field-voterid").removeClass("disabled")
+              .find("input").removeAttr("disabled");           
+          }
+
+
+        });
+
+        function zeropad(num, length) {
+          var s = "000000" + num;
+          return s.substr(s.length-length, length);
+        }
+
+        function get_parent(place, type) {
+          for (var i in place.parents) {
+            var p = place.parents[i];
+            if (p.type == type) {
+              return p;
+            }
+          }
+          return null;
+        }
+
+        $(".verify-voterid").click(function() {
+          var $parent = $(this).closest(".form-group-voterid");
+          var voterid = $parent.find(".voterid").val();
+          console.log($parent.find(".voter"));
+          $parent.find(".voter").hide();
+          $parent.find(".novoter").hide();          
+          $.getJSON("http://voter.missionvistaar.in/search?voterid=" + voterid, function(data) {
+            if (!data) {
+              $parent.find(".novoter").show();
+            }
+            else {
+              $parent.find(".voter").show();
+              $parent.find(".voter-name").html("Name: " + data.name);
+              $parent.find(".voter-relname").html("Rel. Name: " + data.relname);
+              $parent.find(".voter-ac").html("AC: " + data.ac);
+              $parent.find(".voter-part").html("Booth: " + data.part);
+
+              var key = "KA/AC" + zeropad(data.ac, 3) + "/PB" + zeropad(data.part, 4);
+              $.getJSON("http://missionvistaar.in/api/place/" + key, function(place) {
+                var ward = get_parent(place, "LB");
+                var ac = get_parent(place, "AC");
+                var lc = get_parent(place, "DISTRICT");
+                if (ward)
+                  $parent.find(".voter-ward").html("WARD: " + ward.name.replace(/WA0*/, ""));
+                $parent.find(".voter-ac").html("AC: " + ac.name.replace(/AC0*/, ""));
+                $parent.find(".voter-lc").html("LC: " + lc.name.replace(/PC0*/, ""));
+                $parent.find(".voter-part").html("Booth: " + place.name.replace(/PB0*/, ""));
+              });
+            }
+          });
+        });
+      });
+    </script>
+    {% endif %}
+  </body>
+</html>
+

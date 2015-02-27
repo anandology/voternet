@@ -35,6 +35,8 @@ urls = (
     "/login/oauth2callback", "oauth2callback",
     "/report-issue", "report_issue",
     "/tmp/(KA/AC\d+)/px.txt", "tmp_px_dump",
+    "/x/member-registration", "voternet.membership.webapp.member_registration",
+
 
     "/sudo", "sudo",
     "/debug", "debug",
@@ -81,6 +83,7 @@ def login_requrired(handler):
         and not web.ctx.path.startswith("/login") 
         and not web.ctx.path.startswith("/voterid/") 
         and not web.ctx.path.startswith("/tmp/") 
+        and not web.ctx.path.startswith("/x/")
         and web.ctx.path not in whitelist):
         user = account.get_current_user()
         if not user:
@@ -942,8 +945,11 @@ class login:
 
 class logout:
     def POST(self):
+        i = web.input(next=None, error="false")
+        next = i.next or "/"
         account.logout()
-        raise web.seeother("/")
+        raise web.seeother(next)
+    GET = POST
 
 class forgot_password:
     def GET(self):

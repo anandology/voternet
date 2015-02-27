@@ -146,7 +146,7 @@ def main():
     if "--add-admin" in sys.argv:
         index = sys.argv.index("--add-admin")
         email = sys.argv[index+1]
-        state = Place.find(code=webapp.get_state())
+        state = Place.find(key=webapp.get_state())
 
         # Hack to fix the error at account.get_current_user() when adding volunteer
         web.ctx.current_user = None

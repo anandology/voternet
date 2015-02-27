@@ -1,0 +1,128 @@
+import web
+from wtforms import (
+    Form,
+    BooleanField, DateField, IntegerField,
+    StringField, TextAreaField,
+    SelectField, RadioField, SelectMultipleField,
+    validators, widgets)
+
+class MultiDict(web.storage):
+    """wtforms expect the formdate to be a multi-dict instance with getall method.
+    This is a hack to make it work with web.py apps.
+    """
+    def getall(self, name):
+        if name in self:
+            value = self[name]
+            if not isinstance(value, list):
+                value = [value]
+            return value
+        else:
+            return []
+
+class BaseForm(Form):
+    def __init__(self, formdata=None, **kwargs):
+        formdata = formdata and MultiDict(formdata) or None
+        Form.__init__(self, formdata, **kwargs)
+
+
+def radio_field(label, values, **kwargs):
+    return RadioField(label, [validators.Required()], choices=[(v, v) for v in values], **kwargs)
+
+def checkbox_field(label, values):
+    return SelectMultipleField(
+        label,
+        choices=[(v, v) for v in values],
+        option_widget=widgets.CheckboxInput(),
+        widget=widgets.ListWidget(prefix_label=False)
+        )
+
+
+class RegistrationForm(BaseForm):
+    name = StringField('Name', [validators.Required()])
+    father_name = StringField('Father Name', [validators.Required()])
+    gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')])
+    date_of_birth = DateField('Date of Birth')
+    mobile = StringField('Personal Mobile No.', [validators.Required()])
+    mobile2 = StringField('Personal Mobile No. 2')
+    email = StringField('Personal E-Mail ID', [validators.Required(), validators.Email()])
+
+    emergency_contact = TextAreaField('EMERGENCY CONTACT NAME, RELATIONSHIP & MOBILE NUMBER', [validators.Required()])
+
+    address = TextAreaField('Residential Address', [validators.Required()])
+    pincode = StringField('PIN Code', [validators.Required()])
+
+    employer = StringField('EMPLOYER NAME OR PROFESSION', [validators.Required()])
+
+    livelihood = radio_field("Source of Livelihood", ['SALARIED', 'SELF EMPLOYED', 'RETIRED', 'STUDENT'])
+    choice_of_communication = radio_field("Choice of Communication", ['SMS', 'WHATSAPP', 'E-MAIL', 'FACEBOOK', 'TWITTER'])
+
+    work_from = radio_field('WHERE YOU WOULD LIKE TO WORK FROM', ['HOME', 'OUTSIDE', 'BOTH'])
+    internet_connection = radio_field("DO YOU HAVE INTERNET CONNECTION AT HOME", ['YES', 'NO'])
+
+    how_much_time = radio_field("HOW MUCH TIME YOU CAN VOLUNTEER", [
+        "FULL TIME",
+        "2-4 HOURS DAILY",
+        "1 HOUR/DAY ON WEEKENDS",
+        "ONLY WEEKEND"
+        ])
+
+    languages = checkbox_field("Languages Known", [
+        "KANNADA",
+        "ENGLISH",
+        "HINDI", 
+        "OTHER SOUTH INDIAN LANGUAGE"
+    ])
+
+    skills = checkbox_field("Areas where you can volunteer for Central Team", [
+        "Handle Helpline calls from Home",
+        "Data entry from Anywhere",
+        "Tele campaigning",
+        "Sourcing of News from online",
+        "Graphic designing",
+        "Photographer/Videographer",
+        "Video Editor/ Film Maker",
+        "Social Media Moderator (FB / Twitter)",
+        "Content Translators (Like Kannada News to Eng or Viceversa",
+        "Publicity/Advertisement",
+        "Creative (poets, musicians, artists, street theater)",
+        "FB / E-mail Content writing",
+        "Following on FB / Twitter for Feeder service",
+        "Technical support / Information Tech.",
+        "Joomal / Drupal / Webdesigning Expert",
+        "Designers on Photoshop / CorelDraw",
+        "System administrator",
+        "Online Researchers",
+        "Legal Service",
+        "Doctor/ Healthcare",
+        "Media/ Journalism/ Communication",
+        "Public Speaking",
+        "Fund Raising",
+        "Logistic  Management",
+        "Event Management",
+        "Social Media Moderator (FB / Twitter)",
+        "Content Translators (Like Kannada News to Eng or Viceversa",
+        "Publicity/Advertisement",
+        "Creative (poets, musicians, artists, street theater)",
+        "Office administration",
+        "Accounting/Finance",
+        "Volunteer management",
+        "Coordinators/ managers",
+        "Trainers",
+        "On the ground work",
+        "RTI Activist"])
+
+    active_volunteer = radio_field("Have you volunteered for Aam Aadmi Party before?", ['YES', 'NO'])
+
+    contributions = checkbox_field("What did you do?", [
+            "On-ground activities in Karnataka",
+            "Remote/back-office activities in Karnataka",
+            "On-ground activities in Delhi",
+            "Remote/back-office activities in Delhi",
+        ])
+
+    reporting_person_name = StringField("Name of the person that you've reported to")
+    reporting_person_mobile = StringField("Mobile number of the person that you've reported to")
+
+    is_voter_at_residence = radio_field("Is your Voter ID address same as your residential address?", ['YES', 'NO', "I don't have a valid Voter ID"])
+    voterid = StringField("Personal Voter ID")
+    proxy_voterid = StringField("Proxy Voter ID")
