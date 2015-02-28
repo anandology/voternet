@@ -113,7 +113,7 @@ class RegistrationForm(BaseForm):
 
     active_volunteer = radio_field("Have you volunteered for Aam Aadmi Party before?", ['YES', 'NO'])
 
-    contributions = checkbox_field("What did you do?", [
+    contributions = checkbox_field("What did you volunteer?", [
             "On-ground activities in Karnataka",
             "Remote/back-office activities in Karnataka",
             "On-ground activities in Delhi",
