@@ -200,25 +200,20 @@
 
       function replace(template, mapping) {
         var s = template;
-        for (var pattern in mapping)
-          s = s.replace(pattern, mapping[pattern]);
+        for (var pattern in mapping) {
+          var rx = new RegExp(pattern, "g");
+          s = s.replace(rx, mapping[pattern]);
+        }
 
-        console.log(s);
         return s;
       }
 
       $("input[type=radio]").change(function() {
-        console.log(["radio change"]);
         var selector = replace("input:radio[name=NAME]", {NAME: $(this).attr("name")});
 
         var name = $(this).attr("name").replace(/_/g, "-");
         var value = $(selector+":checked").val();
         var index = $(selector+":checked").index(selector);
-
-        console.log(["selector", selector]);
-        console.log(["name", name]);
-        console.log(["value", value]);
-        console.log(["index", index]);
 
         var mapping = {
           NAME: name,
