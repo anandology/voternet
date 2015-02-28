@@ -53,7 +53,7 @@ class RegistrationForm(BaseForm):
 
     employer = StringField('EMPLOYER NAME OR PROFESSION', [validators.Required()])
 
-    livelihood = radio_field("Source of Livelihood", ['SALARIED', 'SELF EMPLOYED', 'RETIRED', 'STUDENT', 'OTHER'])
+    livelihood = radio_field("Your Occupation", ['SALARIED EMPLOYEE', 'SELF EMPLOYED', 'RETIRED', 'STUDENT', 'OTHER'])
     choice_of_communication = checkbox_field("Your Preferred Choice of Communication",
         ['SMS', 'WHATSAPP', 'E-MAIL', 'FACEBOOK', 'TWITTER'],
         [validators.Required()])
@@ -64,11 +64,11 @@ class RegistrationForm(BaseForm):
     how_much_time = radio_field("HOW MUCH TIME YOU CAN VOLUNTEER", [
         "FULL TIME",
         "2-4 HOURS DAILY",
-        "1 HOUR/DAY ON WEEKENDS",
+        "1 HOUR/DAY ON WEEKDAYS",
         "ONLY WEEKEND"
         ])
 
-    languages = checkbox_field("Languages Known", [
+    languages = checkbox_field("Languages That You Can Speak", [
         "KANNADA",
         "ENGLISH",
         "HINDI", 
