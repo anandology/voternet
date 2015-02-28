@@ -29,7 +29,7 @@ class member_registration:
 
         form = RegistrationForm(web.webapi.rawinput())
         if user and form.validate():
-            self.add_member(form.data)
+            self.add_member(user, form.data)
             return render_template("index.html", form=form, user=user, google_url=google_url, done=True)
         else:
             return render_template("index.html", form=form, user=user, google_url=google_url)
@@ -47,7 +47,7 @@ class member_registration:
                 info.pop(k)
         result.update({prefix+k})
 
-    def add_member(self, data):
+    def add_member(self, user, data):
         def process_value(value):
             if isinstance(value, list):
                 return ",".join(v.replace(",", " ") for v in value)
@@ -58,6 +58,7 @@ class member_registration:
 
         data2['voterid_info'] = json.loads(data['voterid_info']) if data.get("voterid_info") else None
         data2['proxy_voterid_info'] = json.loads(data['proxy_voterid_info']) if data.get("proxy_voterid_info") else None
+        data2['submitted_by'] = user.email
 
         db = get_db()
         db.insert("signup", name=data['name'], phone=data['mobile'], email=data['email'], data=json.dumps(data2))
