@@ -329,12 +329,21 @@
       <a class="btn btn-danger" href="/account/logout?next=/x/member-registration">Log Out</a>
       </div>
 
-      <div class="row">
-        <div class="col-md-6 col-sm-12">
-          {{render_form()}}
-        </div>
+      {% if done %}
+      <div class="section">
+        <h2>Registration Complete!</h2>
+        <p>Thank for registering.</p>
+
+        <a href="./member-registration" class="btn btn-primary">Add a new member</a>
       </div>
+      {% else %}
+        <div class="row">
+          <div class="col-md-6 col-sm-12">
+            {{render_form()}}
+          </div>
+        </div>
       {% endif %}
+    {% endif %}
 
     </div>
     <footer>

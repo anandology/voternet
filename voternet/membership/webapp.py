@@ -30,7 +30,7 @@ class member_registration:
         form = RegistrationForm(web.webapi.rawinput())
         if user and form.validate():
             self.add_member(form.data)
-            return "done"
+            return render_template("index.html", form=form, user=user, google_url=google_url, done=True)
         else:
             return render_template("index.html", form=form, user=user, google_url=google_url)
 
