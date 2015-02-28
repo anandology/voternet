@@ -42,7 +42,7 @@ class RegistrationForm(BaseForm):
     name = StringField('Name', [validators.Required()])
     father_name = StringField('Father Name', [validators.Required()])
     gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')])
-    date_of_birth = DateField('Date of Birth')
+    date_of_birth = DateField('Date of Birth', [validators.Required()])
     mobile = StringField('Personal Mobile No.', [validators.Required()])
     mobile2 = StringField('Personal Mobile No. 2')
     email = StringField('Personal E-Mail ID', [validators.Required(), validators.Email()])
