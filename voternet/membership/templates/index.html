@@ -100,7 +100,7 @@
   {{render_radio(field, help=help, class_="checkbox")}}
 {%- endmacro %}
 
-{% macro render_voterid(field, help="") -%}
+{% macro render_voterid(field, hidden_field, help="") -%}
     <div class="form-group form-group-voterid {{'has-error' if field.errors else ''}}" id="field-{{field.name.replace('_', '-')}}">
       <label for="{{ field.id }}">{{ field.label.text }}
         {% if field.flags.required %}
@@ -110,6 +110,7 @@
       </label>
       <div>
         {{ field(class_="form-control voterid", **kwargs) }}
+        {{ hidden_field }}
         <input type="button" class="verify-voterid" value="Verify Voter ID"/>
         <div class="voter alert alert-success hidden2">
             <div><strong><span class="glyphicon glyphicon-ok"></span> Verified!</strong></div>
@@ -155,10 +156,10 @@
       {{render_radio(form.is_voter_at_residence)}}
 
       <div class="autodisable on-is-voter-at-residence index-2">
-      {{render_voterid(form.voterid, help="Your Voter ID No. as seen on your VOTER ID CARD")}}
+      {{render_voterid(form.voterid, form.voterid_info, help="Your Voter ID No. as seen on your VOTER ID CARD")}}
       </div>
       <div class="autodisable on-is-voter-at-residence index-0">
-      {{render_voterid(form.proxy_voterid, help="VOTER ID of any of your immediate neighbour for mapping your location")}}
+      {{render_voterid(form.proxy_voterid, form.proxy_voterid_info, help="VOTER ID of any of your immediate neighbour for mapping your location")}}
       </div>
     </div>
 
@@ -251,10 +252,11 @@
 
       $(".verify-voterid").click(function() {
         var $parent = $(this).closest(".form-group-voterid");
+        var $hidden = $parent.find("input[type=hidden]");
         var voterid = $parent.find(".voterid").val();
-        console.log($parent.find(".voter"));
         $parent.find(".voter").hide();
         $parent.find(".novoter").hide();
+        $hidden.val("");
         $.getJSON("http://voter.missionvistaar.in/search?voterid=" + voterid, function(data) {
           if (!data) {
             $parent.find(".novoter").show();
@@ -268,6 +270,7 @@
 
             var key = "KA/AC" + zeropad(data.ac, 3) + "/PB" + zeropad(data.part, 4);
             $.getJSON("http://missionvistaar.in/api/place/" + key, function(place) {
+              var px = get_parent(place, "PX");
               var ward = get_parent(place, "LB");
               var ac = get_parent(place, "AC");
               var lc = get_parent(place, "DISTRICT");
@@ -276,7 +279,27 @@
               $parent.find(".voter-ac").html("AC: " + ac.name.replace(/AC0*/, ""));
               $parent.find(".voter-lc").html("LC: " + lc.name.replace(/PC0*/, ""));
               $parent.find(".voter-part").html("Booth: " + place.name.replace(/PB0*/, ""));
+
+              var info = {
+                "voterid": voterid,
+                "name": data.name,
+                "relname": data.relname,
+                "gender": data.sex,
+                "age": data.age,
+                "serial": data.serial,
+                "part": data.part,
+                "pb": place.name,
+                "ac": ac.name,
+                "lc": lc.name
+              }
+              if (px)
+                info.px = px.name;
+
+              if (ward)
+                info.ward = ward.name;
+              $hidden.val(JSON.stringify(info));
             });
+
           }
         });
       });

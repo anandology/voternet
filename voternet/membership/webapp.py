@@ -34,12 +34,30 @@ class member_registration:
         else:
             return render_template("index.html", form=form, user=user, google_url=google_url)
 
+    def add_voterid_info(self, info, prefix, result, skip_presonal=False):
+        """Adds the voterid info to result with given prefix.
+
+        Used to add voterid or proxy voterid info to result with prefix
+        VOTER- or RESIDENCE-.
+        """
+        info = dict(info)
+        info.pop('voterid')
+        if skip_presonal:
+            for k in ['name', 'relname', 'gender', 'age']:
+                info.pop(k)
+        result.update({prefix+k})
+
     def add_member(self, data):
         def process_value(value):
             if isinstance(value, list):
                 return ",".join(v.replace(",", " ") for v in value)
             else:
                 return value
-        data = {k: process_value(v) for k, v in data.items()}
+        special_fields = ['voterid_info', 'proxy_voterid_info']
+        data2 = {k: process_value(v) for k, v in data.items() if k not in special_fields}
+
+        data2['voterid_info'] = json.loads(data['voterid_info']) if data.get("voterid_info") else None
+        data2['proxy_voterid_info'] = json.loads(data['proxy_voterid_info']) if data.get("proxy_voterid_info") else None
+
         db = get_db()
-        db.insert("signup", name=data['name'], phone=data['mobile'], email=data['email'], data=json.dumps(data))
+        db.insert("signup", name=data['name'], phone=data['mobile'], email=data['email'], data=json.dumps(data2))

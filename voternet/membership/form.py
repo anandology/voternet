@@ -1,10 +1,11 @@
 import web
 from wtforms import (
     Form,
-    BooleanField, DateField, IntegerField,
+    BooleanField, DateField, IntegerField, HiddenField,
     StringField, TextAreaField,
     SelectField, RadioField, SelectMultipleField,
-    validators, widgets)
+    validators, ValidationError,
+    widgets)
 
 class MultiDict(web.storage):
     """wtforms expect the formdate to be a multi-dict instance with getall method.
@@ -124,4 +125,22 @@ class RegistrationForm(BaseForm):
 
     is_voter_at_residence = radio_field("Is your Voter ID address same as your residential address?", ['YES', 'NO', "I don't have a valid Voter ID"])
     voterid = StringField("Personal Voter ID")
+    voterid_info = HiddenField()
     proxy_voterid = StringField("Proxy Voter ID")
+    proxy_voterid_info = HiddenField()
+
+    def validate_voterid(self, field):
+        if self.is_voter_at_residence.data in ["YES", "NO"]:
+            value = field.data
+            if not value:
+                raise ValidationError("This field is Required")
+            if not self.voterid_info.data:
+                raise ValidationError("Please verify the Voter ID before submit")
+
+    def validate_proxy_voterid(self, field):
+        if self.is_voter_at_residence.data != "YES":
+            value = field.data
+            if not value:
+                raise ValidationError("This field is Required")
+            if not self.proxy_voterid_info.data:
+                raise ValidationError("Please verify the Voter ID before submit")
