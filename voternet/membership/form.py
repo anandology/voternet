@@ -43,9 +43,10 @@ class RegistrationForm(BaseForm):
     father_name = StringField('Father Name', [validators.Required()])
     gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')])
     date_of_birth = DateField('Date of Birth', [validators.Required()])
+
     mobile = StringField('Personal Mobile No.', [validators.Required()])
     mobile2 = StringField('Personal Mobile No. 2')
-    email = StringField('Personal E-Mail ID', [validators.Required(), validators.Email()])
+    email = StringField('Personal E-Mail ID', [validators.Required()])
 
     emergency_contact = TextAreaField('EMERGENCY CONTACT NAME, RELATIONSHIP & MOBILE NUMBER', [validators.Required()])
 
@@ -144,3 +145,8 @@ class RegistrationForm(BaseForm):
                 raise ValidationError("This field is Required")
             if not self.proxy_voterid_info.data:
                 raise ValidationError("Please verify the Voter ID before submit")
+
+    def validate_email(self, field):
+        if field.data.strip() != 'NA':
+            v = validators.Email()
+            v(self, field)
