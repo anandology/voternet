@@ -139,7 +139,7 @@
       {{render_field(form.name, help="Your Name")}}
       {{render_field(form.father_name)}}
       {{render_field(form.gender)}}
-      {{render_field(form.date_of_birth, help="Provide in YYYY-MM-DD format.")}}
+      {{render_field(form.date_of_birth, help="Enter your date of birth in DD-MM-YYYY format.")}}
       {{render_field(form.mobile)}}
       {{render_field(form.mobile2)}}
       {{render_field(form.email, help='Capture your Primary E-Mail ID, the one used by you in Social Media (If the volunteer has no e-mail id mention as NA)')}}
@@ -198,6 +198,10 @@
   </form>
   <script type="text/javascript">
     $(function() {
+
+      $("#date_of_birth").datepicker({
+        format: 'dd-mm-yyyy'
+      });
 
       function replace(template, mapping) {
         var s = template;
@@ -313,6 +317,9 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="/static/datepicker/css/datepicker.css">
+    <script src="/static/datepicker/js/bootstrap-datepicker.js"></script>
 
     {{styles()}}
 

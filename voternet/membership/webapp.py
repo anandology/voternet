@@ -53,12 +53,13 @@ class member_registration:
                 return ",".join(v.replace(",", " ") for v in value)
             else:
                 return value
-        special_fields = ['voterid_info', 'proxy_voterid_info']
+        special_fields = ['voterid_info', 'proxy_voterid_info', 'date_of_birth']
         data2 = {k: process_value(v) for k, v in data.items() if k not in special_fields}
 
         data2['voterid_info'] = json.loads(data['voterid_info']) if data.get("voterid_info") else None
         data2['proxy_voterid_info'] = json.loads(data['proxy_voterid_info']) if data.get("proxy_voterid_info") else None
         data2['submitted_by'] = user.email
+        data2['date_of_birth'] = data['date_of_birth'].isoformat()
 
         db = get_db()
         db.insert("signup", name=data['name'], phone=data['mobile'], email=data['email'], data=json.dumps(data2))
