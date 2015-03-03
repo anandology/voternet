@@ -170,7 +170,10 @@ $code:
               <h4>Download <small>as XLS</small></h4>
               <a href="$place.get_url()/volunteers.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a>
               <a href="$place.get_url()/pb-agents.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All PB Agents</a>
+              $if place.type == 'STATE':
+                <a href="$place.get_url()/member-registrations.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All Member Registrations</a>
               </div>
+
           <div id="actions">
           <h4>Actions</h4>
           <a href="$place.get_url()/add-people" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>

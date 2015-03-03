@@ -63,6 +63,7 @@ urls = (
     "/([\w/]+)/coordinators.xls", "download_coordinators",
     "/([\w/]+)/volunteers.xls", "download_volunteers",
     "/([\w/]+)/pb-agents.xls", "download_pb_agents",
+    "/([\w/]+)/member-registrations.xls", "download_member_registrations",
     "/([\w/]+)/activity", "activity",
     "/([\w/]+)/sms", "send_sms",
     "/([\w/]+)/email", "send_email",
@@ -809,6 +810,19 @@ class download_pb_agents:
         web.header("Content-disposition", "attachment; filename=%s-pb-agents.xls" % place.code)
         web.header("Content-Type", "application/vnd.ms-excel")
         return dataset.xls
+
+class download_member_registrations:
+    @placify(roles=['coordinator', 'admin'])
+    def GET(self, place):
+        if not is_coordinator():
+            raise web.notfound()
+
+        from .membership.webapp import get_signups_as_dataset
+        dataset = get_signups_as_dataset()
+        web.header("Content-disposition", "attachment; filename=%s-member-registrations.xls" % place.code)
+        web.header("Content-Type", "application/vnd.ms-excel")
+        return dataset.xls
+
 
 class activity:
     @placify(roles=['admin', 'coordinator'])

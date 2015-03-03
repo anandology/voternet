@@ -8,6 +8,7 @@ from ..models import get_db, Place
 from .. import account, googlelogin
 import json
 import os
+import tablib
 
 web.config['jinja2_template_path'] = 'voternet/membership/templates'
 
@@ -77,3 +78,53 @@ class member_registration:
             phone=data['mobile'],
             email=data['email'],
             data=json.dumps(data2))
+
+def get_signups_as_dataset():
+    rows = get_db().select("signup")
+
+    def process_row(row):
+        d = dict(row.data)
+        residing_info = d.get('voterid_info') or d.get('proxy_voterid_info') or {}
+        d['residing_lc'] = residing_info.get('lc')
+        d['residing_ac'] = residing_info.get('ac')
+        d['residing_ward'] = residing_info.get('ward')
+        d['residing_booth'] = residing_info.get('pb')
+
+        voter_info = d.get('voterid_info') or {}
+        d['voter_name'] = voter_info.get('name')
+        d['voter_relname'] = voter_info.get('rel_name')
+        d['voter_lc'] = voter_info.get('lc')
+        d['voter_ac'] = voter_info.get('ac')
+        d['voter_ward'] = voter_info.get('ward')
+        d['voter_booth'] = voter_info.get('pb')
+
+        return [d.get(c, "-") for c in columns]
+
+    columns = ("name father_name gender date_of_birth mobile mobile2 email" +
+              " emergency_contact address pincode employer livelihood" +
+              " choice_of_communication work_from internet_connection" +
+              " how_much_time languages skills active_volunteer contributions" +
+              " reporting_person_name reporting_person_mobile" +
+              " is_voter_at_residence voterid proxy_voterid" +
+              " residing_lc residing_ac residing_ward residing_booth " +
+              " voter_name voter_relname voter_lc voter_ac voter_ward voter_booth" +
+              ""
+            ).split()
+
+    header_labels = {
+        "livelihood": "Occupation",
+        "work_from": "Would Like To Work From",
+        "how_much_time": "How Much Time You Ccan Volunteer",
+        "skills": "Areas where you can volunteer",
+        "active_volunteer": "Volunteered for Aam Aadmi Party before",
+        "contributions": "What did you volunteer",
+        "residing_ac": "Residing AC",
+        "residing_lc": "Residing LC",
+        "voter_lc": "Voter LC",
+        "voter_ac": "Voter AC",
+    }
+    headers = [header_labels.get(c, c.replace("_", " ").title()) for c in columns]
+    dataset = tablib.Dataset(headers=headers)
+    for row in rows:
+        dataset.append(process_row(row))
+    return dataset
