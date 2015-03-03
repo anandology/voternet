@@ -817,7 +817,7 @@ class download_member_registrations:
         if not is_coordinator():
             raise web.notfound()
 
-        from .membership.webapp import get_signups_as_dataset
+        from voternet.membership.webapp import get_signups_as_dataset
         dataset = get_signups_as_dataset()
         web.header("Content-disposition", "attachment; filename=%s-member-registrations.xls" % place.code)
         web.header("Content-Type", "application/vnd.ms-excel")
