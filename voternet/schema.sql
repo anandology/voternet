@@ -159,3 +159,13 @@ create table sendmail_message (
 );
 
 create index sendmail_message_batch_id_status_idx on sendmail_message(batch_id, status);
+
+create table signup (
+    id serial primary key,
+    place_id integer refereces place.id,
+    name text,
+    phone text,
+    email text,
+    timestamp timestamp,
+    data JSON
+);

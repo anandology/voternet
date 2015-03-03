@@ -4,7 +4,7 @@
 import web
 from webpy_jinja2 import render_template, context_processor
 from form import RegistrationForm
-from ..models import get_db
+from ..models import get_db, Place
 from .. import account, googlelogin
 import json
 import os
@@ -61,5 +61,19 @@ class member_registration:
         data2['submitted_by'] = user.email
         data2['date_of_birth'] = data['date_of_birth'].isoformat()
 
+        place_info = data2['voterid_info'] or data2['proxy_voterid_info'] or {}
+        if place_info:
+            ac = place_info['ac'].split("-")[0].strip()
+            pb = place_info['pb'].split("-")[0].strip()
+            place_key = "KA/{}/{}".format(ac, pb)
+            place = Place.find(place_key)
+        else:
+            place = None
+
         db = get_db()
-        db.insert("signup", name=data['name'], phone=data['mobile'], email=data['email'], data=json.dumps(data2))
+        db.insert("signup",
+            place_id=place and place.id,
+            name=data['name'],
+            phone=data['mobile'],
+            email=data['email'],
+            data=json.dumps(data2))
