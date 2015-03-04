@@ -83,7 +83,11 @@ def get_signups_as_dataset():
     rows = get_db().select("signup")
 
     def process_row(row):
-        d = dict(row.data)
+        data = row.data
+        if isinstance(data, basestring):
+            data = json.loads(data)
+
+        d = dict(data)
         residing_info = d.get('voterid_info') or d.get('proxy_voterid_info') or {}
         d['residing_lc'] = residing_info.get('lc')
         d['residing_ac'] = residing_info.get('ac')
