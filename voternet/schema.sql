@@ -160,6 +160,16 @@ create table sendmail_message (
 
 create index sendmail_message_batch_id_status_idx on sendmail_message(batch_id, status);
 
+create table voterid_info (
+    id serial primary key,
+    voterid text,
+    name text,
+    rel_name text,
+    ac_num integer,
+    part_no integer,
+    sl_no integer
+);
+
 create table signup (
     id serial primary key,
     place_id integer refereces place.id,
