@@ -172,7 +172,7 @@ create table voterid_info (
 
 create table signup (
     id serial primary key,
-    place_id integer refereces place.id,
+    place_id integer references place.id,
     name text,
     phone text,
     email text,
