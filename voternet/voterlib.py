@@ -3,11 +3,13 @@
 import web
 import sys
 import logging
+import urllib
+import json
 logger = logging.getLogger(__name__)
 
 URL = "http://ceokarnataka.kar.nic.in/SearchWithEpicNo_New.aspx"
 
-def get_voter_details(voterid):
+def get_voter_details_old(voterid):
     # ignore voterids like "yes" etc.
     if len(voterid) <= 4:
         return
@@ -20,8 +22,8 @@ def get_voter_details(voterid):
         b['ctl00$ContentPlaceHolder1$ddlDistrict'] = ['21']
         b['ctl00$ContentPlaceHolder1$txtEpic'] = voterid
         b.submit()
-    except Exception, e:
-        logger.error("failed to request voterid details for %s: %s", voterid, e)
+    except Exception:
+        logger.error("failed to request voterid details for %s", voterid, exc_info=True)
         return web.storage()
 
     soup = b.get_soup()
@@ -37,6 +39,21 @@ def get_voter_details(voterid):
     d['voterid'] = voterid
     logger.info("voter info %s %s", voterid, d)   
     return web.storage(d)
+
+def get_voter_details(voterid):    
+    response = urllib.urlopen("http://voter.missionvistaar.in/search?voterid=" + voterid).read()
+    d = json.loads(response)
+    if d:
+        cols = "ac_num ac_name part_no sl_no first_name last_name rel_firstname rel_lastname sex age".split()
+        mapping = {
+            "ac_num": "ac",
+            "part_no": "part",
+            "sl_no": "serial",
+            "first_name": "name",
+            "rel_firstname": "relname"
+        }
+        return {c:d.get(mapping.get(c, c), "") for c in cols}
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format = "[%(levelname)s] : %(filename)s:%(lineno)d : %(message)s")
