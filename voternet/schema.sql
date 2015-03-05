@@ -163,19 +163,27 @@ create index sendmail_message_batch_id_status_idx on sendmail_message(batch_id, 
 create table voterid_info (
     id serial primary key,
     voterid text,
+    pb_id integer references places(id),
+    first_name text,
+    last_name text,
     name text,
-    rel_name text,
+    rel_firstname text,
+    rel_lastname text,
+    age text,
     ac_num integer,
+    ac_name text,
     part_no integer,
-    sl_no integer
+    sl_no integer,
+    sex text
 );
 
 create table signup (
     id serial primary key,
-    place_id integer references place.id,
+    place_id integer references places.id,
     name text,
     phone text,
     email text,
+    voterid text,
     timestamp timestamp,
     data JSON
 );

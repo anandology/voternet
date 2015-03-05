@@ -51,9 +51,9 @@ class member_registration:
     def add_member(self, user, data):
         def process_value(value):
             if isinstance(value, list):
-                return ",".join(v.replace(",", " ") for v in value)
+                return ",".join(v.replace(",", " ").strip() for v in value)
             else:
-                return value
+                return value.strip()
         special_fields = ['voterid_info', 'proxy_voterid_info', 'date_of_birth']
         data2 = {k: process_value(v) for k, v in data.items() if k not in special_fields}
 
@@ -68,6 +68,14 @@ class member_registration:
             pb = place_info['pb'].split("-")[0].strip()
             place_key = "KA/{}/{}".format(ac, pb)
             place = Place.find(place_key)
+
+            place.add_volunteer(
+                name=data2['name'],
+                email=data2['email'] if data2['email'] != 'NA' else None,
+                phone=data2['mobile'],
+                voterid=data2['voterid'] or None,
+                role='pb_agent',
+                notes='membership-signup')
         else:
             place = None
 
