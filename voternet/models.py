@@ -528,7 +528,6 @@ class Place(web.storage):
     @staticmethod
     @cache.memoize(key="Place.find")
     def find(key):
-        print "Place.find", key
         result = get_db().select("places", where="key=$key", vars=locals())
         if result:
             return Place(result[0])
@@ -920,6 +919,13 @@ class Person(web.storage):
             del kwargs['email']
         result = get_db().where("people", **kwargs)
         if result:
+            roles = {
+                'admin': 0,
+                'coordinator': 1,
+                'volunteer': 2
+            }
+            # Pick the high-ranked role when the person has multiple roles.
+            result = sorted(result, key=lambda p: roles.get(p['role'], 100))
             return Person(result[0])
 
     @staticmethod
