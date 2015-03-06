@@ -52,7 +52,7 @@ def get_voter_details(voterid):
             "first_name": "name",
             "rel_firstname": "relname"
         }
-        return {c:d.get(mapping.get(c, c), "") for c in cols}
+        return web.storage({c:d.get(mapping.get(c, c), "") for c in cols})
 
 
 if __name__ == '__main__':
