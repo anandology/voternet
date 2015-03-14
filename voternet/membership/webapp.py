@@ -92,6 +92,10 @@ def get_signups_as_dataset():
 
     def process_row(row):
         data = row.data
+
+        IST = datetime.timedelta(hours=5, minutes=30)
+        timestamp = row.timestamp + IST # Add timezone offset for Indian Standard Time
+
         if isinstance(data, basestring):
             data = json.loads(data)
 
@@ -109,6 +113,7 @@ def get_signups_as_dataset():
         d['voter_ac'] = voter_info.get('ac')
         d['voter_ward'] = voter_info.get('ward')
         d['voter_booth'] = voter_info.get('pb')
+        d['timestamp'] = timestamp.isoformat()
 
         return [d.get(c, "-") for c in columns]
 
@@ -120,7 +125,7 @@ def get_signups_as_dataset():
               " is_voter_at_residence voterid proxy_voterid" +
               " residing_lc residing_ac residing_ward residing_booth " +
               " voter_name voter_relname voter_lc voter_ac voter_ward voter_booth" +
-              ""
+              " timestamp"
             ).split()
 
     header_labels = {

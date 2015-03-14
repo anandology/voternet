@@ -184,6 +184,6 @@ create table signup (
     phone text,
     email text,
     voterid text,
-    timestamp timestamp,
+    timestamp timestamp default current_timestamp,
     data JSON
 );
