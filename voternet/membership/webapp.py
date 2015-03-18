@@ -89,7 +89,7 @@ class member_registration:
             data=json.dumps(data2))
 
 def get_signups_as_dataset():
-    rows = get_db().select("signup")
+    rows = get_db().select("signup", order='timestamp, id')
 
     def process_row(row):
         data = row.data
