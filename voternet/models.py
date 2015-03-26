@@ -439,7 +439,7 @@ class Place(web.storage):
         pending = total-confirmed
         return web.storage(total=total, confirmed=confirmed, confirmed_booths=confirmed_booths, pending=pending)
 
-    @cache.object_memoize(key="agent_counts2")
+    #@cache.object_memoize(key="agent_counts2")
     def get_agent_counts2(self):
         total_pb_agents, _ = self._get_agent_counts("pb_agent")
         assigned_pb_agents, assigned_booths = self._get_agent_counts("pb_agent", 'PB')
