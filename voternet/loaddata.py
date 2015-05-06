@@ -52,20 +52,19 @@ def add_pcs(state, dir):
             if not db.select("places", where="type='PC' AND key=$key", vars=locals()):
                 db.insert("places", key=key, name=name, type="PC", code=code, parent_id=state.id, state_id=state.id)
 
-def add_wards(state, dir):
-    for line in open("dir/wards.txt"):
-        pc, ac, code, name = line.strip("\n").split("\t")
+def add_wards(state, filename):
+    for line in open(filename):
+        ac, code, name = line.strip("\n").split("\t")
         key = "{0}/{1}/{2}".format(state.key, ac, code)
         name = code + " - " + name
         parent = get_ac(state.id, ac)
         if not db.select("places", where="type='WARD' AND key=$key", vars=locals()):
-            ac_id = parent.id
-            pc_id = get_pc(state.id, pc).id
             db.insert("places", key=key, name=name, type="WARD", code=code,
                 parent_id=parent.id,
                 state_id=state.id,
-                pc_id=pc_id,
-                ac_id=ac_id)
+                region_id=parent.region_id,
+                pc_id=parent.pc_id,
+                ac_id=parent.id)
 
 def add_polling_booths(state, dir):
     with db.transaction():
@@ -161,6 +160,16 @@ def main():
         print "add_polling_centers", state, filename
         add_polling_centers(state, filename)
         return
+    if "--wards" in sys.argv:
+        index = sys.argv.index("--wards")
+        state_code = sys.argv[index+1]
+        filename = sys.argv[index+2]
+        state = Place.find(state_code)
+        print "add_wards", state, filename
+        add_wards(state, filename)
+        return
+
+
     
     dir = sys.argv[1]
     code = sys.argv[2]
