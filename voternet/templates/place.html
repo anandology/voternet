@@ -177,9 +177,10 @@ $code:
 
           <div id="actions">
           <h4>Actions</h4>
-          <a href="$place.get_url()/add-people" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
-          $if place.type == "AC":
-            <a href="$place.get_url()/import-people" class="btn btn-primary" role="button">Bulk Import Volunteers</a>
+          $# $if place.type == "AC":
+          $#    <a href="$place.get_url()/add-people" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span> Volunteer</a>
+          $# $if place.type == "AC":
+          $#  <a href="$place.get_url()/import-people" class="btn btn-primary" role="button">Bulk Import Volunteers</a>
           $if place.type in ["PC", "AC", "WARD"]:
               <a href="$place.get_url()/pb-agents" class="btn btn-primary" role="button">Manage PB Agents</a>
           $if place.type in ['PC', 'AC']:
