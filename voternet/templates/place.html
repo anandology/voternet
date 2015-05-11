@@ -165,7 +165,8 @@ $code:
 
     $if place_writable:
         <div  class="hidden-print">
-          $if place.type in ["STATE", "REGION", "PC", "AC", "WARD"]:
+          $# $if place.type in ["STATE", "REGION", "PC", "AC", "WARD"]:
+          $if place.type in ["STATE"]:
               <div id="download-links">
               <h4>Download <small>as XLS</small></h4>
               <a href="$place.get_url()/volunteers.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All Volunteers</a>
