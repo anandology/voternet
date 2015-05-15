@@ -27,7 +27,8 @@ class BaseForm(Form):
 
 
 def radio_field(label, values, **kwargs):
-    return RadioField(label, [validators.Required()], choices=[(v, v) for v in values], **kwargs)
+    choices = [(v, v) for v in values] + [("", "Not Specified")]
+    return RadioField(label, choices=choices, default="", **kwargs)
 
 def checkbox_field(label, values, validators=None):
     return SelectMultipleField(
@@ -40,25 +41,24 @@ def checkbox_field(label, values, validators=None):
 
 class RegistrationForm(BaseForm):
     name = StringField('Name', [validators.Required()])
-    father_name = StringField('Father Name', [validators.Required()])
+    father_name = StringField('Father Name')
     gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')])
-    date_of_birth = DateField('Date of Birth', [validators.Required()], format='%d-%m-%Y')
+    date_of_birth = DateField('Date of Birth', format='%d-%m-%Y')
 
     mobile = StringField('Personal Mobile No.', [validators.Required()])
     mobile2 = StringField('Personal Mobile No. 2')
     email = StringField('Personal E-Mail ID', [validators.Required()])
 
-    emergency_contact = TextAreaField('EMERGENCY CONTACT NAME, RELATIONSHIP & MOBILE NUMBER', [validators.Required()])
+    emergency_contact = TextAreaField('EMERGENCY CONTACT NAME, RELATIONSHIP & MOBILE NUMBER')
 
-    address = TextAreaField('Residential Address', [validators.Required()])
-    pincode = StringField('PIN Code', [validators.Required()])
+    address = TextAreaField('Residential Address')
+    pincode = StringField('PIN Code')
 
-    employer = StringField('EMPLOYER NAME OR PROFESSION', [validators.Required()])
+    employer = StringField('EMPLOYER NAME OR PROFESSION')
 
     livelihood = radio_field("Your Occupation", ['SALARIED EMPLOYEE', 'SELF EMPLOYED', 'RETIRED', 'STUDENT', 'OTHER'])
     choice_of_communication = checkbox_field("Your Preferred Choice of Communication",
-        ['SMS', 'WHATSAPP', 'E-MAIL', 'FACEBOOK', 'TWITTER'],
-        [validators.Required()])
+        ['SMS', 'WHATSAPP', 'E-MAIL', 'FACEBOOK', 'TWITTER'])
 
     work_from = radio_field('WHERE YOU WOULD LIKE TO WORK FROM', ['HOME', 'OUTSIDE', 'BOTH'])
     internet_connection = radio_field("DO YOU HAVE INTERNET CONNECTION AT HOME", ['YES', 'NO'])
@@ -75,7 +75,7 @@ class RegistrationForm(BaseForm):
         "ENGLISH",
         "HINDI", 
         "OTHER SOUTH INDIAN LANGUAGE"
-    ], [validators.Required()])
+    ])
 
     skills = checkbox_field("Areas where you can volunteer for Central Team", [
         "Accounting/Finance",
@@ -110,7 +110,7 @@ class RegistrationForm(BaseForm):
         "Trainers",
         "Video Editor / Film Maker",
         "Volunteer management",
-    ], [validators.Required()])
+    ])
 
     active_volunteer = radio_field("Have you volunteered for Aam Aadmi Party before?", ['YES', 'NO'])
 
