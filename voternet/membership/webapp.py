@@ -14,6 +14,8 @@ import datetime
 web.config['jinja2_template_path'] = 'voternet/membership/templates'
 
 class member_registration:
+    USE_SIMPLE_FORM = False
+
     def GET(self):
         user = account.get_current_user()
         google = googlelogin.GoogleLogin()
@@ -21,7 +23,7 @@ class member_registration:
         google_url = google.get_redirect_url(state=next)
 
         form = RegistrationForm()
-        return render_template("index.html", form=form, user=user, google_url=google_url)
+        return render_template("index.html", form=form, user=user, google_url=google_url, simple=self.USE_SIMPLE_FORM)
 
     def POST(self):
         user = account.get_current_user()
@@ -34,7 +36,7 @@ class member_registration:
             self.add_member(user, form.data)
             return render_template("index.html", form=form, user=user, google_url=google_url, done=True)
         else:
-            return render_template("index.html", form=form, user=user, google_url=google_url)
+            return render_template("index.html", form=form, user=user, google_url=google_url, simple=self.USE_SIMPLE_FORM)
 
     def add_voterid_info(self, info, prefix, result, skip_presonal=False):
         """Adds the voterid info to result with given prefix.
@@ -87,6 +89,9 @@ class member_registration:
             phone=data['mobile'],
             email=data['email'],
             data=json.dumps(data2))
+
+class member_registration2(member_registration):
+    USE_SIMPLE_FORM = True
 
 def get_signups_as_dataset():
     rows = get_db().select("signup", order='timestamp, id')

@@ -36,6 +36,7 @@ urls = (
     "/report-issue", "report_issue",
     "/tmp/(KA/AC\d+)/px.txt", "tmp_px_dump",
     "/x/member-registration", "voternet.membership.webapp.member_registration",
+    "/x/member-registration/simple", "voternet.membership.webapp.member_registration2",
 
 
     "/sudo", "sudo",

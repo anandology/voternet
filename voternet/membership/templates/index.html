@@ -55,9 +55,9 @@
 
 {% macro render_field(field, help="", class_="") -%}
     {% if field.errors %}
-        <div class="form-group has-error">
+        <div class="form-group has-error {{ 'field-required' if field.flags.required else 'field-not-required' }}">
     {% else %}
-        <div class="form-group">
+        <div class="form-group {{ 'field-required' if field.flags.required else 'field-not-required' }}">
     {% endif %}
         <label for="{{ field.id }}">{{ field.label.text }}
           {% if field.flags.required %}
@@ -75,7 +75,7 @@
 {%- endmacro %}
 
 {% macro render_radio(field, help="", class_="radio") -%}
-    <div class="form-group form-group-voterid {{'has-error' if field.errors else ''}}" id="field-{{field.name.replace('_', '-')}}">
+    <div class="form-group form-group-voterid {{'has-error' if field.errors else ''}}{{ 'field-required' if field.flags.required else 'field-not-required' }}" id="field-{{field.name.replace('_', '-')}}">
         <label for="{{ field.id }}">{{ field.label.text }}
           {% if field.flags.required %}
             <span class="ss-required-asterisk" aria-hidden="true">*</span>          
@@ -101,7 +101,7 @@
 {%- endmacro %}
 
 {% macro render_voterid(field, hidden_field, help="") -%}
-    <div class="form-group form-group-voterid {{'has-error' if field.errors else ''}}" id="field-{{field.name.replace('_', '-')}}">
+    <div class="form-group form-group-voterid field-required {{'has-error' if field.errors else ''}}" id="field-{{field.name.replace('_', '-')}}">
       <label for="{{ field.id }}">{{ field.label.text }}
         {% if field.flags.required %}
           <span class="ss-required-asterisk" aria-hidden="true">*</span>          
@@ -164,7 +164,7 @@
       </div>
     </div>
 
-    <div class="section">
+    <div class="section field-not-required">
       <h2>Additional Details</h2>
       {{render_radio(form.livelihood)}}
       {{render_field(form.employer, help="If you are a salaried, mention your company Name, and if you are a self employed, mention your industry or nature of business type")}}
@@ -176,7 +176,7 @@
       {{render_checkbox(form.skills)}}
 
     </div>
-    <div class="section" id="section-history">
+    <div class="section field-not-required" id="section-history">
       <h2>Your AAP Volunteering History</h2>
       {{render_radio(form.active_volunteer)}}
       <div class="autodisable on-active-volunteer value-NO">
@@ -322,6 +322,14 @@
     <script src="/static/datepicker/js/bootstrap-datepicker.js"></script>
 
     {{styles()}}
+
+    {% if simple %}
+      <style type="text/css">
+        .field-not-required {
+          display: none !important;
+        }
+      </style>
+    {% endif %}
 
   </head>
   <body>
