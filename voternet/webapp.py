@@ -632,6 +632,16 @@ class edit_person:
                 person.update(place_id=new_place.id)
                 flash.add_flash_message("success", "Assigned {0} to {1}".format(person.name, new_place.name))
                 raise web.seeother(next or new_place.url)
+        elif i.action in ("make-ward-coordinator", 'make-ac-coordinator', 'make-pc-coordinator'):
+            type = i.action.split("-")[1]
+            parent = place.get_parent(type)
+            if not parent or not parent.writable_by(user):
+                return render.access_restricted()
+            parent.add_volunteer(name=person.name, email=person.email, phone=person.phone, role='coordinator')
+            raise web.seeother(parent.url)
+        raise web.seeother(place.url)
+
+
         raise web.seeother(place.url)
 
 class edit_account:

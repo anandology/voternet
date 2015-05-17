@@ -24,7 +24,8 @@ $def render_field(field, **kwargs):
     <h2 style="margin-top: -15px;"><small>$roles.get(person.role, person.role.title()) for <a href="$person.place.get_url()">$person.place.name $person.place.type_label</a></small></h2>
 
 <div class="row">
-    <form role="form" method="POST" class="col-md-6">
+    <form role="form" method="POST">
+    <div class="col-md-6">
       $:render_field(form.name, placeholder="Enter name")
       $:render_field(form.phone, placeholder="Phone Number")
       $:render_field(form.email, placeholder="Email Address")
@@ -32,10 +33,12 @@ $def render_field(field, **kwargs):
       $if show_role:
         $:render_field(form.role)
 
+      <div>
       <button type="submit" name="action" value="save" class="btn btn-primary">Save</button>
       $if show_role:
         <button type="submit" name="action" value="delete" class="btn btn-danger pull-right">Delete</button>
-    </form>
+      </div>
+    </div>
     <div class="col-md-6">
         $ dups = person.find_dups()
         $if dups:
@@ -58,5 +61,16 @@ $def render_field(field, **kwargs):
             <div class="alert alert-success">
                 <strong>Yay!</strong> No duplicate entries of this person are found.
             </div>
+    <div class="alert alert-warning">
+        $ place = person.place
+        $ user = get_current_user()
+        $if place.get_parent('ward') and  place.get_parent('ward').writable_by(user):
+            <button type="submit" name="action" value="make-ward-coordinator" class="btn btn-default">Make Ward Coordinator</button>
+        $if place.get_parent('ac') and  place.get_parent('ac').writable_by(user):
+            <button type="submit" name="action" value="make-ac-coordinator" class="btn btn-default">Make AC Coordinator</button>
+        $if place.get_parent('pc') and  place.get_parent('pc').writable_by(user):
+            <button type="submit" name="action" value="make-pc-coordinator" class="btn btn-default">Make PC Coordinator</button>
+      </div>
     </div>
+    </form>
 </div>
