@@ -552,6 +552,8 @@ class Place(web.storage):
         return "<Place: %s>" % dict(self)
 
     def writable_by(self, user, roles=['coordinator', 'admin']):
+        if not user:
+            return False
         # super admins can write to any page.
         if user.email in web.config.get('super_admins', []):
             return True
@@ -564,6 +566,8 @@ class Place(web.storage):
         return bool(result)
 
     def viewable_by(self, user):
+        if not user:
+            return False
         # super admins can view any page.
         if user.email in web.config.get('super_admins', []):
             return True
