@@ -27,7 +27,13 @@ class BaseForm(Form):
 
 
 def radio_field(label, values, **kwargs):
-    choices = [(v, v) for v in values] + [("", "Not Specified")]
+    choices = [(v, v) for v in values]
+
+    required = kwargs.pop("required", False)
+    if not required:
+        choices += [("", "Not Specified")]
+    else:
+        kwargs['validators'] = [validators.Required()]
     return RadioField(label, choices=choices, default="", **kwargs)
 
 def checkbox_field(label, values, validators=None):
@@ -124,7 +130,7 @@ class RegistrationForm(BaseForm):
     reporting_person_name = StringField("Name of the person that you've reported to")
     reporting_person_mobile = StringField("Mobile number of the person that you've reported to")
 
-    is_voter_at_residence = radio_field("Is your Voter ID address same as your residential address?", ['YES', 'NO', "I don't have a valid Voter ID"])
+    is_voter_at_residence = radio_field("Is your Voter ID address same as your residential address?", ['YES', 'NO', "I don't have a valid Voter ID"], required=True)
     voterid = StringField("Personal Voter ID")
     voterid_info = HiddenField()
     proxy_voterid = StringField("Proxy Voter ID")
