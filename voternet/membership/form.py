@@ -45,11 +45,17 @@ def checkbox_field(label, values, validators=None):
         validators=validators or []
         )
 
+class DateField2(DateField):
+    def process_formdata(self, valuelist):
+        # ignore empty values
+        valuelist = [v for v in valuelist if v]
+        return DateField.process_formdata(self, valuelist)
+
 class RegistrationForm(BaseForm):
     name = StringField('Name', [validators.Required()])
     father_name = StringField('Father Name')
     gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')])
-    date_of_birth = DateField('Date of Birth', format='%d-%m-%Y', validators=[validators.Required()])
+    date_of_birth = DateField2('Date of Birth', format='%d-%m-%Y')
 
     mobile = StringField('Personal Mobile No.', [validators.Required()])
     mobile2 = StringField('Personal Mobile No. 2')

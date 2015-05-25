@@ -69,7 +69,7 @@ class member_registration:
         data2['voterid_info'] = json.loads(data['voterid_info']) if data.get("voterid_info") else None
         data2['proxy_voterid_info'] = json.loads(data['proxy_voterid_info']) if data.get("proxy_voterid_info") else None
         data2['submitted_by'] = user.email
-        data2['date_of_birth'] = data['date_of_birth'].isoformat()
+        data2['date_of_birth'] = data['date_of_birth'] and data['date_of_birth'].isoformat() or ''
 
         place_info = data2['voterid_info'] or data2['proxy_voterid_info'] or {}
         if place_info:
