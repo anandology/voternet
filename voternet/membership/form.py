@@ -49,7 +49,7 @@ class RegistrationForm(BaseForm):
     name = StringField('Name', [validators.Required()])
     father_name = StringField('Father Name')
     gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')])
-    date_of_birth = DateField('Date of Birth', format='%d-%m-%Y')
+    date_of_birth = DateField('Date of Birth', format='%d-%m-%Y', validators=[validators.Required()])
 
     mobile = StringField('Personal Mobile No.', [validators.Required()])
     mobile2 = StringField('Personal Mobile No. 2')
