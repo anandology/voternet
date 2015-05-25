@@ -13,6 +13,12 @@ import datetime
 
 web.config['jinja2_template_path'] = 'voternet/membership/templates'
 
+@context_processor
+def context_vars():
+    return {
+        'current_url': web.ctx.home + web.ctx.fullpath
+    }
+
 class member_registration:
     USE_SIMPLE_FORM = False
 
