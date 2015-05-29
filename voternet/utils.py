@@ -159,7 +159,7 @@ def notify_signup(volunteer):
     cc = [c.email for c in coordinators]
     send_email(volunteer.email, msg, cc=cc)
 
-    send_sms(volunteer, msg.message)
+    send_sms([volunteer], msg.message)
 
     name = volunteer.name
     phone = volunteer.phone
@@ -190,6 +190,11 @@ def process_phone(number):
     return number
 
 def send_sms(agents, message):
+    if not web.config.get('sms_url'):
+        print >> web.debug, "To: {}".format(",".join(a.phone for a in agents))
+        print >> web.debug, message
+        return
+
     unsubscribes = get_unsubscribes()
     phones = [process_phone(a.phone) for a in agents if a.email not in unsubscribes]
     phones = set(p for p in phones if p and len(p) == 10)
