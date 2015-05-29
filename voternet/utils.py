@@ -148,6 +148,17 @@ def sendmail_voterid_added(agent, conn=None):
         cc = [c.email for c in coordinators]
         send_email(agent.email, msg, cc=cc, conn=conn)
 
+def notify_signup(volunteer):
+    from webapp import xrender
+    msg = xrender.email_volunteer_signup(volunteer)
+    place = volunteer.place
+    ward = place.get_parent("WARD")
+    ac = place.get_parent("AC")
+    pc = place.get_parent("PC")
+    coordinators = (ward and ward.get_coordinators() or []) + ac.get_coordinators() + pc.get_coordinators()
+    cc = [c.email for c in coordinators]
+    send_email(volunteer.email, msg, cc=cc)
+
 @limit_once_per_day
 def sendmail_voterid_pending(agent, conn=None):
     unsubscribes = get_unsubscribes()

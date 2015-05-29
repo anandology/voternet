@@ -5,7 +5,7 @@ import web
 from webpy_jinja2 import render_template, context_processor
 from form import RegistrationForm
 from ..models import get_db, Place
-from .. import account, googlelogin
+from .. import account, googlelogin, utils
 import json
 import os
 import tablib
@@ -78,7 +78,7 @@ class member_registration:
             place_key = "KA/{}/{}".format(ac, pb)
             place = Place.find(place_key)
 
-            place.add_volunteer(
+            member = place.add_volunteer(
                 name=data2['name'],
                 email=data2['email'] if data2['email'] != 'NA' else None,
                 phone=data2['mobile'],
@@ -87,6 +87,7 @@ class member_registration:
                 notes='membership-signup')
         else:
             place = None
+            member = None
 
         db = get_db()
         db.insert("signup",
@@ -95,6 +96,8 @@ class member_registration:
             phone=data['mobile'],
             email=data['email'],
             data=json.dumps(data2))
+        if member:
+            utils.notify_signup(member)
 
 class member_registration2(member_registration):
     USE_SIMPLE_FORM = True
