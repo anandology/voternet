@@ -10,6 +10,9 @@ import json
 import os
 import tablib
 import datetime
+import logging
+
+logger = logging.getLogger("webapp")
 
 web.config['jinja2_template_path'] = 'voternet/membership/templates'
 
@@ -97,7 +100,10 @@ class member_registration:
             email=data['email'],
             data=json.dumps(data2))
         if member:
-            utils.notify_signup(member)
+            try:
+                utils.notify_signup(member)
+            except:
+                logger.error("Failed to notify about signup.", exc_info=True)
 
 class member_registration2(member_registration):
     USE_SIMPLE_FORM = True

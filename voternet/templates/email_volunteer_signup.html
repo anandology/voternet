@@ -2,20 +2,20 @@ $def with (volunteer)
 $var subject: Thank You for Registering as a Volunteer
 $ booth = volunteer.place
 $ ward = booth.get_parent("WARD")
-$ ward_coordinators = ward and ward.get_coordinators()
+$ ward_coordinators = ward and ward.get_coordinators() or []
 $ ac = booth.get_parent("AC")
-$ ac_coordinators = ac and ac.get_coordinators()
+$ ac_coordinators = ac and ac.get_coordinators() or []
 $ pc = booth.get_parent("PC")
-$ pc_coordinators = pc and pc.get_coordinators()
+$ pc_coordinators = pc and pc.get_coordinators() or []
 Dear $volunteer.name,
 
 Thank you for registering as a volunteer at booth $booth.code of $ac.name Assembly Consituency.
 
 You have been registered with the following details:
 
-	Name: $volunteer.name
-	Phone: $volunteer.phone
-	E-mail: $volunteer.email
+    Name: $volunteer.name
+    Phone: $volunteer.phone
+    E-mail: $volunteer.email
 
 $if ward_coordinators: Your ward incharge is $ward_coordinators[0].name - $ward_coordinators[0].phone.
 $if ac_coordinators: Your AC Adhyaksha is $ac_coordinators[0].name - $ac_coordinators[0].phone.
@@ -24,6 +24,10 @@ $if pc_coordinators: And your Loksabha Adhyaksha is $pc_coordinators[0].name - $
 Thank you for stepping up and volunteering. Together, we can easily overthrow the corrupt politicians and bring in the change that we wish to see in the country.
 
 Jai Hind! Jai Karnataka!!
+
+$var coordinators = ward_coordinators + ac_coordinators + pc_coordinators
+
+$var message: Thank you for registering as volunteer. Your ${"ward incharge is {}-{}. ".format(ward_coordinators[0].name, ward_coordinators[0].phone) if ward_coordinators else ""}${"AC Adhyaksha is {}-{}. ".format(ac_coordinators[0].name, ac_coordinators[0].phone) if ac_coordinators else ""}${"Loksabha Adhyaksha is {}-{}.".format(pc_coordinators[0].name, pc_coordinators[0].phone) if pc_coordinators else ""}
 
 ---
 Aam Aadmi Party, Karnataka

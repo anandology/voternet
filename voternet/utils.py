@@ -159,6 +159,15 @@ def notify_signup(volunteer):
     cc = [c.email for c in coordinators]
     send_email(volunteer.email, msg, cc=cc)
 
+    send_sms(volunteer, msg.message)
+
+    name = volunteer.name
+    phone = volunteer.phone
+    booth = place.code.lstrip("PB0")
+    ward = ward or ac
+    message2 = "You have a new volunteer Name {} & Mob {} registered under {} booth of {} ward.".format(name, phone, booth, ward.name)
+    send_sms(msg.coordinators, message2)
+
 @limit_once_per_day
 def sendmail_voterid_pending(agent, conn=None):
     unsubscribes = get_unsubscribes()
