@@ -54,7 +54,7 @@ class DateField2(DateField):
 class RegistrationForm(BaseForm):
     name = StringField('Name', [validators.Required()])
     father_name = StringField('Father Name')
-    gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')])
+    gender = SelectField('Gender', [validators.Required()], choices=[('male', 'Male'), ('female', 'Female')])
     date_of_birth = DateField2('Date of Birth', format='%d-%m-%Y')
 
     mobile = StringField('Personal Mobile No.', [validators.Required()])
