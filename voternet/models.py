@@ -447,6 +447,8 @@ class Place(web.storage):
         total_px_agents, _ = self._get_agent_counts("px_agent")
         assigned_px_agents, assigned_centers = self._get_agent_counts("px_agent", 'PX')
 
+        ward_coordinators, assigned_wards = self._get_agent_counts('coordinator', 'WARD')
+
         return web.storage({
             "assigned_pb_agents": assigned_pb_agents,
             "assigned_pbs": assigned_booths,
@@ -454,7 +456,10 @@ class Place(web.storage):
             "assigned_px_agents": assigned_px_agents,
             "unassigned_px_agents": total_px_agents - assigned_px_agents,            
             "assigned_pxs": assigned_centers,
-            "assigned_pxs_including_pbs": self._get_px_count(),            
+            "assigned_pxs_including_pbs": self._get_px_count(),
+
+            "assigned_ward_coordinators": ward_coordinators,
+            "assigned_wards": assigned_wards,
         })
 
     def _get_agent_counts(self, role, place_type=None):
