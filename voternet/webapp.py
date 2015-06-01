@@ -65,6 +65,7 @@ urls = (
     "/([\w/]+)/volunteers.xls", "download_volunteers",
     "/([\w/]+)/pb-agents.xls", "download_pb_agents",
     "/([\w/]+)/member-registrations.xls", "download_member_registrations",
+    "/([\w/]+)/ward-report", "ward_report",
     "/([\w/]+)/activity", "activity",
     "/([\w/]+)/sms", "send_sms",
     "/([\w/]+)/email", "send_email",
@@ -721,6 +722,17 @@ class links:
         links = [link for link in links if link.get('url')]
         place.save_links(links)
         return '{"result": "ok"}'
+
+class ward_report:
+    def GET(self, code):
+        place = Place.find(key=code)
+        if not place:
+            raise web.notfound()
+        user = account.get_current_user()
+        if not place.writable_by(user, roles=['coordinator', 'admin']):
+            raise web.seeother(place.url)
+        return render.ward_report(place)
+
 
 class sudo:
     def GET(self):

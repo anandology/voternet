@@ -184,6 +184,9 @@ $code:
               <a href="$place.get_url()/pb-agents.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All PB Agents</a>
               $if place.type == 'STATE':
                 <a href="$place.get_url()/member-registrations.xls" class="btn btn-primary hidden-print" role="button"><span class="glyphicon glyphicon-download"></span> All Member Registrations</a>
+              $if place.type in ['STATE', 'REGION', 'PC', 'AC']:
+                <a href="$place.get_url()/ward-report" class="btn btn-primary hidden-print" role="button">Ward Report</a>
+              </div>
               </div>
 
           <div id="actions">
@@ -283,10 +286,10 @@ $code:
                             <div><a href="tel:$person.phone">$person.phone</a></div>
                     </div>
             </td>
+            $ counts = p.get_counts()
             <!--
             <td>
                 <ul class="list-unstyled">
-                    $ counts = p.get_counts()
                     $ vcounts = p.get_volunteer_counts()                    
                     $for t in subtypes[1:]:
                         $ count = counts.get(t.code, 0)

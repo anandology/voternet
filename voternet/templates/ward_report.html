@@ -1,0 +1,39 @@
+$def with (place)
+
+$var title: $place.name
+
+<ul class="breadcrumb">
+    $for p in place.get_parents():
+        <li><a href="$p.get_url()">$p.name</a> <span class="divider"></span></li>
+    <li><a href="$place.get_url()">$place.name</a></li>
+</ul>
+
+<h1><a href="$place.get_url()">$place.name</a> <span class="small">$place.type_label</span> / Ward Report</h1>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Ward Name</th>
+        <th>Assembly Constituency</th>
+        <th>Loksabha Constituency</th>
+        <th>Ward Drivers</th>
+        <th>Number of Booths</th>
+        <th>Booth Agents</th>
+        <th>Number of Polling Centers</th>
+        <th>Polling Center Agents</th>
+    </tr> 
+    $for ward in place.get_places('WARD'):
+    	$ ac = ward.get_parent("AC")
+    	$ pc = ward.get_parent("PC")
+        $ counts = p.get_counts()
+    	$ agent_counts = p.get_agent_counts2()
+    	<tr>
+    		<td>$ward.name</td>
+    		<td>${ac and ac.name or "-"}</td>
+    		<td>${pc and pc.name or "-"}</td>
+    		<td>$agent_counts.get("asigned_ward_coordinators", 0)</td>
+    		<td>$counts.get("PB", 0)</td>
+    		<td>$agent_counts.get("asigned_pb_agents", 0)</td>
+    		<td>$counts.get("PX", 0)</td>
+    		<td>$agent_counts.get("asigned_px_agents", 0)</td>
+    	</tr>
+</table>
