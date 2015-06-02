@@ -28,6 +28,7 @@ urls = (
     "/account/login", "login",
     "/account/logout", "logout",
     "/account/remoteauth", "remoteauth",
+    "/account/remoteauth/verify", "remoteauth_verify",
     "/account/remoteauth/authorize", "remoteauth_authorize",
     "/account/forgot-password", "forgot_password",
     "/account/reset-password", "change_password",
@@ -1012,7 +1013,25 @@ class remoteauth:
             raise web.seeother(url('/account/login', next='/account/remoteauth', redirect_uri=redirect_uri))
 
 def jsonify(**kwargs):
-    return json.dumps(kwargs)
+    return json.dumps(kwargs, indent=4)
+
+class remoteauth_verify:
+    def POST(self):
+        i = web.input()
+        token = i.get('token')
+        user = account.token2user(token)
+
+        if not user:
+            return jsonify(
+                    status='failed',
+                    code='error_token_invalid',
+                    message='Token is either invalid or expired.')
+        else:
+            return jsonify(
+                    status='ok',
+                    code='verified',
+                    message='The token is successfully verified.',
+                    person=dict(name=user.name))
 
 class remoteauth_authorize:
     def POST(self):
@@ -1041,14 +1060,12 @@ class remoteauth_authorize:
             return jsonify(
                     status='failed',
                     code='error_permission_denied',
-                    message="User doesn't have permission to modify data at this place.",
-                    person=dict(name=user.name))
+                    message="User doesn't have permission to modify data at this place.")
         else:
             return jsonify(
                     status='ok',
                     code='authorized',
-                    message='The user is authorized to modify data at this place.',
-                    person=dict(name=user.name))
+                    message='The user is authorized to modify data at this place.')
 
 class forgot_password:
     def GET(self):
