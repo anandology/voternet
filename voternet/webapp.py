@@ -27,6 +27,8 @@ urls = (
 
     "/account/login", "login",
     "/account/logout", "logout",
+    "/account/remoteauth", "remoteauth",
+    "/account/remoteauth/authorize", "remoteauth_authorize",
     "/account/forgot-password", "forgot_password",
     "/account/reset-password", "change_password",
     "/account/change-password", "change_password",
@@ -987,6 +989,66 @@ class logout:
         account.logout()
         raise web.seeother(next)
     GET = POST
+
+def url(path, **query):
+    return path + '?' + urllib.urlencode(query)
+
+class remoteauth:
+    """Simple hack to allow remote servcies to authenticate users of this system.
+
+    This is similar to OAuth, but a lot simpler. Excepts the following query parameters:
+
+        * client_key
+        * redirect_uri
+    """
+    def GET(self):
+        i = web.input(redirect_uri="/")
+        redirect_uri = i['redirect_uri']
+        user = account.get_current_user()
+        if user:
+            token = account.user2token(user)
+            raise web.seeother(redirect_uri + "?" + urllib.urlencode(dict(token=token)))
+        else:
+            raise web.seeother(url('/account/login', next='/account/remoteauth', redirect_uri=redirect_uri))
+
+def jsonify(**kwargs):
+    return json.dumps(kwargs)
+
+class remoteauth_authorize:
+    def POST(self):
+        i = web.input()
+        token = i.get('token')
+        place_key = i.get('place')
+        #client_key = i['client_key']
+        #client_secret = i['client_secret']
+
+        user = account.token2user(token)
+        place = Place.find(key=place_key)
+
+        if not user:
+            return jsonify(
+                    status='failed',
+                    code='error_token_invalid',
+                    message='Token is either invalid or expired.')
+
+        if not place:
+            return jsonify(
+                    status='failed',
+                    code='error_invalid_input',
+                    message='Invalid Place')
+
+        if not place.writable_by(user):
+            return jsonify(
+                    status='failed',
+                    code='error_permission_denied',
+                    message="User doesn't have permission to modify data at this place.",
+                    person=dict(name=user.name))
+        else:
+            return jsonify(
+                    status='ok',
+                    code='authorized',
+                    message='The user is authorized to modify data at this place.',
+                    person=dict(name=user.name))
 
 class forgot_password:
     def GET(self):
