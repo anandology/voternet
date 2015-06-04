@@ -1,0 +1,28 @@
+server {
+    listen   80;
+    server_name  {{ server_name }};
+
+    root {{ project_root }};
+
+    location /favicon.ico {
+        root {{ project_root }}/code/static;
+    }
+    location /robots.txt {
+        root {{ project_root }}/code/static;
+    }
+
+    location /static/ {
+        root {{ project_root }}/code;
+    }
+
+    location / {
+      include /etc/nginx/fastcgi_params;
+      fastcgi_pass  127.0.0.1:{{ app_port }};
+    }
+}
+
+server {
+    listen 80;
+    server_name www.{{ server_name }};
+    rewrite  ^(.*)$  http://{{ server_name }}$1 permanent;
+}

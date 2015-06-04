@@ -1,0 +1,13 @@
+[remote:children]
+production
+
+[servers:children]
+production
+local
+
+[production]
+128.199.81.6 nickname=production vm=0 branch=master
+
+[local]
+local ansible_ssh_host=127.0.0.1 ansible_ssh_port=2222 nickname=local vm=1 branch=master
+

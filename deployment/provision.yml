@@ -1,0 +1,80 @@
+---
+- hosts: all
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  sudo: true
+
+  tasks:
+  - name: Create the project directory.
+    file: state=directory path={{ project_root }}
+
+  - name: Create user.
+    user: home={{ project_root }} name={{ project_name }} shell=/bin/bash state=present
+
+  - name: Update the project directory.
+    file: group={{ project_name }} owner={{ project_name }} mode=755 state=directory path={{ project_root }}
+
+  - name: Create the code directory.
+    file: group={{ project_name }} owner={{ project_name }} mode=755 state=directory path={{ project_root }}/code/
+    when: vm == 0
+
+  - name: Create logs directory.
+    file: group={{ project_name }} owner={{ project_name }} mode=755 state=directory path={{ project_root }}/logs/
+
+  - name: Install required system packages.
+    apt: pkg={{ item }} state=installed update-cache=yes
+    with_items: system_packages
+
+  - name: Install required Python packages.
+    easy_install: name={{ item }}
+    with_items: python_packages
+
+  # - name: Mount code folder.
+  #   mount: fstype=vboxsf opts=uid={{ project_name }},gid={{ project_name }} name={{ project_root }}/code/ src={{ project_name }} state=mounted
+  #   when: vm == 1
+
+  - name: link code folder
+    file: state=link src=/vagrant dest={{ project_root }}/code
+    when: vm == 1
+
+  - name: Create the SSH directory.
+    file: state=directory path={{ project_root }}/.ssh/
+    when: vm == 0
+
+  # - name: Upload SSH known hosts.
+  #   copy: src=known_hosts dest={{ project_root }}/home/.ssh/known_hosts mode=0600
+  #   when: vm == 0
+
+  - name: Upload SSH public key
+    authorized_key:
+      user={{ project_name }}
+      key="{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+  - name: Install nginx configuration file
+    template: src=templates/nginx_fastcgi.conf.j2 dest=/etc/nginx/sites-available/{{ project_name }}
+    notify: restart nginx
+
+  - name: Enable nginx configuration file
+    file: src=/etc/nginx/sites-available/{{project_name}} dest=/etc/nginx/sites-enabled/{{project_name}} state=link
+    notify: restart nginx
+
+  - name: Install supervisor scripts.
+    template: src=templates/supervisor_fastcgi.conf.j2 dest=/etc/supervisor/conf.d/{{ project_name }}.conf
+    notify: restart webapp
+
+  #   copy: src=files/conf/nginx.conf dest=/etc/nginx/sites-enabled/{{ project_name }}
+  #   notify: restart nginx
+
+  - name: Create {{ project_name }} postgres user
+    postgresql_user: name={{ project_name }} role_attr_flags=CREATEDB,NOSUPERUSER
+    sudo_user: postgres
+
+  - name: Create {{ project_name }} database
+    postgresql_db: name={{ project_name}} owner={{ project_name }}
+    sudo_user: postgres
+
+  handlers:
+    - include: handlers.yml
+
+- include: deploy.yml

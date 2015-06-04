@@ -1,0 +1,20 @@
+project_name: voternet
+project_root: /opt/voternet
+project_repo: git://github.com/anandology/voternet.git
+app_port: 7001
+server_name: cms.aapvol.in
+system_packages:
+  - build-essential
+  - git
+  - nginx
+  - postgresql
+  - libpq-dev    
+  - python-dev
+  - python-setuptools
+  - python-psycopg2 
+  - supervisor
+
+python_packages:
+  - pip
+  - virtualenv
+
