@@ -56,7 +56,6 @@ create table people (
 
 create index people_place_id_idx on people(place_id);
 create index people_email_idx on people(email);
-create index people_reset_token_idx on people(reset_token);
 
 create table auth (
     id serial primary key,
@@ -179,7 +178,7 @@ create table voterid_info (
 
 create table signup (
     id serial primary key,
-    place_id integer references places.id,
+    place_id integer references places(id),
     name text,
     phone text,
     email text,
