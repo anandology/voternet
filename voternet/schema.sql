@@ -26,7 +26,7 @@ create index places_region_id_idx on places(region_id);
 create index places_pc_id_idx on places(pc_id);
 create index places_ac_id_idx on places(ac_id);
 create index places_ward_id_idx on places(ward_id);
-create index places_ps_id_idx on places(ps_id);
+create index places_px_id_idx on places(px_id);
 
 
 create table things (
