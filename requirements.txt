@@ -8,3 +8,4 @@ flup
 pytz
 WTForms
 envelopes
+webpy_jinja2
