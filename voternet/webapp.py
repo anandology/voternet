@@ -29,6 +29,7 @@ urls = (
     "/account/logout", "logout",
     "/account/remoteauth", "remoteauth",
     "/account/remoteauth/verify", "remoteauth_verify",
+    "/account/remoteauth/roles", "remoteauth_roles",
     "/account/remoteauth/authorize", "remoteauth_authorize",
     "/account/forgot-password", "forgot_password",
     "/account/reset-password", "change_password",
@@ -1032,6 +1033,27 @@ class remoteauth_verify:
                     code='verified',
                     message='The token is successfully verified.',
                     person=dict(name=user.name))
+
+class remoteauth_roles:
+    def POST(self):
+        i = web.input()
+        token = i.get('token')
+        #client_key = i['client_key']
+        #client_secret = i['client_secret']
+
+        user = account.token2user(token)
+
+        if not user:
+            return jsonify(
+                    status='failed',
+                    code='error_token_invalid',
+                    message='Token is either invalid or expired.')
+
+        dups = user.find_dups()
+        roles = [user] + dups
+        return jsonify(
+                status='ok',
+                roles=[r.dict() for r in roles])
 
 class remoteauth_authorize:
     def POST(self):

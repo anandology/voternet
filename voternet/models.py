@@ -985,7 +985,8 @@ class Person(web.storage):
             "phone": self.phone,
             "voterid": self.voterid,
             "role": self.role,
-            "place": self.place.key
+            "place": self.place.key,
+            "place_type": self.place.type,
         }
 
     def __repr__(self):           
